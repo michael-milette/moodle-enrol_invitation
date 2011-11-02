@@ -105,7 +105,7 @@ class invitation_manager {
                     
                     $DB->insert_record('enrol_invitation', $invitation);
                     
-                    $enrolurl = new moodle_url('/enrol/index.php',
+                    $enrolurl = new moodle_url('/enrol/invitation/enrol.php',
                             array('enrolinvitationtoken' => $token, 'id' => $data['courseid']));
 
                     //send invitation to the user
