@@ -83,6 +83,46 @@ class enrol_invitation_plugin extends enrol_plugin {
         return false;
     }
     
+    /**
+     * Returns link to page which may be used to add new instance of enrolment plugin in course.
+     * @param int $courseid
+     * @return moodle_url page url
+     */
+    public function get_newinstance_link($courseid) {
+        global $DB;
+
+        $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
+
+        if (!has_capability('moodle/course:enrolconfig', $context) 
+                or !has_capability('enrol/invitation:config', $context)) {
+            return NULL;
+        }
+
+        //we don't want more than one instance per course
+        if ($DB->record_exists('enrol', array('courseid'=>$courseid, 'enrol'=>'invitation'))) {
+            return NULL;
+        }
+
+        return new moodle_url('/enrol/invitation/edit.php', array('courseid'=>$courseid));
+    }
+    
+    /**
+     * Add new instance of enrol plugin.
+     * @param object $course
+     * @param array instance fields
+     * @return int id of new instance, null if can not be created
+     */
+    public function add_instance($course, array $fields = NULL) {
+        global $DB;
+
+        if ($DB->record_exists('enrol', array('courseid'=>$course->id, 'enrol'=>'invitation'))) {
+            // only one instance allowed, sorry
+            return NULL;
+        }
+
+        return parent::add_instance($course, $fields);
+    }
+    
      
 
     /**
@@ -124,23 +164,6 @@ class enrol_invitation_plugin extends enrol_plugin {
         }
 
         return $icons;
-    }
-
-    /**
-     * ???
-     * Returns link to page which may be used to add new instance of enrolment plugin in course.
-     * @param int $courseid
-     * @return moodle_url page url
-     */
-    public function get_newinstance_link($courseid) {
-        $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
-
-        if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/invitation:config', $context)) {
-            return NULL;
-        }
-
-        // multiple instances supported - different cost for different roles
-        return new moodle_url('/enrol/invitation/edit.php', array('courseid'=>$courseid));
     }
 
     /**
