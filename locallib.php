@@ -39,6 +39,39 @@ class invitation_manager {
     }
     
     /**
+     * Return HTML invitation menu link for a given course 
+     * It's mostly useful to add a link in a block menu - by default icon is displayed.
+     * @param boolean $withicon - set to false to not display the icon
+     * @return 
+     */
+    public function get_menu_link($withicon = true) {
+        global $OUTPUT;
+        
+        $inviteicon = '';
+        $link = '';
+       
+        if (has_capability('enrol/invitation:enrol',
+                        get_context_instance(CONTEXT_COURSE, $this->courseid))
+                and ($this->leftinvitationfortoday() > 0)) {
+            
+            //display an icon with requested (css can be changed in stylesheet)
+            if ($withicon) {
+                $inviteicon = html_writer::empty_tag('img',
+                            array('alt' => "invitation", 'class' => "enrol_invitation_item_icon", 'title' => "invitation",
+                                'src' => $OUTPUT->pix_url('invite', 'enrol_invitation')));
+            }
+            
+            $link = html_writer::link(
+                new moodle_url('/enrol/invitation/invitation.php',
+                        array('courseid' => $this->courseid)),
+                $inviteicon . get_string('inviteusers', 'enrol_invitation'));
+            
+        }
+        
+        return $link;
+    }
+    
+    /**
      * Return the number of invitation that can still be sent today for a specific course
      * If users accept quickly their invitation then you can send a lot more email per day
      * It is just to avoid spam.
