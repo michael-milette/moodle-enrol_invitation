@@ -246,7 +246,7 @@ class enrol_invitation_plugin extends enrol_plugin {
      *
      * @return bool
      */
-    public function has_bulk_operations() {
+    public function has_bulk_operations(course_enrolment_manager $manager) {
        return false;
     }
 
@@ -256,7 +256,7 @@ class enrol_invitation_plugin extends enrol_plugin {
      *
      * @return array
      */
-    public function get_bulk_operations() {
+    public function get_bulk_operations(course_enrolment_manager $manager) {
         return array();
     }
 
