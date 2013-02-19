@@ -48,7 +48,7 @@ $sql = "SELECT c.* $ctxsql
          WHERE e.id = :enrolid";
 $params = array('enrolid' => $ue->enrolid);
 $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
-context_instance_preload($course);
+context_helper::preload_from_record($course);
 
 // Make sure its not the front page course
 if ($course->id == SITEID) {
@@ -58,7 +58,7 @@ if ($course->id == SITEID) {
 // Obviously
 require_login($course);
 // Make sure the user can manage invitation enrolments for this course
-require_capability("enrol/invitation:manage", get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST));
+require_capability("enrol/invitation:manage", context_course::instance($course->id));
 
 // Get the enrolment manager for this course
 $manager = new course_enrolment_manager($PAGE, $course, $filter);

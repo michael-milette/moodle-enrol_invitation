@@ -86,7 +86,7 @@ if (!empty($enrolinvitationtoken)) {
 
     //send an email to the user who sent the invitation        
     $teacher = $DB->get_record('user', array('id' => $invitation->creatorid));
-    $contactuser = new object;
+    $contactuser = new stdClass;
     $contactuser->email = $teacher->email;
     $contactuser->firstname = $teacher->firstname;
     $contactuser->lastname = $teacher->lastname;

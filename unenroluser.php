@@ -47,14 +47,14 @@ $sql = "SELECT c.* $ctxsql
          WHERE e.id = :enrolid";
 $params = array('enrolid' => $ue->enrolid);
 $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
-context_instance_preload($course);
+context_helper::preload_from_record($course);
 
 if ($course->id == SITEID) {
     redirect(new moodle_url('/'));
 }
 
 require_login($course);
-require_capability("enrol/invitation:unenrol", get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST));
+require_capability("enrol/invitation:unenrol", context_course::instance($course->id));
 
 $manager = new course_enrolment_manager($PAGE, $course, $filter);
 $table = new course_enrolment_users_table($manager, $PAGE);

@@ -42,7 +42,7 @@ if ($ADMIN->fulltree) {
         get_string('status', 'enrol_invitation'), get_string('status_desc', 'enrol_invitation'), ENROL_INSTANCE_DISABLED, $options));
     
     if (!during_initial_install()) {
-        $options = get_default_enrol_roles(get_context_instance(CONTEXT_SYSTEM));
+        $options = get_default_enrol_roles(context_system::instance());
         $student = get_archetype_roles('student');
         $student = reset($student);
         $settings->add(new admin_setting_configselect('enrol_invitation/roleid',

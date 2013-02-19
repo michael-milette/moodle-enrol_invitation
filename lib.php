@@ -91,7 +91,7 @@ class enrol_invitation_plugin extends enrol_plugin {
     public function get_newinstance_link($courseid) {
         global $DB;
 
-        $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
+        $context = context_course::instance($courseid);
 
         if (!has_capability('moodle/course:enrolconfig', $context) 
                 or !has_capability('enrol/invitation:config', $context)) {
@@ -136,7 +136,7 @@ class enrol_invitation_plugin extends enrol_plugin {
              throw new coding_exception('Invalid enrol instance type!');
         }
 
-        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+        $context = context_course::instance($instance->courseid);
         if (has_capability('enrol/invitation:config', $context)) {
             $managelink = new moodle_url('/enrol/invitation/edit.php', array('courseid'=>$instance->courseid, 'id'=>$instance->id));
             $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
@@ -154,7 +154,7 @@ class enrol_invitation_plugin extends enrol_plugin {
         if ($instance->enrol !== 'invitation') {
             throw new coding_exception('invalid enrol instance!');
         }
-        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+        $context = context_course::instance($instance->courseid);
 
         $icons = array();
 
@@ -202,7 +202,7 @@ class enrol_invitation_plugin extends enrol_plugin {
             return false;
         }
         
-        $context = get_context_instance(CONTEXT_COURSE, $instance->courseid);
+        $context = context_course::instance($instance->courseid);
         if (has_capability('enrol/invitation:enrol', $context)) {
             $invitelink = new moodle_url('/enrol/invitation/invitation.php', 
                 array('courseid'=>$instance->courseid, 'id'=>$instance->id));

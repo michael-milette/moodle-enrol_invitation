@@ -108,7 +108,7 @@ class invitation_manager {
         
         //to send invitation you must able to edit the course - no need to be able to enrol into the course
         if (has_capability('enrol/invitation:enrol',
-                        get_context_instance(CONTEXT_COURSE, $data['courseid']))) {
+                        context_course::instance($data['courseid']))) {
             for ($indice = 1; $indice <= $invitationleft; $indice = $indice + 1) {
                 
                 $invitationleft = $invitationleft - 1;
@@ -142,7 +142,7 @@ class invitation_manager {
                             array('enrolinvitationtoken' => $token, 'id' => $data['courseid']));
 
                     //send invitation to the user
-                    $contactuser = new object;
+                    $contactuser = new stdClass;
                     $contactuser->email = $email;
                     $contactuser->firstname = '';
                     $contactuser->lastname = '';

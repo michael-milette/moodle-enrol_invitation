@@ -35,7 +35,7 @@ $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $fullname = $course->fullname;
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$context = context_course::instance($courseid);
 
 if (!has_capability('enrol/invitation:enrol', $context)) {
     throw new moodle_exception('nopermissiontosendinvitation' , 'enrol_invitation', $courseurl);
