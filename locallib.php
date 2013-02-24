@@ -37,12 +37,14 @@ class invitation_manager {
         $this->courseid = $courseid;
         $this->enrol_instance = $this->get_invitation_instance($courseid, $instancemustexist);
     }
-    
+
     /**
-     * Return HTML invitation menu link for a given course 
+     * DEPRECATED
+     * Return HTML invitation menu link for a given course
      * It's mostly useful to add a link in a block menu - by default icon is displayed.
      * @param boolean $withicon - set to false to not display the icon
-     * @return 
+     * @return
+     * @deprecated 24/02/13 - nothing is using this function and at best it should be in lib.php. This function will not be removed before 2014.
      */
     public function get_menu_link($withicon = true) {
         global $OUTPUT;
