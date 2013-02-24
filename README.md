@@ -17,7 +17,7 @@ Installation
 
 Required Moodle version
 -----------------------
-Moodle 2.3
+Moodle 2.2
 
 Maintenance
 -----------
@@ -29,8 +29,12 @@ I quickly review patches and if they seem to match a minimum the Moodle standard
 
 To get a plugin version compatible with older Moodle version, go to [Moodle.og] (https://moodle.org/plugins/pluginversions.php?plugin=enrol_invitation)
 
-Don't forget to indicate if you use the plugin: #4
+Don't forget to [indicate if you use the plugin] (https://github.com/mouneyrac/enrol_invitation/issues/4)
 You can also have a look to the [Moodle.org download stats] (https://moodle.org/plugins/stats.php?plugin=enrol_invitation)
+
+Important notices
+----------------_
+* 02/24/13 - Since 1.1, the require version is Moodle 2.2. This is due to using some new functions like context_course.
 
 Cheers,
 Jerome Mouneyrac
