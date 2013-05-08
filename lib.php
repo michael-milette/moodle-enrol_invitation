@@ -66,7 +66,7 @@ class enrol_invitation_plugin extends enrol_plugin {
         // users with manage cap may tweak period and status - requires enrol/invitation:manage
         return true;
     }
-    
+
      /**
      * Attempt to automatically enrol current user in course without any interaction,
      * calling code has to make sure the plugin and instance are active.
@@ -82,7 +82,7 @@ class enrol_invitation_plugin extends enrol_plugin {
 
         return false;
     }
-    
+
     /**
      * Returns link to page which may be used to add new instance of enrolment plugin in course.
      * @param int $courseid
@@ -105,7 +105,7 @@ class enrol_invitation_plugin extends enrol_plugin {
 
         return new moodle_url('/enrol/invitation/edit.php', array('courseid'=>$courseid));
     }
-    
+
     /**
      * Add new instance of enrol plugin.
      * @param object $course
@@ -122,8 +122,6 @@ class enrol_invitation_plugin extends enrol_plugin {
 
         return parent::add_instance($course, $fields);
     }
-    
-     
 
     /**
      * Sets up navigation entries.
@@ -158,9 +156,16 @@ class enrol_invitation_plugin extends enrol_plugin {
 
         $icons = array();
 
+        if (has_capability('enrol/invitation:enrol', $context) or has_capability('enrol/invitation:unenrol', $context)) {
+            $managelink = new moodle_url("/enrol/invitation/invitation.php", array('courseid'=>$instance->courseid));
+            $icons[] = $OUTPUT->action_icon($managelink, new pix_icon('t/enrolusers',
+                get_string('enrolusers', 'enrol_manual'), 'core', array('class'=>'iconsmall')));
+        }
+
         if (has_capability('enrol/invitation:config', $context)) {
             $editlink = new moodle_url("/enrol/invitation/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('i/edit', get_string('edit'), 'core', array('class'=>'icon')));
+            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit',
+                get_string('edit'), 'core', array('class'=>'iconsmall')));
         }
 
         return $icons;
@@ -174,7 +179,7 @@ class enrol_invitation_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     function enrol_page_hook(stdClass $instance) {}
-    
+
     /**
      * Returns an enrol_user_button that takes the user to a page where they are able to
      * enrol users into the managers course through this plugin.

@@ -41,14 +41,16 @@ class enrol_invitation_edit_form extends moodleform {
         $mform->addElement('header', 'header', get_string('pluginname', 'enrol_invitation'));
 
         $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
+        $mform->setType('name', PARAM_NOTAGS);
 
         $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
                          ENROL_INSTANCE_DISABLED => get_string('no'));
         $mform->addElement('select', 'status', get_string('status', 'enrol_invitation'), $options);
         $mform->setDefault('status', $plugin->get_config('status'));
-        
+
         //max invitation per day
         $mform->addElement('text', 'customint1', get_string('maxinviteperday', 'enrol_invitation'));
+        $mform->setType('customint1', PARAM_INT);
         $mform->addHelpButton('customint1', 'maxinviteperday', 'enrol_invitation');
         $maxinviteperday = $plugin->get_config('customint1');
 
@@ -73,7 +75,9 @@ class enrol_invitation_edit_form extends moodleform {
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_invitation');
 
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
 
         $this->add_action_buttons(true, ($instance->id ? null : get_string('addinstance', 'enrol')));
 
@@ -91,7 +95,7 @@ class enrol_invitation_edit_form extends moodleform {
                 $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_invitation');
             }
         }
-        
+
         if ($data['customint1'] != clean_param($data['customint1'], PARAM_INT)) {
             $errors['customint1'] = get_string('maxinviteerror', 'enrol_invitation');
         }

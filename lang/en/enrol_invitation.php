@@ -31,7 +31,7 @@ $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during invitation enrolments';
 $string['editenrolment'] = 'Edit enrolment';
 $string['emailaddressnumber'] = 'Email address {$a}';
-$string['emailmessageinvitation'] = '{$a->managername} invited you to join {$a->fullname}. 
+$string['emailmessageinvitation'] = '{$a->managername} invited you to join {$a->fullname}.
 
 To join, click the following link: {$a->enrolurl}
 
@@ -41,7 +41,7 @@ You will need to create an account if you don\'t have one yet.
 -----------------------------
 {$a->siteurl}';
 $string['emailmessageuserenrolled'] = '{$a->userfullname} has enrolled in {$a->coursefullname}.
-    
+
 Click the following link to check the new enrolments: {$a->courseenrolledusersurl}
 
 {$a->sitename}
