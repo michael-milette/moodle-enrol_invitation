@@ -1,37 +1,38 @@
 <?php
-// This file is not a part of Moodle - http://moodle.org/
-// This is a none core contributed module.
+// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
-// This is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// The GNU General Public License
-// can be see at <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Sending invitation page script.
+ * Page to send invitations.
  *
- * @package    enrol
- * @subpackage invitation
- * @copyright  2011 Jerome Mouneyrac
+ * @package    enrol_invitation
+ * @copyright  2013 UC Regents
+ * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../config.php');
-require_once('locallib.php');
-require_once('invitation_forms.php');
-require_once("$CFG->dirroot/enrol/locallib.php");
+require(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/locallib.php');
+require_once(dirname(__FILE__) . '/invitation_form.php');
+require_once($CFG->dirroot . '/enrol/locallib.php');
 require_login();
 
 $courseid = required_param('courseid', PARAM_INT);
 $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+
+$inviteid = optional_param('inviteid', 0, PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $fullname = $course->fullname;
@@ -42,43 +43,74 @@ if (!has_capability('enrol/invitation:enrol', $context)) {
 }
 
 $PAGE->set_context($context);
-$PAGE->set_url('/enrol/invitation/invitation.php');
+$PAGE->set_url(new moodle_url('/enrol/invitation/invitation.php',
+        array('courseid' => $courseid)));
 $PAGE->set_pagelayout('course');
 $PAGE->set_course($course);
-$PAGE->set_heading(get_string('inviteusers', 'enrol_invitation'));
-$PAGE->set_title(get_string('inviteusers', 'enrol_invitation'));
-$PAGE->navbar->add(get_string('inviteusers', 'enrol_invitation'));
+$page_title = get_string('inviteusers', 'enrol_invitation');
+$PAGE->set_heading($page_title);
+$PAGE->set_title($page_title);
+$PAGE->navbar->add($page_title);
+
+echo $OUTPUT->header();
+
+// Print out a heading.
+echo $OUTPUT->heading($page_title, 2, 'headingblock');
+
+print_page_tabs('invite');  // OUTPUT page tabs.
 
 $invitationmanager = new invitation_manager($courseid);
-$instance = $invitationmanager->get_invitation_instance($courseid, true);
-$invitationleft = $invitationmanager->leftinvitationfortoday($courseid);
-$mform = new invitations_form(null, array('courseid' => $courseid, 'leftinvitation' => $invitationleft));
-$mform->set_data($invitationmanager);
-$data = $mform->get_data();
-$confirmation = '';
-if ($data and confirm_sesskey()) {
-    $data->fullname = $fullname;
-    $invitationmanager->send_invitations($data);
 
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('inviteusers', 'enrol_invitation'), 3, 'main');
-    $confirmation = $OUTPUT->notification(get_string('emailssent', 'enrol_invitation'),
-            'notifysuccess');
-    echo $confirmation;
-    echo $OUTPUT->continue_button(new moodle_url('/course/view.php', array('id' => $courseid)));
-    echo $OUTPUT->footer();
-    exit();
+// Make sure that site has invitation plugin installed.
+$instance = $invitationmanager->get_invitation_instance($courseid, true);
+
+// If the user was sent to this page by selecting 'resend invite', then
+// prefill the form with the data used to resend the invite.
+$prefilled = array();
+if ($inviteid) {
+    if ( $invite = $DB->get_record('enrol_invitation', array('courseid' => $courseid, 'id' => $inviteid)) ) {
+        $prefilled['roleid'] = $invite->roleid;
+        $prefilled['email'] = $invite->email;
+        $prefilled['subject'] = $invite->subject;
+        $prefilled['message'] = $invite->message;
+        $prefilled['show_from_email'] = $invite->show_from_email;
+        $prefilled['notify_inviter'] = $invite->notify_inviter;
+    } else {
+        print_error('invalidinviteid');
+    }
 }
 
-//OUTPUT form
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('inviteusers', 'enrol_invitation'), 3, 'main');
-echo html_writer::tag('div', get_string('invitationpagehelp', 'enrol_invitation', $invitationleft),
-        array('class' => 'invitationpagehelp'));
-if ($invitationleft > 0) {
-    $mform->display();
+$mform = new invitation_form(null, array('course' => $course, 'prefilled' => $prefilled),
+        'post', '', array('class' => 'mform-invite'));
+$mform->set_data($invitationmanager);
+
+$data = $mform->get_data();
+if ($data and confirm_sesskey()) {
+
+    // Check for the invitation of multiple users.
+    $delimiters = "/[;, \r\n]/";
+    $email_list = invitation_form::parse_dsv_emails($data->email, $delimiters);
+    $email_list = array_unique($email_list);
+
+    foreach ($email_list as $email) {
+        $data->email = $email;
+        $invitationmanager->send_invitations($data);
+    }
+
+    $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+    $courseret = new single_button($courseurl, get_string('returntocourse',
+                            'enrol_invitation'), 'get');
+
+    $secturl = new moodle_url('/enrol/invitation/invitation.php',
+                    array('courseid' => $courseid));
+    $sectret = new single_button($secturl, get_string('returntoinvite',
+                            'enrol_invitation'), 'get');
+
+    echo $OUTPUT->confirm(get_string('invitationsuccess', 'enrol_invitation'),
+            $sectret, $courseret);
+
 } else {
-    echo $OUTPUT->single_button(new moodle_url('/course/view.php', array('id' => $courseid)), get_string('cancel'));
+    $mform->display();
 }
 
 echo $OUTPUT->footer();

@@ -1,24 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/invitation/db" VERSION="20111028" COMMENT="XMLDB file for Moodle enrol/invitation"
+<XMLDB PATH="enrol/invitation/db" VERSION="20130426" COMMENT="XMLDB file for Moodle enrol/invitation"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
     <TABLE NAME="enrol_invitation" COMMENT="Holds all known information about the invitation">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="token"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="token"/>
         <FIELD NAME="token" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="email"/>
         <FIELD NAME="email" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="token" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="the user using the token" PREVIOUS="email" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="userid" NEXT="tokenused"/>
-        <FIELD NAME="tokenused" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="timesent"/>
-        <FIELD NAME="timesent" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="tokenused" NEXT="timeused"/>
-        <FIELD NAME="timeused" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timesent" NEXT="creatorid"/>
-        <FIELD NAME="creatorid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="the user sending the invitation" PREVIOUS="timeused"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the user using the token" PREVIOUS="email" NEXT="roleid"/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="role user accepting invitation will be brought into course as" PREVIOUS="userid" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="roleid" NEXT="tokenused"/>
+        <FIELD NAME="tokenused" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="timesent"/>
+        <FIELD NAME="timesent" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="tokenused" NEXT="timeexpiration"/>
+        <FIELD NAME="timeexpiration" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="when invitation should expire" PREVIOUS="timesent" NEXT="timeused"/>
+        <FIELD NAME="timeused" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="timeexpiration" NEXT="inviterid"/>
+        <FIELD NAME="inviterid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="the user sending the invitation" PREVIOUS="timeused" NEXT="subject"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="inviterid" NEXT="message"/>
+        <FIELD NAME="message" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="notify_inviter"/>
+        <FIELD NAME="notify_inviter" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, will sent email to inviter that invite was used" PREVIOUS="message" NEXT="show_from_email"/>
+        <FIELD NAME="show_from_email" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, when email is sent will show inviter's email in the &quot;FROM&quot; field" PREVIOUS="notify_inviter" NEXT="daysexpire"/>
+        <FIELD NAME="daysexpire" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of days that role will expire after being accepted." PREVIOUS="show_from_email"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="userid" NEXT="roleid"/>
+        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" PREVIOUS="courseid" NEXT="inviterid"/>
+        <KEY NAME="inviterid" TYPE="foreign" FIELDS="inviterid" REFTABLE="user" REFFIELDS="id" PREVIOUS="roleid"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="token" UNIQUE="true" FIELDS="token" COMMENT="Invitation tokens must be unique"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

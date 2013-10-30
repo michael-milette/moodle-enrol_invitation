@@ -1,66 +1,58 @@
 <?php
-// This file is not a part of Moodle - http://moodle.org/
-// This is a none core contributed module.
+// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
-// This is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// The GNU General Public License
-// can be see at <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Invitation user enrolment edit script.
  *
- * This page allows the current user to edit a invitation user enrolment.
- * It is not compatible with the frontpage.
- *
- * @package    enrol
- * @subpackage invitation
- * @copyright  2011 Jerome Mouneyrac
+ * @package    enrol_invitation
+ * @copyright  2013 UC Regents
+ * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
 require_once("$CFG->dirroot/enrol/locallib.php");
-require_once("$CFG->dirroot/enrol/renderer.php"); // Required for the course enrolment manager table
+require_once("$CFG->dirroot/enrol/renderer.php"); // Required for the course enrolment manager table.
 require_once("$CFG->dirroot/enrol/invitation/editenrolment_form.php");
 
-$ueid   = required_param('ue', PARAM_INT); // user enrolment id
+$ueid   = required_param('ue', PARAM_INT); // User enrolment id.
 $filter = optional_param('ifilter', 0, PARAM_INT);
 
-// Get the user enrolment object
+// Get the user enrolment object.
 $ue     = $DB->get_record('user_enrolments', array('id' => $ueid), '*', MUST_EXIST);
-// Get the user for whom the enrolment is
+// Get the user for whom the enrolment is.
 $user   = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
-// Get the course the enrolment is to
+// Get the course the enrolment is to.
 list($ctxsql, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
-$sql = "SELECT c.* $ctxsql
-          FROM {course} c
-     LEFT JOIN {enrol} e ON e.courseid = c.id
-               $ctxjoin
-         WHERE e.id = :enrolid";
+$sql = "SELECT c.* $ctxsql FROM {course} c LEFT JOIN {enrol} e ON e.courseid = c.id $ctxjoin WHERE e.id = :enrolid";
 $params = array('enrolid' => $ue->enrolid);
 $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
-context_helper::preload_from_record($course);
+context_instance_preload($course);
 
-// Make sure its not the front page course
+// Make sure its not the front page course.
 if ($course->id == SITEID) {
     redirect(new moodle_url('/'));
 }
 
-// Obviously
+// Obviously.
 require_login($course);
-// Make sure the user can manage invitation enrolments for this course
-require_capability("enrol/invitation:manage", context_course::instance($course->id));
+// Make sure the user can manage invitation enrolments for this course.
+require_capability("enrol/invitation:manage", context_course::instance($course->id, MUST_EXIST));
 
-// Get the enrolment manager for this course
+// Get the enrolment manager for this course.
 $manager = new course_enrolment_manager($PAGE, $course, $filter);
 // Get an enrolment users table object. Doign this will automatically retrieve the the URL params
 // relating to table the user was viewing before coming here, and allows us to return the user to the
@@ -71,7 +63,7 @@ $table = new course_enrolment_users_table($manager, $PAGE);
 $usersurl = new moodle_url('/enrol/users.php', array('id' => $course->id));
 // The URl to return the user too after this screen.
 $returnurl = new moodle_url($usersurl, $manager->get_url_params()+$table->get_url_params());
-// The URL of this page
+// The URL of this page.
 $url = new moodle_url('/enrol/invitation/editenrolment.php', $returnurl->params());
 
 $PAGE->set_url($url);
@@ -86,7 +78,7 @@ if (!$plugin->allow_manage($instance) || $instance->enrol != 'invitation' || !($
 $mform = new enrol_invitation_user_enrolment_form($url, array('user'=>$user, 'course'=>$course, 'ue'=>$ue));
 $mform->set_data($PAGE->url->params());
 
-// Check the form hasn't been cancelled
+// Check the form hasn't been cancelled.
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($mform->is_submitted() && $mform->is_validated() && confirm_sesskey()) {

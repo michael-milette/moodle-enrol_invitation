@@ -1,27 +1,24 @@
 <?php
-
-// This file is not a part of Moodle - http://moodle.org/
-// This is a none core contributed module.
+// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
-// This is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// The GNU General Public License
-// can be see at <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Adds new instance of enrol_invitation to specified course
- * or edits current instance.
+ * Adds new instance of enrol_invitation or edits current instance.
  *
- * @package    enrol
- * @subpackage invitation
+ * @package    enrol_invitation
+ * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +27,7 @@ require('../../config.php');
 require_once('edit_form.php');
 
 $courseid   = required_param('courseid', PARAM_INT);
-$instanceid = optional_param('id', 0, PARAM_INT); // instanceid
+$instanceid = optional_param('id', 0, PARAM_INT); // Instanceid.
 
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id);
@@ -52,14 +49,14 @@ if ($instanceid) {
     $instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'invitation', 'id'=>$instanceid), '*', MUST_EXIST);
 } else {
     require_capability('moodle/course:enrolconfig', $context);
-    // no instance yet, we have to add new instance
+    // No instance yet, we have to add new instance.
     navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
     $instance = new stdClass();
     $instance->id       = null;
     $instance->courseid = $course->id;
 }
 
-$mform = new enrol_invitation_edit_form(NULL, array($instance, $plugin, $context));
+$mform = new enrol_invitation_edit_form(null, array($instance, $plugin, $context));
 
 if ($mform->is_cancelled()) {
     redirect($return);
@@ -67,23 +64,12 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     if ($instance->id) {
         $instance->status         = $data->status;
-        $instance->name           = $data->name;      
-        $instance->roleid         = $data->roleid;
-        $instance->enrolperiod    = $data->enrolperiod;
-        $instance->enrolstartdate = $data->enrolstartdate;
-        $instance->enrolenddate   = $data->enrolenddate;
+        $instance->name           = $data->name;
         $instance->timemodified   = time();
-        $instance->customint1   = $data->customint1;
         $DB->update_record('enrol', $instance);
-
     } else {
-        $fields = array('status'=>$data->status, 
-                        'name'=>$data->name, 
-                        'roleid'=>$data->roleid,
-                        'enrolperiod'=>$data->enrolperiod, 
-                        'enrolstartdate'=>$data->enrolstartdate, 
-                        'enrolenddate'=>$data->enrolenddate,
-                        'customint1'=>$data->customint1);
+        $fields = array('status'=>$data->status,
+                        'name'=>$data->name);
         $plugin->add_instance($course, $fields);
     }
 

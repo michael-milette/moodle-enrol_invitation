@@ -1,28 +1,27 @@
 <?php
-// This file is not a part of Moodle - http://moodle.org/
-// This is a none core contributed module.
+// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
-// This is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// The GNU General Public License
-// can be see at <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Unenrol a user who was enrolled through a invitation enrolment.
  *
  * Please note when unenrolling a user all of their grades are removed as well.
  *
- * @package    enrol
- * @subpackage invitation
- * @copyright  2011 Jerome Mouneyrac
+ * @package    enrol_invitation
+ * @copyright  2013 UC Regents
+ * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,15 +29,15 @@ require('../../config.php');
 require_once("$CFG->dirroot/enrol/locallib.php");
 require_once("$CFG->dirroot/enrol/renderer.php");
 
-$ueid   = required_param('ue', PARAM_INT); // user enrolment id
+$ueid   = required_param('ue', PARAM_INT); // User enrolment id.
 $filter = optional_param('ifilter', 0, PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
-// Get the user enrolment object
-$ue     = $DB->get_record('user_enrolments', array('id' => $ueid), '*', MUST_EXIST);
-// Get the user for whom the enrolment is
-$user   = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
-// Get the course the enrolment is to
+// Get the user enrolment object.
+$ue = $DB->get_record('user_enrolments', array('id' => $ueid), '*', MUST_EXIST);
+// Get the user for whom the enrolment is.
+$user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
+// Get the course the enrolment is to.
 list($ctxsql, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
 $sql = "SELECT c.* $ctxsql
           FROM {course} c
@@ -47,14 +46,14 @@ $sql = "SELECT c.* $ctxsql
          WHERE e.id = :enrolid";
 $params = array('enrolid' => $ue->enrolid);
 $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
-context_helper::preload_from_record($course);
+context_instance_preload($course);
 
 if ($course->id == SITEID) {
     redirect(new moodle_url('/'));
 }
 
 require_login($course);
-require_capability("enrol/invitation:unenrol", context_course::instance($course->id));
+require_capability("enrol/invitation:unenrol", context_course::instance($course->id, MUST_EXIST));
 
 $manager = new course_enrolment_manager($PAGE, $course, $filter);
 $table = new course_enrolment_users_table($manager, $PAGE);
@@ -63,7 +62,7 @@ $table = new course_enrolment_users_table($manager, $PAGE);
 $usersurl = new moodle_url('/enrol/users.php', array('id' => $course->id));
 // The URl to return the user too after this screen.
 $returnurl = new moodle_url($usersurl, $manager->get_url_params()+$table->get_url_params());
-// The URL of this page
+// The URL of this page.
 $url = new moodle_url('/enrol/invitation/unenroluser.php', $returnurl->params());
 $url->param('ue', $ueid);
 
@@ -83,7 +82,8 @@ if ($confirm && confirm_sesskey() && $manager->unenrol_user($ue)) {
 }
 
 $yesurl = new moodle_url($PAGE->url, array('confirm'=>1, 'sesskey'=>sesskey()));
-$message = get_string('unenroluser', 'enrol_invitation', array('user'=>fullname($user, true), 'course'=>format_string($course->fullname)));
+$message = get_string('unenroluser', 'enrol_invitation', array('user'=>fullname($user, true),
+    'course'=>format_string($course->fullname)));
 $fullname = fullname($user);
 $title = get_string('unenrol', 'enrol_invitation');
 

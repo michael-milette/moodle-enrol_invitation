@@ -1,26 +1,25 @@
 <?php
-// This file is not a part of Moodle - http://moodle.org/
-// This is a none core contributed module.
+// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
-// This is free software: you can redistribute it and/or modify
+// Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// The GNU General Public License
-// can be see at <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the form used to edit invitation enrolments for a user.
+ * Contains the form used to edit invitation enrolment for a user.
  *
- * @package    enrol
- * @subpackage invitation
- * @copyright  2011 Jerome Mouneyrac
+ * @package    enrol_invitation
+ * @copyright  2013 UC Regents
+ * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,8 +27,18 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
 
+/**
+ * Form to edit invitation enrolment for a user.
+ * 
+ * @copyright  2013 UC Regents
+ * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class enrol_invitation_user_enrolment_form extends moodleform {
-    function definition() {
+    /**
+     * Form definition.
+     */
+    public function definition() {
         global $CFG, $DB;
 
         $mform = $this->_form;
@@ -38,7 +47,7 @@ class enrol_invitation_user_enrolment_form extends moodleform {
         $course = $this->_customdata['course'];
         $ue     = $this->_customdata['ue'];
 
-        $mform->addElement('header','general', '');
+        $mform->addElement('header', 'general', '');
 
         $options = array(ENROL_USER_ACTIVE    => get_string('participationactive', 'enrol'),
                          ENROL_USER_SUSPENDED => get_string('participationsuspended', 'enrol'));
@@ -66,7 +75,15 @@ class enrol_invitation_user_enrolment_form extends moodleform {
         ));
     }
 
-    function validation($data, $files) {
+    /**
+     * Form validation.
+     * 
+     * @param array $data
+     * @param array $files
+     *
+     * @return array
+     */
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         if (!empty($data['timestart']) and !empty($data['timeend'])) {
