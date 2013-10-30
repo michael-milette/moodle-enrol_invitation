@@ -20,8 +20,7 @@
         <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="inviterid" NEXT="message"/>
         <FIELD NAME="message" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="notify_inviter"/>
         <FIELD NAME="notify_inviter" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, will sent email to inviter that invite was used" PREVIOUS="message" NEXT="show_from_email"/>
-        <FIELD NAME="show_from_email" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, when email is sent will show inviter's email in the &quot;FROM&quot; field" PREVIOUS="notify_inviter" NEXT="daysexpire"/>
-        <FIELD NAME="daysexpire" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of days that role will expire after being accepted." PREVIOUS="show_from_email"/>
+        <FIELD NAME="show_from_email" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, when email is sent will show inviter's email in the &quot;FROM&quot; field" PREVIOUS="notify_inviter"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>

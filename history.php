@@ -51,10 +51,10 @@ $PAGE->set_url(new moodle_url('/enrol/invitation/history.php',
         array('courseid' => $courseid)));
 $PAGE->set_pagelayout('course');
 $PAGE->set_course($course);
-$page_title = get_string('invitehistory', 'enrol_invitation');
-$PAGE->set_heading($page_title);
-$PAGE->set_title($page_title);
-$PAGE->navbar->add($page_title);
+$pagetitle = get_string('invitehistory', 'enrol_invitation');
+$PAGE->set_heading($pagetitle);
+$PAGE->set_title($pagetitle);
+$PAGE->navbar->add($pagetitle);
 
 // Do not display the page if we are going to be redirecting the user.
 if ($actionid != invitation_manager::INVITE_RESEND) {
@@ -62,7 +62,7 @@ if ($actionid != invitation_manager::INVITE_RESEND) {
     echo $OUTPUT->header();
 
     // Print out a heading.
-    echo $OUTPUT->heading($page_title, 2, 'headingblock');
+    echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
     // OUTPUT page tabs.
     print_page_tabs('history');

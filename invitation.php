@@ -47,15 +47,15 @@ $PAGE->set_url(new moodle_url('/enrol/invitation/invitation.php',
         array('courseid' => $courseid)));
 $PAGE->set_pagelayout('course');
 $PAGE->set_course($course);
-$page_title = get_string('inviteusers', 'enrol_invitation');
-$PAGE->set_heading($page_title);
-$PAGE->set_title($page_title);
-$PAGE->navbar->add($page_title);
+$pagetitle = get_string('inviteusers', 'enrol_invitation');
+$PAGE->set_heading($pagetitle);
+$PAGE->set_title($pagetitle);
+$PAGE->navbar->add($pagetitle);
 
 echo $OUTPUT->header();
 
 // Print out a heading.
-echo $OUTPUT->heading($page_title, 2, 'headingblock');
+echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
 print_page_tabs('invite');  // OUTPUT page tabs.
 

@@ -28,8 +28,12 @@ require($CFG->dirroot . '/enrol/invitation/locallib.php');
 
 require_login(null, false);
 
-// Check if param token exist.
-$enrolinvitationtoken = required_param('token', PARAM_ALPHANUM);
+// Check if param token exist. Support checking for both old
+// "enrolinvitationtoken" token name and new "token" parameters.
+$enrolinvitationtoken = optional_param('enrolinvitationtoken', null, PARAM_ALPHANUM);
+if (empty($enrolinvitationtoken)) {
+    $enrolinvitationtoken = required_param('token', PARAM_ALPHANUM);
+}
 
 // Retrieve the token info.
 $invitation = $DB->get_record('enrol_invitation',
@@ -37,10 +41,10 @@ $invitation = $DB->get_record('enrol_invitation',
 
 // If token is valid, enrol the user into the course.
 if (empty($invitation) or empty($invitation->courseid) or $invitation->timeexpiration < time()) {
-    $course_id = empty($invitation->courseid) ? $SITE->id : $invitation->courseid;
-    add_to_log($course_id, 'course', 'invitation expired',
-        "../enrol/invitation/history.php?courseid=$course_id",
-        $DB->get_record('course', array('id' => $course_id), 'fullname')->fullname);
+    $courseid = empty($invitation->courseid) ? $SITE->id : $invitation->courseid;
+    add_to_log($courseid, 'course', 'invitation expired',
+        "../enrol/invitation/history.php?courseid=$courseid",
+        $DB->get_record('course', array('id' => $courseid), 'fullname')->fullname);
     throw new moodle_exception('expiredtoken', 'enrol_invitation');
 }
 
@@ -54,10 +58,10 @@ $PAGE->set_url(new moodle_url('/enrol/invitation/enrol.php',
         array('token' => $enrolinvitationtoken)));
 $PAGE->set_pagelayout('course');
 $PAGE->set_course($course);
-$page_title = get_string('invitation_acceptance_title', 'enrol_invitation');
-$PAGE->set_heading($page_title);
-$PAGE->set_title($page_title);
-$PAGE->navbar->add($page_title);
+$pagetitle = get_string('invitation_acceptance_title', 'enrol_invitation');
+$PAGE->set_heading($pagetitle);
+$PAGE->set_title($pagetitle);
+$PAGE->navbar->add($pagetitle);
 
 // Get.
 $invitationmanager = new invitation_manager($invitation->courseid);
@@ -71,7 +75,7 @@ if (isguestuser()) {
     echo $OUTPUT->header();
 
     // Print out a heading.
-    echo $OUTPUT->heading($page_title, 2, 'headingblock');
+    echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
     echo $OUTPUT->box_start('generalbox', 'notice');
 
@@ -92,7 +96,7 @@ if (empty($confirm)) {
     echo $OUTPUT->header();
 
     // Print out a heading.
-    echo $OUTPUT->heading($page_title, 2, 'headingblock');
+    echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
     add_to_log($invitation->courseid, 'course', 'invitation view',
         "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);

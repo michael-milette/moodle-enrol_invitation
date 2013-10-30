@@ -24,8 +24,8 @@
  */
 
 // Global strings.
-$string['pluginname'] = 'Site invitation';
-$string['pluginname_desc'] = 'The site invitation module allows to send invitation by email. These invitations can be used only once. Users clicking on the email link are automatically enrolled.';
+$string['pluginname'] = 'Invitation';
+$string['pluginname_desc'] = 'The Invitation module allows sending invitations by email. These invitations can be used only once. Users clicking on the email link are automatically enrolled.';
 
 // Email message strings.
 $string['reminder'] = 'Reminder: ';
@@ -55,7 +55,7 @@ $string['instructormsg'] =
 $string['assignrole'] = 'Assign role';
 $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during invitation enrollments';
-$string['default_subject'] = 'Site invitation for {$a}';
+$string['default_subject'] = 'Invitation for {$a}';
 $string['editenrollment'] = 'Edit enrollment';
 $string['header_email'] = 'Who do you want to invite?';
 $string['emailaddressnumber'] = 'Email address';
@@ -133,8 +133,8 @@ $string['returntocourse'] = 'Return to course';
 $string['returntoinvite'] = 'Send another invite';
 
 // Processing invitation acceptance strings.
-$string['invitation_acceptance_title'] = 'Site invitation acceptance';
-$string['expiredtoken'] = 'Site invitation token is expired or has already been used.';
+$string['invitation_acceptance_title'] = 'Invitation acceptance';
+$string['expiredtoken'] = 'Invitation token is expired or has already been used.';
 $string['loggedinnot'] = '<p>This invitation to access "{$a->coursefullname}" as
     a "{$a->rolename}" is intended for {$a->email}. If you are not the
     intended recipient, please do not accept this invitation.</p>
@@ -175,19 +175,8 @@ $string['action_extend_invite'] = 'Extend invite';
 $string['action_resend_invite'] = 'Resend invite';
 
 // Capabilities strings.
-$string['invitation:config'] = 'Configure site invitation instances';
+$string['invitation:config'] = 'Configure invitation instances';
 $string['invitation:enrol'] = 'Invite users';
-$string['invitation:manage'] = 'Manage site invitation assignments';
+$string['invitation:manage'] = 'Manage invitation assignments';
 $string['invitation:unenrol'] = 'Unassign users from the course';
 $string['invitation:unenrolself'] = 'Unassign self from the course';
-
-// Strings to handle "Temporary Participant".
-$string['enabletempparticipant'] = 'Enable Temporary Participant role handling';
-$string['enabletempparticipant_desc'] = 'If enabled, will display ' .
-        '"Temporary Participant" as an invitable role for site invitation. ' .
-        'Requires the "Temporary Participant" role to exist on the server or ' .
-        'site invitation will not work.';
-$string['tempgroup'] = 'Temporary';
-$string['daysexpire_string'] = 'Expires {$a} days after being accepted.';
-$string['daysexpire_notice'] = 'After accepting this invitation, your access to the site will expire in {$a} days.';
-$string['err_daysexpire'] = 'Invalid choice option for days expiration.';
