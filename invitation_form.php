@@ -86,48 +86,6 @@ class invitation_form extends moodleform {
             }
         }
 
-        // Give "Temporary Participant" option if site is Registrar or TA site.
-        if (get_config('enrol_invitation', 'enabletempparticipant')) {
-            $site_type = null;
-            if (is_collab_site($course)) {
-                $siteindicator = siteindicator_site::load($course->id);
-                if (!empty($siteindicator)) {
-                    $site_type = $siteindicator->property->type;
-                }
-            } else {
-                $site_type = siteindicator_manager::SITE_TYPE_SRS_INSTRUCTION;
-            }
-
-            if ($site_type == siteindicator_manager::SITE_TYPE_SRS_INSTRUCTION ||
-                    $site_type == siteindicator_manager::SITE_TYPE_TASITE) {
-
-                // Create Temporary Roles group.
-                $role_type_string = html_writer::tag('div',
-                        get_string('tempgroup', 'enrol_invitation'),
-                        array('class' => 'label-bstp label-warning'));
-                $role_group[] = &$mform->createElement('static', 'role_type_header',
-                        '', $role_type_string);
-
-                // Add Temporary Participant role.
-                $role = $DB->get_record('role',
-                        array('shortname' => 'tempparticipant'));
-                $role_string = $this->format_role_string($role);
-
-                $role_group[] = &$mform->createElement('radio', 'roleid', '',
-                        $role_string, $role->id);
-
-                // Create dropdown for choosing day expiration.
-                $daysexpire_dropdown = &$mform->createElement('select',
-                        'daysexpire', '', self::$daysexpire_options);
-                $daysexpire_string = html_writer::tag('span',
-                        get_string('daysexpire_string', 'enrol_invitation',
-                                $daysexpire_dropdown->toHtml()),
-                        array('class' => 'well well-sm daysexpire_string'));
-                $role_group[] = &$mform->createElement('static',
-                        'daysexpire_string', '', $daysexpire_string);
-            }
-        }
-
         $mform->addGroup($role_group, 'role_group', $label);
         $mform->addRule('role_group',
                 get_string('norole', 'enrol_invitation'), 'required');

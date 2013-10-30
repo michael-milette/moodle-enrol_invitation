@@ -34,9 +34,8 @@ $string['emailmsgtxt'] =
     'INSTRUCTIONS:' . "\n" .
     '------------------------------------------------------------' . "\n" .
     'You have been invited to access the site: {$a->fullname}. You will ' .
-    'need to log in to CCLE with your UCLA logon in order to confirm your access ' .
-    'to the site. If you do not have a UCLA logon, please see the instructions ' .
-    'below. Be advised that by clicking on the site access link provided in this ' .
+    'need to log in to confirm your access to the site. Be advised that by ' .
+    'clicking on the site access link provided in this ' .
     'email you are acknowledging that:' . "\n" .
     ' --you are the person to whom this email was addressed and for whom this' .
     '   invitation is intended;' . "\n" .
@@ -44,16 +43,6 @@ $string['emailmsgtxt'] =
     'ACCESS LINK:' . "\n" .
     '------------------------------------------------------------' . "\n" .
     '{$a->inviteurl}' . "\n\n" .
-    'UCLA LOGON:' . "\n" .
-    '------------------------------------------------------------' . "\n" .
-    'If you currently do not have a UCLA Logon ID, you can obtain one here: ' .
-    'https://logon.ucla.edu/activate.php. You do not need to be an enrolled ' .
-    'student at UCLA or have a 9 digit UID to create a UCLA Logon. When you are ' .
-    'asked to identify your role in the UCLA system, select the following  ' .
-    'option:' . "\n" .
-    '"I do not have a UCLA Identification Number and I am NONE OF THE ABOVE."' . "\n\n" .
-    'CONTACT CCLE:' . "\n" .
-    '------------------------------------------------------------' . "\n" .
     'If you believe that you have received this message in error or are in need ' .
     'of assistance, please contact: {$a->supportemail}.';
 
@@ -61,11 +50,6 @@ $string['instructormsg'] =
     'MESSAGE FROM INSTRUCTOR:' . "\n" .
     '------------------------------------------------------------' . "\n" .
     '{$a}' . "\n\n";
-
-// Add special notice for project sites about privacy.
-$string['project_privacy_notice'] = 'Please be aware that if you accept this ' .
-        'invitation your profile information will be available to the other ' .
-        'members of this project.';
 
 // Invite form strings.
 $string['assignrole'] = 'Assign role';
@@ -113,25 +97,15 @@ $string['message_help'] =
     'INSTRUCTIONS:'.
     '<hr />'.
     'You have been invited to access the site: [site name]. You will ' .
-    'need to log in to CCLE with your UCLA logon in order to confirm your access ' .
-    'to the site. If you do not have a UCLA logon, please see the instructions ' .
-    'below. Be advised that by clicking on the site access link provided in this ' .
+    'need to log in to confirm your access to the site. Be advised that by ' .
+    'clicking on the site access link provided in this ' .
     'email you are acknowledging that:<br />' .
     ' --you are the person to whom this email was addressed and for whom this ' .
     '   invitation is intended;<br />' .
     ' --the link below will expire on ([expiration date]).<br /><br />' .
     'ACCESS LINK:'.
     '<hr />'.
-    '[invite url]<br /><br />'.
-    'UCLA LOGON:'.
-    '<hr />'.
-    'If you currently do not have a UCLA Logon ID, you can obtain one here: ' .
-    'https://logon.ucla.edu/activate.php. You do not need to be an enrolled ' .
-    'student at UCLA or have a 9 digit UID to create a UCLA Logon. When you are ' .
-    'asked to identify your role in the UCLA system, select the following  ' .
-    'option: <br />' .
-    '"I do not have a UCLA Identification Number and I am NONE OF THE ABOVE."<br /><br />'.
-    'CONTACT CCLE:'.
+    '[invite url]<br />'.
     '<hr />'.
     'If you believe that you have received this message in error or are in need ' .
     'of assistance, please contact: [support email].';
@@ -165,17 +139,7 @@ $string['loggedinnot'] = '<p>This invitation to access "{$a->coursefullname}" as
     a "{$a->rolename}" is intended for {$a->email}. If you are not the
     intended recipient, please do not accept this invitation.</p>
     <p>
-        Before you can accept this invitation you must be logged in to CCLE.
-        <ul>
-            <li>
-                If you have an UCLA LogonID, please login now.
-            </li>
-            <li>
-                If you do not have an UCLA Logon ID, you can obtain one at:
-                <a target="_blank" href="https://logon.ucla.edu/activate.php">
-                https://logon.ucla.edu/activate.php</a>
-            </li>
-        </ul>
+        Before you can accept this invitation you must be logged in.
     </p>';
 $string['invitationacceptance'] = '<p>This invitation to access
     "{$a->coursefullname}" as a "{$a->rolename}" is intended for {$a->email}.

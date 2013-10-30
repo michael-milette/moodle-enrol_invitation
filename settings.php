@@ -41,12 +41,4 @@ if ($ADMIN->fulltree) {
     // Default to 2 weeks expiration.
     $settings->add(new admin_setting_configtext('enrol_invitation/enrolperiod',
         get_string('enrolperiod', 'enrol_invitation'), get_string('enrolperiod_desc', 'enrol_invitation'), 1209600, PARAM_INT));
-
-    // Enable special case handling for tempparticipant
-    // (requires tempparticipant role to exist on system).
-    $settings->add(new admin_setting_configcheckbox(
-            'enrol_invitation/enabletempparticipant',
-            get_string('enabletempparticipant', 'enrol_invitation'),
-            get_string('enabletempparticipant_desc', 'enrol_invitation'),
-            0, PARAM_BOOL));
 }

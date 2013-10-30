@@ -108,11 +108,6 @@ if (empty($confirm)) {
     $invitationacceptance = get_string('invitationacceptance',
             'enrol_invitation', $notice_object);
 
-    $privacy_notice = invitation_manager::get_project_privacy_notice($course->id, true);
-    if (!empty($privacy_notice)) {
-        $invitationacceptance .= $privacy_notice;
-    }
-
     // If invitation has "daysexpire" set, then give notice.
     if (!empty($invitation->daysexpire)) {
         $invitationacceptance .= html_writer::tag('p',

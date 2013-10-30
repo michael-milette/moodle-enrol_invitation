@@ -27,11 +27,3 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2013062500;
 $plugin->requires = 2011070100;   // Requires Moodle 2.1 or later.
-
-$plugin->cron = 86400;  // Only check once a day.
-
-$plugin->dependencies = array(
-    'local_ucla' => 2012051900,
-    'tool_uclasiteindicator' => ANY_VERSION,
-    'tool_uclaroles' => ANY_VERSION
-);
