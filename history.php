@@ -29,9 +29,6 @@ require_once(dirname(__FILE__) . '/invitation_form.php');
 require_once($CFG->dirroot . '/enrol/locallib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
-// For distance_of_time_in_words.
-require_once($CFG->dirroot . '/local/ucla/datetimehelpers.php');
-
 require_login();
 $courseid = required_param('courseid', PARAM_INT);
 $inviteid = optional_param('inviteid', 0, PARAM_INT);
@@ -68,9 +65,8 @@ if ($actionid != invitation_manager::INVITE_RESEND) {
     print_page_tabs('history');
 }
 
-$invitationmanager = new invitation_manager($courseid);
 // Course must have invitation plugin installed (will give error if not found).
-$invite_instance = $invitationmanager->get_invitation_instance($courseid, true);
+$invitationmanager = new invitation_manager($courseid, true);
 
 // Get invites and display them.
 $invites = $invitationmanager->get_invites();
@@ -93,17 +89,13 @@ if (empty($invites)) {
             add_to_log($course->id, 'course', 'invitation revoke',
                             "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
 
-            echo $OUTPUT->box_start('noticebox');
-            echo html_writer::tag('span', get_string('revoke_invite_sucess', 'enrol_invitation'));
-            echo $OUTPUT->box_end();
+            echo $OUTPUT->notification(get_string('revoke_invite_sucess', 'enrol_invitation'), 'notifysuccess');
 
         } else if ($actionid == invitation_manager::INVITE_EXTEND) {
             // Resend the invite and email.
             $invitationmanager->send_invitations($curr_invite, true);
 
-            echo $OUTPUT->box_start('noticebox');
-            echo html_writer::tag('span', get_string('extend_invite_sucess', 'enrol_invitation'));
-            echo $OUTPUT->box_end();
+            echo $OUTPUT->notification(get_string('extend_invite_sucess', 'enrol_invitation'), 'notifysuccess');
 
         } else if ($actionid == invitation_manager::INVITE_RESEND) {
             // Send the user to the invite form with prefilled data.

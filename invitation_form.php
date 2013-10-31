@@ -30,10 +30,6 @@ require_once('locallib.php');
 require_once($CFG->dirroot . '/lib/formslib.php');
 require_once($CFG->dirroot . '/lib/enrollib.php');
 
-// Required to get figure out roles.
-require_once($CFG->dirroot . '/local/ucla/lib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/uclaroles/lib.php');
-
 /**
  * Class for sending invitation to enrol users in a course.
  *
@@ -41,14 +37,6 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/uclaroles/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class invitation_form extends moodleform {
-    /**
-     * Display options for expiration time for temporary participants.
-     * 
-     * @var array
-     */
-    public static $daysexpire_options = array(3 => 3, 7 => 7, 30 => 30,
-            90 => 90, 180 => 180);
-
     /**
      * The form definition.
      */
@@ -74,8 +62,8 @@ class invitation_form extends moodleform {
         $role_group = array();
         foreach ($site_roles as $role_type => $roles) {
             $role_type_string = html_writer::tag('div',
-                    get_string($role_type, 'tool_uclaroles'),
-                    array('class' => 'label-bstp label-primary'));
+                    get_string('archetype'.$role_type, 'role'),
+                    array('class' => 'label badge-info'));
             $role_group[] = &$mform->createElement('static', 'role_type_header',
                     '', $role_type_string);
 
@@ -189,16 +177,30 @@ class invitation_form extends moodleform {
 
     /**
      * Private class method to return a list of appropiate roles for given
-     * course.
+     * course and user.
      *
-     * @param object $course    Course record
+     * @param object $course    Course record.
      *
-     * @return array            Returns array of roles indexed by role type
+     * @return array            Returns array of roles indexed by role archetype.
      */
     private function get_appropiate_roles($course) {
-        $roles = uclaroles_manager::get_assignable_roles_by_courseid($course);
-        // Sort roles into type.
-        return uclaroles_manager::orderby_role_type($roles);
+        global $DB;
+        $retval = array();
+        $context = context_course::instance($course->id);
+        $roles = get_assignable_roles($context);
+
+        if (empty($roles)) {
+            return $retval;
+        }
+
+        // Get full role records for archetype and description.
+        foreach ($roles as $roleid => $rolename) {
+            $record = $DB->get_record('role', array('id' => $roleid));
+            $record->name = $rolename;  // User might have customised name.
+            $retval[$record->archetype][] = $record;
+        }
+
+        return $retval;
     }
 
     /**

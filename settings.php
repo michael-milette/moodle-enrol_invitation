@@ -39,6 +39,6 @@ if ($ADMIN->fulltree) {
         get_string('status', 'enrol_invitation'), get_string('status_desc', 'enrol_invitation'), ENROL_INSTANCE_ENABLED, $options));
 
     // Default to 2 weeks expiration.
-    $settings->add(new admin_setting_configtext('enrol_invitation/enrolperiod',
-        get_string('enrolperiod', 'enrol_invitation'), get_string('enrolperiod_desc', 'enrol_invitation'), 1209600, PARAM_INT));
+    $settings->add(new admin_setting_configtext('enrol_invitation/inviteexpiration',
+        get_string('inviteexpiration', 'enrol_invitation'), get_string('inviteexpiration_desc', 'enrol_invitation'), 1209600, PARAM_INT));
 }

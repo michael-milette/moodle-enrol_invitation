@@ -84,6 +84,8 @@ $string['enrolperiod_help'] = 'Length of time that the enrollment is valid, star
 $string['enrolstartdate'] = 'Start date';
 $string['enrolstartdate_help'] = 'If enabled, users can be enrolled from this date onward only.';
 $string['editenrolment'] = 'Edit enrolment';
+$string['inviteexpiration'] = 'Invitation expiration';
+$string['inviteexpiration_desc'] = 'Length of time that an invitation is valid (in seconds). Default is 2 weeks.';
 
 $string['show_from_email'] = 'Allow invited user to contact me at {$a->email} (your address will be on the "FROM" field. If not selected, the "FROM" field will be {$a->supportemail})';
 $string['inviteusers'] = 'Invite user';
@@ -180,3 +182,14 @@ $string['invitation:enrol'] = 'Invite users';
 $string['invitation:manage'] = 'Manage invitation assignments';
 $string['invitation:unenrol'] = 'Unassign users from the course';
 $string['invitation:unenrolself'] = 'Unassign self from the course';
+
+// Strings for datetimehelpers.
+$string['less_than_x_seconds'] = 'less than {$a} seconds';
+$string['half_minute'] = 'half a minute';
+$string['less_minute'] = 'less than a minute';
+$string['a_minute'] = '1 minute';
+$string['x_minutes'] = '{$a} minutes';
+$string['about_hour'] = 'about 1 hour';
+$string['about_x_hours'] = 'about {$a} hours';
+$string['a_day'] = '1 day';
+$string['x_days'] = '{$a} days';
