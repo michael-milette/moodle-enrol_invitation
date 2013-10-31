@@ -68,8 +68,8 @@ $string['emailmessageuserenrolled'] = 'Hello,
 
     {$a->userfullname} ({$a->useremail}) has accepted your invitation to access {$a->coursefullname} as a "{$a->rolename}". You can verify the  status of this invitation by viewing either:
 
-        * the participant list for : {$a->courseenrolledusersurl}
-        * your site invitation history: {$a->invitehistoryurl}
+        * Participant list: {$a->courseenrolledusersurl}
+        * Invitation history: {$a->invitehistoryurl}
 
     {$a->sitename}
     -------------
@@ -120,7 +120,7 @@ $string['header_role'] = 'What role do you want to assign to the invitee?';
 $string['email_clarification'] = 'You may specify multiple email addresses by separating
     them with semi-colons, commas, spaces, or new lines';
 $string['subject'] = 'Subject';
-$string['status'] = 'Allow site invitations';
+$string['status'] = 'Allow invitations';
 $string['status_desc'] = 'Allow users to invite people to enroll into a course by default.';
 $string['unenrol'] = 'Unenroll user';
 $string['unenroluser'] = 'Do you really want to unenroll "{$a->user}" from course "{$a->course}"?';

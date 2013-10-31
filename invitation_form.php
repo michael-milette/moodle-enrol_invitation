@@ -44,8 +44,10 @@ class invitation_form extends moodleform {
         global $CFG, $DB, $USER;
         $mform = & $this->_form;
 
-        // Get rid of "Collapse all".
-        $mform->setDisableShortforms(true);
+        // Get rid of "Collapse all" in Moodle 2.5+.
+        if (method_exists($mform, 'setDisableShortforms')) {
+            $mform->setDisableShortforms(true);
+        }
 
         // Add some hidden fields.
         $course = $this->_customdata['course'];
