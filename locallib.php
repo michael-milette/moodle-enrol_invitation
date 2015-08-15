@@ -151,8 +151,13 @@ class invitation_manager {
                     // Prepend subject heading with a 'Reminder' string.
                     $invitation->subject = get_string('reminder', 'enrol_invitation');
                 }
-
-                $invitation->subject .= $data->subject;
+				
+				if(empty($invitation->subject)){
+					$invitation->subject = $data->subject;
+				}
+				else{
+					$invitation->subject .= $data->subject;
+				}
 
                 $invitation->inviterid = $USER->id;
                 $invitation->notify_inviter = empty($data->notify_inviter) ? 0 : 1;
@@ -194,10 +199,12 @@ class invitation_manager {
 
                 // Send invitation to the user.
                 $contactuser = new stdClass();
+                $contactuser->id = -1; // required by new version of email_to_user since moodle 2.6
                 $contactuser->email = $invitation->email;
                 $contactuser->firstname = '';
                 $contactuser->lastname = '';
                 $contactuser->maildisplay = true;
+
                 email_to_user($contactuser, $fromuser, $invitation->subject, $message);
 
                 // Log activity after sending the email.
