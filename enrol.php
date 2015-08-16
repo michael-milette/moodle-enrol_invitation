@@ -148,6 +148,7 @@ if (empty($confirm)) {
 
         $contactuser = new object;
         $contactuser->email = $inviter->email;
+		$contactuser->id = $invitation->inviterid; // required by new version of email_to_user since moodle 2.6
         $contactuser->firstname = $inviter->firstname;
         $contactuser->lastname = $inviter->lastname;
         $contactuser->maildisplay = true;

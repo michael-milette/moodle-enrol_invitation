@@ -477,10 +477,21 @@ function prepare_notice_object($invitation) {
     $noticeobject->supportemail = $CFG->supportemail;
 
     // Get role name for use in acceptance message.
-    $role = $DB->get_record('role', array('id' => $invitation->roleid));
-    $noticeobject->rolename = $role->name;
-    $noticeobject->roledescription = strip_tags($role->description);
-
+    //role name is no longer defined in `role` table. It is scattered around database.
+    $context = context_course::instance($course->id);
+    $roles = get_default_enrol_roles($context); //fetching roles using API
+    if(array_key_exists($invitation->roleid,$roles)){
+        //Normally we should have roles here
+        $noticeobject->rolename = $roles[$invitation->roleid];
+    }
+    else {
+        //In case something gone wrong we will do this the old way
+        $role = $DB->get_record('role', array('id' => $invitation->roleid));
+        $noticeobject->rolename = $role->name; //empty in new Moodle versions
+        // role description is not used anywhere in plugin 
+        // and is also empty in new Moodle versions
+        $noticeobject->roledescription = strip_tags($role->description); 
+    }
     return $noticeobject;
 }
 
