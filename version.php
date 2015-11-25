@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2013030102;
+$plugin->version  = 2015112400;
 $plugin->requires = 2011120500;   // Requires Moodle 2.2 or later
 $plugin->maturity = MATURITY_RC;
+$plugin->component= "enrol_invitation";
