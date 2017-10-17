@@ -38,15 +38,16 @@ $ue = $DB->get_record('user_enrolments', array('id' => $ueid), '*', MUST_EXIST);
 // Get the user for whom the enrolment is.
 $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
 // Get the course the enrolment is to.
-list($ctxsql, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+$ctxsql = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+$ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
 $sql = "SELECT c.* $ctxsql
           FROM {course} c
      LEFT JOIN {enrol} e ON e.courseid = c.id
                $ctxjoin
          WHERE e.id = :enrolid";
-$params = array('enrolid' => $ue->enrolid);
+$params = array('enrolid' => $ue->enrolid, 'contextlevel' => CONTEXT_COURSE);
 $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
-context_instance_preload($course);
+context_helper::preload_from_record($course);
 
 if ($course->id == SITEID) {
     redirect(new moodle_url('/'));

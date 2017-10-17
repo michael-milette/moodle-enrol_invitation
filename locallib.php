@@ -195,6 +195,10 @@ class invitation_manager {
                     $fromuser->firstname = '';
                     $fromuser->lastname = $SITE->fullname;
                     $fromuser->maildisplay = true;
+					$fromuser->firstnamephonetic = '';
+					$fromuser->lastnamephonetic = '';
+					$fromuser->middlename = '';
+					$fromuser->alternatename = '';
                 }
 
                 // Send invitation to the user.
@@ -204,16 +208,20 @@ class invitation_manager {
                 $contactuser->firstname = '';
                 $contactuser->lastname = '';
                 $contactuser->maildisplay = true;
+                $contactuser->firstnamephonetic = '';
+                $contactuser->lastnamephonetic = '';
+                $contactuser->middlename = '';
+                $contactuser->alternatename = '';
 
                 email_to_user($contactuser, $fromuser, $invitation->subject, $message);
 
                 // Log activity after sending the email.
                 if ($resend) {
-                    add_to_log($course->id, 'course', 'invitation extend',
-                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
+//                    add_to_log($course->id, 'course', 'invitation extend',
+//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
                 } else {
-                    add_to_log($course->id, 'course', 'invitation send',
-                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
+//                    add_to_log($course->id, 'course', 'invitation send',
+//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
                 }
             }
         } else {

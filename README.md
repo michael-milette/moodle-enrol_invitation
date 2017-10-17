@@ -3,6 +3,12 @@
 The Invitation Enrollment plug-in for Moodle allows instructor to invite
 students to their site and grant necessary access and role to them.
 
+## IMPORTANT: Current version
+
+This is the fork of the original UCLA plugin. The development of the UCLA plugin has stopped long time ago.
+The most recent version is now here: https://github.com/PetrovskYYY/moodle-enrol_invitation
+
+
 ## Download
 
 Visit the [GitHub page for the Invitation Enrolment plug-in](https://github.com/ucla/moodle-enrol_invitation) to download the package.
