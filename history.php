@@ -86,8 +86,8 @@ if (empty($invites)) {
             $DB->set_field('enrol_invitation', 'timeexpiration', time()-1,
                     array('courseid' => $curr_invite->courseid, 'id' => $curr_invite->id) );
 
-            add_to_log($course->id, 'course', 'invitation revoke',
-                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
+//            add_to_log($course->id, 'course', 'invitation revoke',
+//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
 
             echo $OUTPUT->notification(get_string('revoke_invite_sucess', 'enrol_invitation'), 'notifysuccess');
 

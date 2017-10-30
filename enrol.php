@@ -42,9 +42,9 @@ $invitation = $DB->get_record('enrol_invitation',
 // If token is valid, enrol the user into the course.
 if (empty($invitation) or empty($invitation->courseid) or $invitation->timeexpiration < time()) {
     $courseid = empty($invitation->courseid) ? $SITE->id : $invitation->courseid;
-    add_to_log($courseid, 'course', 'invitation expired',
-        "../enrol/invitation/history.php?courseid=$courseid",
-        $DB->get_record('course', array('id' => $courseid), 'fullname')->fullname);
+//    add_to_log($courseid, 'course', 'invitation expired',
+//        "../enrol/invitation/history.php?courseid=$courseid",
+//        $DB->get_record('course', array('id' => $courseid), 'fullname')->fullname);
     throw new moodle_exception('expiredtoken', 'enrol_invitation');
 }
 
@@ -98,8 +98,8 @@ if (empty($confirm)) {
     // Print out a heading.
     echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
-    add_to_log($invitation->courseid, 'course', 'invitation view',
-        "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
+//    add_to_log($invitation->courseid, 'course', 'invitation view',
+//        "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
 
     $accepturl = new moodle_url('/enrol/invitation/enrol.php',
             array('token' => $invitation->token, 'confirm' => true));
@@ -125,16 +125,16 @@ if (empty($confirm)) {
     exit;
 } else {
     if ($invitation->email != $USER->email) {
-        add_to_log($invitation->courseid, 'course', 'invitation mismatch',
-            "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
+//        add_to_log($invitation->courseid, 'course', 'invitation mismatch',
+//            "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
     }
     // User confirmed, so add them.
     require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
     $invitationmanager = new invitation_manager($invitation->courseid);
     $invitationmanager->enroluser($invitation);
 
-    add_to_log($invitation->courseid, 'course', 'invitation claim',
-        "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
+//    add_to_log($invitation->courseid, 'course', 'invitation claim',
+//        "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
 
     // Set token as used and mark which user was assigned the token.
     $invitation->tokenused = true;
