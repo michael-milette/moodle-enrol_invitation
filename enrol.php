@@ -146,7 +146,7 @@ if (empty($confirm)) {
         // Send an email to the user who sent the invitation.
         $inviter = $DB->get_record('user', array('id' => $invitation->inviterid));
 
-        $contactuser = new object;
+        $contactuser = new stdClass();
         $contactuser->email = $inviter->email;
 		$contactuser->id = $invitation->inviterid; // required by new version of email_to_user since moodle 2.6
         $contactuser->firstname = $inviter->firstname;
