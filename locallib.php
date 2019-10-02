@@ -165,16 +165,11 @@ class invitation_manager {
 
                 // Construct message: custom (if any) + template.
                 $message = '';
-                if (!empty($data->message)) {
-                    $message .= get_string('instructormsg', 'enrol_invitation',
-                            $data->message);
-                    $invitation->message = $data->message;
-                }
 
                 $message_params = new stdClass();
                 $message_params->fullname =
                         sprintf('%s: %s', $course->shortname, $course->fullname);
-                $message_params->expiration = date('M j, Y g:ia', $invitation->timeexpiration);
+                $message_params->expiration = date('d-m-Y', $invitation->timeexpiration);
                 $inviteurl =  new moodle_url('/enrol/invitation/enrol.php',
                                 array('token' => $token));
                 $inviteurl = $inviteurl->out(false);
@@ -182,6 +177,15 @@ class invitation_manager {
                 $message_params->inviteurl = $inviteurl;
                 $message_params->supportemail = $CFG->supportemail;
                 $message .= get_string('emailmsgtxt', 'enrol_invitation', $message_params);
+				
+                if (!empty($data->message['text'])) {
+                    $message .= get_string('instructormsg', 'enrol_invitation',
+                            $data->message['text']);
+
+                    $invitation->message = $data->message;
+                }
+
+
 
                 if (!$resend) {
                     $DB->insert_record('enrol_invitation', $invitation);
@@ -205,6 +209,7 @@ class invitation_manager {
                 $contactuser = new stdClass();
                 $contactuser->id = -1; // required by new version of email_to_user since moodle 2.6
                 $contactuser->email = $invitation->email;
+				$contactuser->mailformat = 1; // 0 (zero) text-only emails, 1 (one) for HTML/Text emails.
                 $contactuser->firstname = '';
                 $contactuser->lastname = '';
                 $contactuser->maildisplay = true;
@@ -213,7 +218,7 @@ class invitation_manager {
                 $contactuser->middlename = '';
                 $contactuser->alternatename = '';
 
-                email_to_user($contactuser, $fromuser, $invitation->subject, $message);
+                email_to_user($contactuser, $fromuser, $invitation->subject, null, $message);
 
                 // Log activity after sending the email.
                 if ($resend) {
