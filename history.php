@@ -73,7 +73,7 @@ $invites = $invitationmanager->get_invites();
 
 if (empty($invites)) {
     echo $OUTPUT->notification(
-            get_string('noinvitehistory', 'enrol_invitation'), 'notifymessage');
+            get_string('noinvitehistory', 'enrol_invitation'), 'info');
 } else {
 
     // Update invitation if the user decided to revoke/extend/resend an invite.
@@ -89,13 +89,13 @@ if (empty($invites)) {
 //            add_to_log($course->id, 'course', 'invitation revoke',
 //                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
 
-            echo $OUTPUT->notification(get_string('revoke_invite_sucess', 'enrol_invitation'), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('revoke_invite_sucess', 'enrol_invitation'), 'success');
 
         } else if ($actionid == invitation_manager::INVITE_EXTEND) {
             // Resend the invite and email.
             $invitationmanager->send_invitations($curr_invite, true);
 
-            echo $OUTPUT->notification(get_string('extend_invite_sucess', 'enrol_invitation'), 'notifysuccess');
+            echo $OUTPUT->notification(get_string('extend_invite_sucess', 'enrol_invitation'), 'success');
 
         } else if ($actionid == invitation_manager::INVITE_RESEND) {
             // Send the user to the invite form with prefilled data.
@@ -173,10 +173,10 @@ if (empty($invites)) {
         }
 
         // When was the invite sent?
-        $row[3] = date('M j, Y g:ia', $invite->timesent);
+        $row[3] = date('Y-m-j g:ia', $invite->timesent);
 
         // When does the invite expire?
-        $row[4] = date('M j, Y g:ia', $invite->timeexpiration);
+        $row[4] = date('Y-m-j g:ia', $invite->timeexpiration);
 
         // If status is active, then state how many days/minutes left.
         if ($status == get_string('status_invite_active', 'enrol_invitation')) {
