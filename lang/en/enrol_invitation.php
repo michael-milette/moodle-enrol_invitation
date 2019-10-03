@@ -58,6 +58,7 @@ $string['defaultrole_desc'] = 'Select role which should be assigned to users dur
 $string['default_subject'] = 'Invitation for {$a}';
 $string['editenrollment'] = 'Edit enrollment';
 $string['header_email'] = 'Who do you want to invite?';
+$string['email'] = 'Email address';
 $string['emailaddressnumber'] = 'Email address';
 
 $string['notifymsg'] = 'Hello, I would like to inform you that user $a->username, with email $a->email has successful gained access to your course, $a->course';
@@ -117,7 +118,7 @@ $string['nopermissiontosendinvitation'] = 'No permission to send invitation';
 $string['norole'] = 'Please choose a role.';
 $string['notify_inviter'] = 'Notify me at {$a->email} when invited users accept this invitation';
 $string['header_role'] = 'What role do you want to assign to the invitee?';
-$string['email_clarification'] = 'You may specify multiple email addresses by separating
+$string['email_help'] = 'You may specify multiple email addresses by separating
     them with semi-colons, commas, spaces, or new lines';
 $string['subject'] = 'Subject';
 $string['status'] = 'Allow invitations';

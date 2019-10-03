@@ -53,6 +53,7 @@ $string['defaultrole_desc'] = 'Wybierz rolę, która powinna być przypisana uż
 $string['default_subject'] = 'Zaproszenie na kurs {$a}';
 $string['editenrollment'] = 'Edycja zapisów';
 $string['header_email'] = 'Kogo chcesz zaprosić?';
+$string['email'] = 'Adresy e-mail';
 $string['emailaddressnumber'] = 'Adresy e-mail';
 
 $string['notifymsg'] = 'Witam, chciałbym poinformować, że użytkownik $a->username, z e-mailem $a->email zaakceptował dostęp do twojego kursu, $a->course';
@@ -70,14 +71,14 @@ $string['emailmessageuserenrolled'] = 'Witam,
     {$a->supportemail}';
 
 $string['enrolenddate'] = 'Data końca dostępu';
-$string['enrolenddate_help'] = 'If enabled, will be the date the invitee will no longer be able to access the site.';
-$string['enrolenddaterror'] = 'Access end date cannot be earlier than today';
-$string['enrolperiod'] = 'enrollment duration';
-$string['enrolperiod_desc'] = 'Default length of time that the enrollment is valid (in seconds). If set to zero, the enrollment duration will be unlimited by default.';
-$string['enrolperiod_help'] = 'Length of time that the enrollment is valid, starting with the moment the user is enrolled. If disabled, the enrollment duration will be unlimited.';
-$string['enrolstartdate'] = 'Start date';
-$string['enrolstartdate_help'] = 'If enabled, users can be enrolled from this date onward only.';
-$string['editenrolment'] = 'Edit enrolment';
+$string['enrolenddate_help'] = 'Jeśli opcja ta zostanie włączona, będzie to data, po której zaproszony nie będzie mógł uzyskać dostępu do strony.';
+$string['enrolenddaterror'] = 'Data zakończenia dostępu nie może być wcześniejsza niż dzisiaj.';
+$string['enrolperiod'] = 'czas trwania rejestracji';
+$string['enrolperiod_desc'] = 'Domyślny czas ważności rejestracji (w sekundach). Jeśli ustawione na zero, czas trwania rejestracji będzie domyślnie nieograniczony.';
+$string['enrolperiod_help'] = 'Długość czasu, przez jaki obowiązuje rejestracja, począwszy od momentu rejestracji użytkownika. Jeśli opcja jest wyłączona, czas trwania rejestracji będzie nieograniczony.';
+$string['enrolstartdate'] = 'Data początku';
+$string['enrolstartdate_help'] = 'Jeśli opcja ta jest włączona, użytkownicy mogą być rejestrowani tylko od tej daty.';
+$string['editenrolment'] = 'Edycja rejestracji';
 $string['inviteexpiration'] = 'Wygaśnięcie zaproszenia';
 $string['inviteexpiration_desc'] = 'Czas ważności zaproszenia (w sekundach). Domyślnie jest to 2 tygodnie.';
 
@@ -88,30 +89,24 @@ $string['maxinviteperday'] = 'Maksymalna liczba zaproszeń na dzień';
 $string['maxinviteperday_help'] = 'Maksymalna liczba zaproszeń do kursu, które można wysłać dziennie.';
 $string['message'] = 'Wiadomość';
 
-$string['message_help_link'] = 'see what instructions invitees are sent';
+$string['message_help_link'] = 'sprawdź, jakie instrukcje są wysyłane w zaproszeniach.';
 $string['message_help'] =
-    'INSTRUCTIONS:'.
-    '<hr />'.
-    'You have been invited to access the site: [site name]. You will ' .
-    'need to log in to confirm your access to the site. Be advised that by ' .
-    'clicking on the site access link provided in this ' .
-    'email you are acknowledging that:<br />' .
-    ' --you are the person to whom this email was addressed and for whom this ' .
-    '   invitation is intended;<br />' .
-    ' --the link below will expire on ([expiration date]).<br /><br />' .
-    'ACCESS LINK:'.
-    '<hr />'.
-    '[invite url]<br />'.
-    '<hr />'.
-    'If you believe that you have received this message in error or are in need ' .
-    'of assistance, please contact: [support email].';
+    '<h2>Dostęp do szkolenia:</h2>' .
+    '<hr />' . 
+    'Zostałeś/aś zaproszony/a do udziału w szkoleniu: [site name]. Musisz kliknąć poniższy link, aby zaakceptować udział w szkoleniu. <br />' .
+    '<b>LINK DOSTĘPOWY:</b> ' . '[invite url] <br />' . 
+    'Klikając na link dostępu do strony zamieszczony w tym e-mailu przyjmujesz do wiadomości, że: <br />' .
+    '* jesteś osobą, do której adresowany był ten e-mail i dla której to zaproszenie jest przeznaczone;<br />' . 
+    '* powyższy link wygaśnie w dniu ([expiration date]).' .
+    '<p>Jeśli uważasz, że otrzymałeś tę wiadomość błędnie lub potrzebujesz pomocy, prosimy o kontakt: [support email].</p>';
 
 $string['noinvitationinstanceset'] = 'Nie znaleziono żadnego przypadku rejestracji zaproszenia. Proszę najpierw dodać instancję zaproszenia do swojego kursu.';
 $string['nopermissiontosendinvitation'] = 'Brak uprawnień do wysyłania zaproszeń';
 $string['norole'] = 'Wybierz rolę.';
 $string['notify_inviter'] = 'Powiadom mnie na adres e-mail {$a->email}, gdy zaproszeni użytkownicy zaakceptują to zaproszenie.';
 $string['header_role'] = 'Jaką rolę chcesz przypisać zaproszonemu?';
-$string['email_clarification'] = 'Można podać wiele adresów e-mail, rozdzielając je średnikami, przecinkami, spacjami lub nowymi liniami.';
+$string['email_help'] = 'Można podać wiele adresów e-mail, rozdzielając je średnikami, przecinkami, spacjami lub nowymi liniami.';
+
 $string['subject'] = 'Temat';
 $string['status'] = 'Dopuść zaproszenia';
 $string['status_desc'] = 'Pozwól użytkownikom zapraszać ludzi do zapisania się na kurs domyślnie.';
@@ -121,25 +116,23 @@ $string['unenrolselfconfirm'] = 'Naprawdę chcesz się wypisać się z kursu "{$
 
 // After invite sent strings.
 $string['invitationsuccess'] = 'Zaproszenie zostało wysłane';
-$string['revoke_invite_sucess'] = 'Invitation sucessfully revoked';
-$string['extend_invite_sucess'] = 'Invitation sucessfully extended';
-$string['resend_invite_sucess'] = 'Invitation sucessfully resent';
+$string['revoke_invite_sucess'] = 'Zaproszenie zostało pomyślnie wycofane';
+$string['extend_invite_sucess'] = 'Zaproszenie zostało pomyślnie rozszerzone';
+$string['resend_invite_sucess'] = 'Zaproszenie zostało pomyślnie wysłane';
 $string['returntocourse'] = 'Powrót do kursu';
 $string['returntoinvite'] = 'Wyślij kolejne zaproszenie';
 
 // Processing invitation acceptance strings.
-$string['invitation_acceptance_title'] = 'Invitation acceptance';
-$string['expiredtoken'] = 'Invitation token is expired or has already been used.';
-$string['loggedinnot'] = '<p>This invitation to access "{$a->coursefullname}" as
-    a "{$a->rolename}" is intended for {$a->email}. If you are not the
-    intended recipient, please do not accept this invitation.</p>
+$string['invitation_acceptance_title'] = 'Przyjęcie zaproszenia';
+$string['expiredtoken'] = 'Token zaproszenia wygasł lub został już użyty.';
+$string['loggedinnot'] = '<p>To zaproszenie do dostępu do "{$a->coursefullname}" jako
+    "{$a->rolename}" jest przeznaczone dla {$a->email}. Jeśli nie jesteś jego odbiorcą, nie przyjmuj tego zaproszenia. </p>
     <p>
-        Before you can accept this invitation you must be logged in.
+        Zanim przyjmiesz to zaproszenie, musisz być zalogowany.
     </p>';
-$string['invitationacceptance'] = '<p>This invitation to access
-    "{$a->coursefullname}" as a "{$a->rolename}" is intended for {$a->email}.
-    If you are not the intended recipient, please do not accept this invitation.</p>';
-$string['invitationacceptancebutton'] = 'Accept invitation';
+$string['invitationacceptance'] = '<p>To zaproszenie do dostępu do "{$a->coursefullname}" jako
+    "{$a->rolename}" jest przeznaczone dla {$a->email}. Jeśli nie jesteś jego odbiorcą, nie przyjmuj tego zaproszenia. </p>';
+$string['invitationacceptancebutton'] = 'Zaakceptuj zaproszenie';
 
 // Invite history strings.
 $string['invitehistory'] = 'Historia zaproszeń';
@@ -152,37 +145,37 @@ $string['historydateexpiration'] = 'Data wygaśnięcia';
 $string['historyactions'] = 'Akcje';
 $string['historyundefinedrole'] = 'Nie można znaleźć roli. Proszę wyślij zaproszenie ponownie i wybierz inną rolę.';
 $string['historyexpires_in'] = 'wygasa w ciągu';
-$string['used_by'] = ' by {$a->username} ({$a->roles}, {$a->useremail}) on {$a->timeused}';
+$string['used_by'] = ' przez {$a->username} ({$a->roles}, {$a->useremail}) dnia {$a->timeused}';
 
 // Invite status strings.
-$string['status_invite_invalid'] = 'Invalid';
-$string['status_invite_expired'] = 'Expired';
-$string['status_invite_used'] = 'Accepted';
-$string['status_invite_used_noaccess'] = '(no longer has access)';
-$string['status_invite_used_expiration'] = '(access ends on {$a})';
-$string['status_invite_revoked'] = 'Revoked';
-$string['status_invite_resent'] = 'Resent';
-$string['status_invite_active'] = 'Active';
+$string['status_invite_invalid'] = 'Nieprawidłowy';
+$string['status_invite_expired'] = 'Wygasło';
+$string['status_invite_used'] = 'Zaakceptowane';
+$string['status_invite_used_noaccess'] = '(nie ma już dostępu)';
+$string['status_invite_used_expiration'] = '(dostęp kończy się {$a})';
+$string['status_invite_revoked'] = 'Wycofane';
+$string['status_invite_resent'] = 'Powtórnie wysłane';
+$string['status_invite_active'] = 'Aktywne';
 
 // Invite action strings.
-$string['action_revoke_invite'] = 'Revoke invite';
-$string['action_extend_invite'] = 'Extend invite';
-$string['action_resend_invite'] = 'Resend invite';
+$string['action_revoke_invite'] = 'Wycofaj zaproszenie';
+$string['action_extend_invite'] = 'Wyślij przypomnienie';
+$string['action_resend_invite'] = 'Powtórnie wyślij zaproszenie';
 
 // Capabilities strings.
-$string['invitation:config'] = 'Configure invitation instances';
-$string['invitation:enrol'] = 'Invite users';
-$string['invitation:manage'] = 'Manage invitation assignments';
-$string['invitation:unenrol'] = 'Unassign users from the course';
-$string['invitation:unenrolself'] = 'Unassign self from the course';
+$string['invitation:config'] = 'Konfiguracja instancji zaproszeń';
+$string['invitation:enrol'] = 'Zaproś użytkowników';
+$string['invitation:manage'] = 'Zarządzanie przydziałami zaproszeń';
+$string['invitation:unenrol'] = 'Usuwanie użytkowników z kursu.';
+$string['invitation:unenrolself'] = 'Usuwanie siebie z kursu.';
 
 // Strings for datetimehelpers.
-$string['less_than_x_seconds'] = 'less than {$a} seconds';
-$string['half_minute'] = 'half a minute';
-$string['less_minute'] = 'less than a minute';
-$string['a_minute'] = '1 minute';
-$string['x_minutes'] = '{$a} minutes';
-$string['about_hour'] = 'about 1 hour';
-$string['about_x_hours'] = 'about {$a} hours';
-$string['a_day'] = '1 day';
-$string['x_days'] = '{$a} days';
+$string['less_than_x_seconds'] = 'mniej niż {$a} sekund';
+$string['half_minute'] = 'pół minuty';
+$string['less_minute'] = 'poniżej minuty';
+$string['a_minute'] = '1 minuta';
+$string['x_minutes'] = '{$a} minut';
+$string['about_hour'] = 'około 1 godziny';
+$string['about_x_hours'] = 'około {$a} godzin';
+$string['a_day'] = '1 dzień';
+$string['x_days'] = '{$a} dni';
