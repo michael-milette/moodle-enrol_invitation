@@ -218,6 +218,7 @@ class invitation_manager {
                 $contactuser->middlename = '';
                 $contactuser->alternatename = '';
 
+				// email_to_user($toUser, $fromUser, $subject, $messageText, $messageHtml, '', '', true);
                 email_to_user($contactuser, $fromuser, $invitation->subject, null, $message);
 
                 // Log activity after sending the email.
@@ -259,7 +260,7 @@ class invitation_manager {
         } else if ($timeend > 0) {
             // Access will end on a certain date.
             $expiration = get_string('status_invite_used_expiration',
-                    'enrol_invitation', date('M j, Y', $timeend));
+                    'enrol_invitation', date('Y-m-j', $timeend));
         }
         return $expiration;
     }
@@ -356,7 +357,7 @@ class invitation_manager {
         $timeend = 0;
         if (!empty($invitation->daysexpire)) {
             // Get today's date as a timestamp. Ignore the current time.
-            $today = strtotime(date('Y/m/d'));
+            $today = strtotime(date('Y-m-d'));
             // Get the day in the future.
             $timeend = strtotime(sprintf('+%d days', $invitation->daysexpire), $today);
             // But make sure the timestamp is for the end of that day. Remember
@@ -409,7 +410,7 @@ class invitation_manager {
         $ret_val->roles = strip_tags($ret_val->roles);
 
         // Format string when invite was used.
-        $ret_val->timeused = date('M j, Y g:ia', $invite->timeused);
+        $ret_val->timeused = date('Y-m-j g:ia', $invite->timeused);
 
         return $ret_val;
     }
