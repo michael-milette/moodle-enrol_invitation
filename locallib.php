@@ -151,13 +151,13 @@ class invitation_manager {
                     // Prepend subject heading with a 'Reminder' string.
                     $invitation->subject = get_string('reminder', 'enrol_invitation');
                 }
-				
-				if(empty($invitation->subject)){
-					$invitation->subject = $data->subject;
-				}
-				else{
-					$invitation->subject .= $data->subject;
-				}
+                
+                if(empty($invitation->subject)){
+                    $invitation->subject = $data->subject;
+                }
+                else{
+                    $invitation->subject .= $data->subject;
+                }
 
                 $invitation->inviterid = $USER->id;
                 $invitation->notify_inviter = empty($data->notify_inviter) ? 0 : 1;
@@ -177,14 +177,17 @@ class invitation_manager {
                 $message_params->inviteurl = $inviteurl;
                 $message_params->supportemail = $CFG->supportemail;
                 $message .= get_string('emailmsgtxt', 'enrol_invitation', $message_params);
-				
+                
                 if (!empty($data->message['text'])) {
                     $message .= get_string('instructormsg', 'enrol_invitation',
                             $data->message['text']);
 
-                    $invitation->message = $data->message;
+                    // Saving instructormsg only.
+                    // $invitation->message = $data->message['text'];
                 }
 
+                // Saving whole msg as is.
+                $invitation->message = $message;
 
 
                 if (!$resend) {
@@ -199,17 +202,28 @@ class invitation_manager {
                     $fromuser->firstname = '';
                     $fromuser->lastname = $SITE->fullname;
                     $fromuser->maildisplay = true;
-					$fromuser->firstnamephonetic = '';
-					$fromuser->lastnamephonetic = '';
-					$fromuser->middlename = '';
-					$fromuser->alternatename = '';
+                    $fromuser->firstnamephonetic = '';
+                    $fromuser->lastnamephonetic = '';
+                    $fromuser->middlename = '';
+                    $fromuser->alternatename = '';
                 }
 
+				// User exists?
+				//$dbuser = $DB->get_record('user', array('email' => strtolower($invitation->email), 'auth' => 'ldap', 'deleted' => '0'));
+				
+				$dbuser = $DB->get_record_select('user',
+									'lower(email) = :email and auth = \'ldap\' and deleted = \'0\'', array(
+                                         'email'    => strtolower($invitation->email)));
+				
+				if(!empty($dbuser)) {
+					$invitation->subject .= ' - Uczestnik szkolenia ' . $dbuser->firstname . ' ' . $dbuser->lastname;
+				}
+				
                 // Send invitation to the user.
                 $contactuser = new stdClass();
                 $contactuser->id = -1; // required by new version of email_to_user since moodle 2.6
                 $contactuser->email = $invitation->email;
-				$contactuser->mailformat = 1; // 0 (zero) text-only emails, 1 (one) for HTML/Text emails.
+                $contactuser->mailformat = 1; // 0 (zero) text-only emails, 1 (one) for HTML/Text emails.
                 $contactuser->firstname = '';
                 $contactuser->lastname = '';
                 $contactuser->maildisplay = true;
@@ -218,7 +232,7 @@ class invitation_manager {
                 $contactuser->middlename = '';
                 $contactuser->alternatename = '';
 
-				// email_to_user($toUser, $fromUser, $subject, $messageText, $messageHtml, '', '', true);
+                // email_to_user($toUser, $fromUser, $subject, $messageText, $messageHtml, '', '', true);
                 email_to_user($contactuser, $fromuser, $invitation->subject, null, $message);
 
                 // Log activity after sending the email.
