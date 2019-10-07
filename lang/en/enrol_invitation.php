@@ -121,6 +121,7 @@ $string['header_role'] = 'What role do you want to assign to the invitee?';
 $string['email_help'] = 'You may specify multiple email addresses by separating
     them with semi-colons, commas, spaces, or new lines';
 $string['subject'] = 'Subject';
+$string['extendedsubject'] = ' - Participant ';
 $string['status'] = 'Allow invitations';
 $string['status_desc'] = 'Allow users to invite people to enroll into a course by default.';
 $string['unenrol'] = 'Unenroll user';

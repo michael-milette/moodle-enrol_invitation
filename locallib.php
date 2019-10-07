@@ -208,17 +208,20 @@ class invitation_manager {
                     $fromuser->alternatename = '';
                 }
 
-				// User exists?
-				//$dbuser = $DB->get_record('user', array('email' => strtolower($invitation->email), 'auth' => 'ldap', 'deleted' => '0'));
-				
-				$dbuser = $DB->get_record_select('user',
-									'lower(email) = :email and auth = \'ldap\' and deleted = \'0\'', array(
+                // User exists?
+                //$dbuser = $DB->get_record('user', array('email' => strtolower($invitation->email), 'auth' => 'ldap', 'deleted' => '0'));
+                $dbuser = $DB->get_record_select('user',
+                                    'lower(email) = :email and auth = \'ldap\' and deleted = \'0\'', array(
                                          'email'    => strtolower($invitation->email)));
-				
-				if(!empty($dbuser)) {
-					$invitation->subject .= ' - Uczestnik szkolenia ' . $dbuser->firstname . ' ' . $dbuser->lastname;
-				}
-				
+                
+                //$role = $DB->get_record('role', array('id' => $invitation->roleid));
+                
+                $invitation->extendedsubject = get_string('extendedsubject', 'enrol_invitation') . ' '  . $dbuser->firstname . ' ' . $dbuser->lastname;
+                
+                if(!empty($dbuser)) {
+                    $invitation->subject .= $invitation->extendedsubject;
+                }
+                
                 // Send invitation to the user.
                 $contactuser = new stdClass();
                 $contactuser->id = -1; // required by new version of email_to_user since moodle 2.6

@@ -108,6 +108,7 @@ $string['header_role'] = 'Jaką rolę chcesz przypisać zaproszonemu?';
 $string['email_help'] = 'Można podać wiele adresów e-mail, rozdzielając je średnikami, przecinkami, spacjami lub nowymi liniami.';
 
 $string['subject'] = 'Temat';
+$string['extendedsubject'] = ' - Uczestnik szkolenia ';
 $string['status'] = 'Dopuść zaproszenia';
 $string['status_desc'] = 'Pozwól użytkownikom zapraszać ludzi do zapisania się na kurs domyślnie.';
 $string['unenrol'] = 'Odwołaj zapisanie użytkownika';
