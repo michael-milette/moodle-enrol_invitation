@@ -64,6 +64,7 @@ class invitation_manager {
      *
      * @param int $courseid
      * @param boolean $instancemustexist
+     * @throws moodle_exception
      */
     public function __construct($courseid, $instancemustexist = true) {
         $this->courseid = $courseid;
@@ -75,9 +76,11 @@ class invitation_manager {
      *
      * It's mostly useful to add a link in a block menu - by default icon is
      * displayed.
-     * 
+     *
      * @param boolean $withicon - set to false to not display the icon
-     * @return
+     * @return string
+     * @throws coding_exception
+     * @throws moodle_exception
      */
     public function get_menu_link($withicon = true) {
         global $OUTPUT;
@@ -105,8 +108,11 @@ class invitation_manager {
     /**
      * Send invitation (create a unique token for each of them).
      *
-     * @param array $data       data processed from the invite form, or an invite
-     * @param bool $resend     resend the invite specified by $data
+     * @param object $data data processed from the invite form, or an invite
+     * @param bool $resend resend the invite specified by $data
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
      */
     public function send_invitations($data, $resend = false) {
         global $DB, $CFG, $SITE, $USER;
@@ -189,7 +195,6 @@ class invitation_manager {
                 // Saving whole msg as is.
                 $invitation->message = $message;
 
-
                 if (!$resend) {
                     $DB->insert_record('enrol_invitation', $invitation);
                 }
@@ -208,21 +213,8 @@ class invitation_manager {
                     $fromuser->alternatename = '';
                 }
 
-                // User exists?
-                //$dbuser = $DB->get_record('user', array('email' => strtolower($invitation->email), 'auth' => 'ldap', 'deleted' => '0'));
-                $dbuser = $DB->get_record_select('user',
-                                    'lower(email) = :email and auth = \'ldap\' and deleted = \'0\'', array(
-                                         'email'    => strtolower($invitation->email)));
-                
-                //$role = $DB->get_record('role', array('id' => $invitation->roleid));
-                
-                $invitation->extendedsubject = get_string('extendedsubject', 'enrol_invitation') . ' '  . $dbuser->firstname . ' ' . $dbuser->lastname;
-                
-                if(!empty($dbuser)) {
-                    $invitation->subject .= $invitation->extendedsubject;
-                }
-                
                 // Send invitation to the user.
+                /** @var object $contactuser */
                 $contactuser = new stdClass();
                 $contactuser->id = -1; // required by new version of email_to_user since moodle 2.6
                 $contactuser->email = $invitation->email;
@@ -234,18 +226,32 @@ class invitation_manager {
                 $contactuser->lastnamephonetic = '';
                 $contactuser->middlename = '';
                 $contactuser->alternatename = '';
-
+                
+                // Contactuser has an account?
+                $dbuser = $DB->get_record_select('user',
+                                    'lower(email) = :email and auth = \'ldap\' and deleted = \'0\'', array(
+                                          'email' => strtolower($invitation->email)));
+                
+                //$role = $DB->get_record('role', array('id' => $invitation->roleid));
+                
+                if(!empty($dbuser)) {
+                    $invitation->extendedsubject = get_string('extendedsubject', 'enrol_invitation') . ' ' . $dbuser->firstname . ' ' . $dbuser->lastname;
+                    $invitation->subject .= $invitation->extendedsubject;
+                    $contactuser->firstname = $dbuser->firstname;
+                    $contactuser->lastname = $dbuser->lastname;
+                }
+                
                 // email_to_user($toUser, $fromUser, $subject, $messageText, $messageHtml, '', '', true);
                 email_to_user($contactuser, $fromuser, $invitation->subject, null, $message);
 
                 // Log activity after sending the email.
-                if ($resend) {
+//                if ($resend) {
 //                    add_to_log($course->id, 'course', 'invitation extend',
 //                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
-                } else {
+//                } else {
 //                    add_to_log($course->id, 'course', 'invitation send',
 //                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
-                }
+//                }
             }
         } else {
             throw new moodle_exception('cannotsendinvitation', 'enrol_invitation',
@@ -257,10 +263,11 @@ class invitation_manager {
      * Checks if user who accepted invite has an access expiration for their
      * enrollment.
      *
-     * @param object $invite    Database record
+     * @param object $invite Database record
      *
      * @return string           Returns expiration string. Blank if no
      *                          restriction.
+     * @throws coding_exception
      */
     public function get_access_expiration($invite) {
         $expiration = '';
@@ -285,9 +292,10 @@ class invitation_manager {
     /**
      * Returns status of given invite.
      *
-     * @param object $invite    Database record
+     * @param object $invite Database record
      *
      * @return string           Returns invite status string.
+     * @throws coding_exception
      */
     public function get_invite_status($invite) {
         if (!is_object($invite)) {
@@ -312,6 +320,7 @@ class invitation_manager {
      *
      * @param int $courseid
      * @return array
+     * @throws dml_exception
      */
     public function get_invites($courseid = null) {
         global $DB;
@@ -334,6 +343,8 @@ class invitation_manager {
      * @param int $courseid
      * @param boolean $mustexist when set, an exception is thrown if no instance is found
      * @return object
+     * @throws dml_exception
+     * @throws moodle_exception
      */
     public function get_invitation_instance($courseid, $mustexist = false) {
         global $PAGE, $CFG, $DB;
@@ -365,6 +376,7 @@ class invitation_manager {
     /**
      * Enrol the user following the invitation data.
      * @param object $invitation
+     * @throws coding_exception
      */
     public function enroluser($invitation) {
         global $USER;
@@ -391,15 +403,16 @@ class invitation_manager {
     /**
      * Figures out who used an invite.
      *
-     * @param object $invite    Invitation record
+     * @param object $invite Invitation record
      *
-     * @return object           Returns an object with following values:
+     * @return bool|object
      *                          ['username'] - name of who used invite
      *                          ['useremail'] - email of who used invite
      *                          ['roles'] - roles the user has for course that
      *                                      they were invited
      *                          ['timeused'] - formatted string of time used
      *                          Returns false on error or if invite wasn't used.
+     * @throws dml_exception
      */
     public function who_used_invite($invite) {
         global $DB;
@@ -437,7 +450,7 @@ class invitation_manager {
 /**
  * Reports the approximate distance in time between two times given in seconds
  * or in a valid ISO string like.
- * 
+ *
  * For example, if the distance is 47 minutes, it'll return
  * "about 1 hour". See the source for the complete wording list.
  *
@@ -450,11 +463,12 @@ class invitation_manager {
  * http://www.8tiny.com/source/akelos/lib/AkActionView/helpers/date_helper.php.source.txt
  *
  * Which was in term inspired by Ruby on Rails' similarly called function.
- * 
+ *
  * @param int $from_time
  * @param int $to_time
  * @param boolean $include_seconds
  * @return string
+ * @throws coding_exception
  */
 function distance_of_time_in_words($from_time, $to_time = 0, $include_seconds = false) {
     $from_time = is_numeric($from_time) ? $from_time : strtotime($from_time);
@@ -498,6 +512,7 @@ function distance_of_time_in_words($from_time, $to_time = 0, $include_seconds = 
  *
  * @param object $invitation
  * @return object
+ * @throws dml_exception
  */
 function prepare_notice_object($invitation) {
     global $CFG, $course, $DB;
@@ -528,11 +543,13 @@ function prepare_notice_object($invitation) {
 
 /**
  * Prints out tabs and highlights the appropiate current tab.
- * 
- * @param string $active_tab  Either 'invite' or 'history'
+ *
+ * @param string $active_tab Either 'invite' or 'history'
+ * @throws coding_exception
+ * @throws moodle_exception
  */
 function print_page_tabs($active_tab) {
-    global $CFG, $COURSE;
+    global $COURSE;
 
     $tabs[] = new tabobject('history',
                     new moodle_url('/enrol/invitation/history.php',
