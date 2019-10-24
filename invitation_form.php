@@ -39,9 +39,11 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
 class invitation_form extends moodleform {
     /**
      * The form definition.
+     * @throws dml_exception
+     * @throws coding_exception
      */
     public function definition() {
-        global $CFG, $DB, $USER;
+        global $CFG, $USER;
         $mform = & $this->_form;
 
         // Get rid of "Collapse all" in Moodle 2.5+.
@@ -191,9 +193,10 @@ class invitation_form extends moodleform {
      * Private class method to return a list of appropiate roles for given
      * course and user.
      *
-     * @param object $course    Course record.
+     * @param object $course Course record.
      *
      * @return array            Returns array of roles indexed by role archetype.
+     * @throws dml_exception
      */
     private function get_appropiate_roles($course) {
         global $DB;
@@ -225,6 +228,7 @@ class invitation_form extends moodleform {
      * @param array $files
      *
      * @return array
+     * @throws coding_exception
      */
     public function validation($data, $files) {
         $errors = array();
@@ -242,9 +246,10 @@ class invitation_form extends moodleform {
      * Parses a string containing delimiter seperated values for email addresses.
      * Returns an empty array if an invalid email is found.
      *
-     * @param string $emails           string of emails to be parsed
-     * @param string $delimiters       list of delimiters as regex
+     * @param string $emails string of emails to be parsed
+     * @param string $delimiters list of delimiters as regex
      * @return array $parsed_emails    array of emails
+     * @throws coding_exception
      */
     public static function parse_dsv_emails($emails, $delimiters) {
         $parsed_emails = array();
