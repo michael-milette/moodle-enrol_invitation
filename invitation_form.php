@@ -76,6 +76,7 @@ class invitation_form extends moodleform {
             }
         }
 
+		$mform->setDefault('roleid', 3);
         $mform->addGroup($role_group, 'role_group', $label);
         $mform->addRule('role_group',
                 get_string('norole', 'enrol_invitation'), 'required');
@@ -83,7 +84,7 @@ class invitation_form extends moodleform {
         // Email address field.
         $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
         $mform->addElement('textarea', 'email', get_string('emailaddressnumber', 'enrol_invitation'),
-                array('maxlength' => 1000, 'class' => 'form-invite-email'));
+                array('maxlength' => 1000, 'class' => 'form-invite-email', 'style' => 'resize: both;'));
         $mform->addRule('email', null, 'required', null, 'client');
         $mform->setType('email', PARAM_TEXT);
         // Check for correct email formating later in validation() function.
@@ -100,9 +101,16 @@ class invitation_form extends moodleform {
         $mform->setDefault('subject', $default_subject);
 
         // Message field.
-        $mform->addElement('textarea', 'message', get_string('message', 'enrol_invitation'),
+		//
+        // $mform->addElement('textarea', 'message', get_string('message', 'enrol_invitation'),
+        //         array('class' => 'form-invite-message'));
+        
+		$mform->addElement('editor', 'message', get_string('message', 'enrol_invitation'),
                 array('class' => 'form-invite-message'));
-        // Put help text to show what default message invitee gets.
+		$mform->setType('message', PARAM_RAW);
+		
+		
+		// Put help text to show what default message invitee gets.
         $mform->addHelpButton('message', 'message', 'enrol_invitation',
                 get_string('message_help_link', 'enrol_invitation'));
 
