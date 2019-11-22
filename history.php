@@ -102,7 +102,9 @@ if (empty($invites)) {
             $redirect = new moodle_url('/enrol/invitation/invitation.php',
                     array('courseid' => $curr_invite->courseid, 'inviteid' => $curr_invite->id));
             redirect($redirect);
-
+        } else if ($actionid == invitation_manager::INVITE_DELETE) {
+            $DB->delete_records('enrol_invitation', array('courseid' => $curr_invite->courseid, 'id' => $curr_invite->id));
+            echo $OUTPUT->notification(get_string('remove_invite_success', 'enrol_invitation'), 'success');
         } else {
             print_error('invalidactionid');
         }
@@ -203,6 +205,13 @@ if (empty($invites)) {
             // Create link to resend invite.
             $url->param('actionid', invitation_manager::INVITE_RESEND);
             $row[5] .= html_writer::link($url, get_string('action_resend_invite', 'enrol_invitation'));
+            $row[5] .= html_writer::start_tag('br');
+            // Create link to delete invitation from DB
+            $url->param('actionid', invitation_manager::INVITE_DELETE);
+            $row[5] .= html_writer::link($url, get_string('action_delete_invite', 'enrol_invitation'),
+                array(
+                    'onClick' => 'javascript: return confirm("'. get_string('remove_invite_confirm', 'enrol_invitation') . '");',
+                    'style' => 'color: red'));
         }
 
         $table->add_data($row);

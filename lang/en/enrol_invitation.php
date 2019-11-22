@@ -133,6 +133,8 @@ $string['invitationsuccess'] = 'Invitation successfully sent';
 $string['revoke_invite_sucess'] = 'Invitation sucessfully revoked';
 $string['extend_invite_sucess'] = 'Invitation sucessfully extended';
 $string['resend_invite_sucess'] = 'Invitation sucessfully resent';
+$string['remove_invite_success'] = 'Invitation sucessfully removed';
+$string['remove_invite_confirm'] = 'Please confirm deletion';
 $string['returntocourse'] = 'Return to course';
 $string['returntoinvite'] = 'Send another invite';
 
@@ -177,6 +179,7 @@ $string['status_invite_active'] = 'Active';
 $string['action_revoke_invite'] = 'Revoke invite';
 $string['action_extend_invite'] = 'Extend invite';
 $string['action_resend_invite'] = 'Resend invite';
+$string['action_delete_invite'] = 'Remove invite from database';
 
 // Capabilities strings.
 $string['invitation:config'] = 'Configure invitation instances';

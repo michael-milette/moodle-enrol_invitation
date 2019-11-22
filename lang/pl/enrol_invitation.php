@@ -118,8 +118,10 @@ $string['unenrolselfconfirm'] = 'Naprawdę chcesz się wypisać się z kursu "{$
 // After invite sent strings.
 $string['invitationsuccess'] = 'Zaproszenie zostało wysłane';
 $string['revoke_invite_sucess'] = 'Zaproszenie zostało pomyślnie wycofane';
-$string['extend_invite_sucess'] = 'Zaproszenie zostało pomyślnie rozszerzone';
+$string['extend_invite_sucess'] = 'Zaproszenie zostało pomyślnie przedłużone';
 $string['resend_invite_sucess'] = 'Zaproszenie zostało pomyślnie wysłane';
+$string['remove_invite_success'] = 'Zaproszenie zostało pomyślnie usunięte';
+$string['remove_invite_confirm'] = 'Potwierdź usunięcie danych';
 $string['returntocourse'] = 'Powrót do kursu';
 $string['returntoinvite'] = 'Wyślij kolejne zaproszenie';
 
@@ -162,6 +164,7 @@ $string['status_invite_active'] = 'Aktywne';
 $string['action_revoke_invite'] = 'Wycofaj zaproszenie';
 $string['action_extend_invite'] = 'Wyślij przypomnienie';
 $string['action_resend_invite'] = 'Powtórnie wyślij zaproszenie';
+$string['action_delete_invite'] = 'Usuń zaproszenie z bazy';
 
 // Capabilities strings.
 $string['invitation:config'] = 'Konfiguracja instancji zaproszeń';

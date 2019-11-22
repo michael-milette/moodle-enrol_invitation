@@ -60,6 +60,11 @@ class invitation_manager {
     const INVITE_RESEND = 3;
 
     /**
+     * Constant for deleting an invitation from a database.
+     */
+    const INVITE_DELETE = 4;
+
+    /**
      * Constructor.
      *
      * @param int $courseid
