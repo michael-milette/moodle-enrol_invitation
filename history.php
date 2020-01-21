@@ -193,7 +193,7 @@ if (empty($invites)) {
         $url = new moodle_url('/enrol/invitation/history.php',
                 array('courseid' => $courseid, 'inviteid' => $invite->id));
         // Same if statement as above, seperated for clarity.
-        if ($status == get_string('status_invite_active', 'enrol_invitation')) {
+        if ($status == get_string('status_invite_active', 'enrol_invitation') || $status == get_string('status_invite_resent', 'enrol_invitation')) {
             // Create link to revoke an invite.
             $url->param('actionid', invitation_manager::INVITE_REVOKE);
             $row[5] .= html_writer::link($url, get_string('action_revoke_invite', 'enrol_invitation'));

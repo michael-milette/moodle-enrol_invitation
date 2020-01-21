@@ -301,6 +301,7 @@ class invitation_manager {
      *
      * @return string           Returns invite status string.
      * @throws coding_exception
+     * @throws dml_exception
      */
     public function get_invite_status($invite) {
         if (!is_object($invite)) {
@@ -309,15 +310,26 @@ class invitation_manager {
 
         if ($invite->tokenused) {
             // Invite was used already.
-            $status = get_string('status_invite_used', 'enrol_invitation');
-            return $status;
+            return get_string('status_invite_used', 'enrol_invitation');
         } else if ($invite->timeexpiration < time()) {
             // Invite is expired.
             return get_string('status_invite_expired', 'enrol_invitation');
         } else {
-            return get_string('status_invite_active', 'enrol_invitation');
+            /** @var int $pluginconfig */
+            $pluginconfig = get_config('enrol_invitation', 'inviteexpiration');
+
+            /** @var int $timestatus */
+            $timestatus = $invite->timeexpiration - $invite->timesent - $pluginconfig;
+            if ($timestatus == 0) {
+                return get_string('status_invite_active', 'enrol_invitation');
+            }
+            else if ($timestatus > 0) {
+                return get_string('status_invite_resent', 'enrol_invitation');
+            }
+            else if ($timestatus < 0) {
+                return get_string('status_invite_revoked', 'enrol_invitation');
+            }
         }
-        // TO DO: add status_invite_revoked and status_invite_resent status.
     }
 
     /**
