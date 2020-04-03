@@ -25,7 +25,7 @@
 
 // Global strings.
 $string['pluginname'] = 'Zaproszenie';
-$string['pluginname_desc'] = 'Moduł Zaproszenie umożliwia wysyłanie zaproszeń pocztą elektroniczną. Zaproszenia te mogą być użyte tylko raz. Użytkownicy klikający na link e-mail są automatycznie rejestrowani.';
+$string['pluginname_desc'] = 'Moduł Zaproszenie umożliwia wysyłanie zaproszeń pocztą elektroniczną. Zaproszenia te mogą być użyte tylko raz. Użytkownicy klikający na link w poczcie e-mail są automatycznie rejestrowani.';
 
 // Email message strings.
 $string['reminder'] = 'Przypomnienie: ';
@@ -37,7 +37,7 @@ $string['emailmsgtxt'] =
     '<b>LINK DOSTĘPOWY:</b> ' . '{$a->inviteurl} <br />' . 
     'Klikając na link dostępu do strony zamieszczony w tym e-mailu przyjmujesz do wiadomości, że: <br />' .
     '* jesteś osobą, do której adresowany był ten e-mail i dla której to zaproszenie jest przeznaczone;<br />' . 
-    '* powyższy link wygaśnie w dniu ({$a->expiration}).' .
+    '* powyższy link wygaśnie w dniu ({$a->expiration}). Szkolenie rozpoczęte przed powyższym terminem będzie dostępne aż do ukończenia szkolenia.' .
 
     '<p>Jeśli uważasz, że otrzymałeś tę wiadomość błędnie lub potrzebujesz pomocy, prosimy o kontakt: {$a->supportemail}.</p>';
 
