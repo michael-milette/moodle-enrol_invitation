@@ -86,7 +86,7 @@ class invitation_form extends moodleform {
         // Email address field.
         $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
         $mform->addElement('textarea', 'email', get_string('emailaddressnumber', 'enrol_invitation'),
-                array('maxlength' => 1000, 'class' => 'form-invite-email', 'style' => 'resize: both;'));
+                array('maxlength' => 1000, 'class' => 'form-invite-email', 'style' => 'resize: both; width: 100%; height: 200px'));
 		
 		$mform->addHelpButton('email','email', 'enrol_invitation');
         $mform->addRule('email', null, 'required', null, 'client');
@@ -95,9 +95,9 @@ class invitation_form extends moodleform {
         // Check for correct email formating later in validation() function.
        // $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation'));
 
-       // Ssubject field.
+       // Subject field.
         $mform->addElement('text', 'subject', get_string('subject', 'enrol_invitation'),
-                array('class' => 'form-invite-subject'));
+                array('class' => 'form-invite-subject', 'style' => 'width:100%'));
         $mform->setType('subject', PARAM_TEXT);
         $mform->addRule('subject', get_string('required'), 'required');
         // Default subject is "Site invitation for <course title>".
