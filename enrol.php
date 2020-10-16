@@ -98,9 +98,6 @@ if (empty($confirm)) {
     // Print out a heading.
     echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
-//    add_to_log($invitation->courseid, 'course', 'invitation view',
-//        "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
-
     $accepturl = new moodle_url('/enrol/invitation/enrol.php',
             array('token' => $invitation->token, 'confirm' => true));
     $accept = new single_button($accepturl,
@@ -125,16 +122,13 @@ if (empty($confirm)) {
     exit;
 } else {
     if ($invitation->email != $USER->email) {
-//        add_to_log($invitation->courseid, 'course', 'invitation mismatch',
-//            "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
+		//TODO error 'invitation mismatch'
     }
+	
     // User confirmed, so add them.
     require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
     $invitationmanager = new invitation_manager($invitation->courseid);
     $invitationmanager->enroluser($invitation);
-
-//    add_to_log($invitation->courseid, 'course', 'invitation claim',
-//        "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
 
     // Set token as used and mark which user was assigned the token.
     $invitation->tokenused = true;

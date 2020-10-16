@@ -86,9 +86,6 @@ if (empty($invites)) {
             $DB->set_field('enrol_invitation', 'timeexpiration', time()-1,
                     array('courseid' => $curr_invite->courseid, 'id' => $curr_invite->id) );
 
-//            add_to_log($course->id, 'course', 'invitation revoke',
-//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
-
             echo $OUTPUT->notification(get_string('revoke_invite_sucess', 'enrol_invitation'), 'success');
 
         } else if ($actionid == invitation_manager::INVITE_EXTEND) {
@@ -146,14 +143,14 @@ if (empty($invites)) {
         $row[0] = $invite->email;
 
         // Figure out invited role.
-        if (empty($role_cache[$invite->roleid])) {
+        if (!array_key_exists($invite->roleid, $role_cache)) {
             $role = $DB->get_record('role', array('id' => $invite->roleid));
             if (empty($role)) {
                 // Cannot find role, give error.
                 $role_cache[$invite->roleid] =
                         get_string('historyundefinedrole', 'enrol_invitation');
             } else {
-                $role_cache[$invite->roleid] = $role->name;
+                $role_cache[$invite->roleid] = $role->archetype;
             }
         }
         $row[1] = $role_cache[$invite->roleid];
