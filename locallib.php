@@ -346,9 +346,7 @@ class invitation_manager {
             $courseid = $this->courseid;
         }
 
-        $invites = $DB->get_records('enrol_invitation', array('courseid' => $courseid));
-
-        return $invites;
+        return $DB->get_records('enrol_invitation', array('courseid' => $courseid));
     }
 
     /**

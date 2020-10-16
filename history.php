@@ -150,7 +150,7 @@ if (empty($invites)) {
                 $role_cache[$invite->roleid] =
                         get_string('historyundefinedrole', 'enrol_invitation');
             } else {
-                $role_cache[$invite->roleid] = $role->archetype;
+                $role_cache[$invite->roleid] = empty($role->name) ? $role->archetype : $role->name;
             }
         }
         $row[1] = $role_cache[$invite->roleid];

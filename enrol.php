@@ -122,7 +122,7 @@ if (empty($confirm)) {
     exit;
 } else {
     if ($invitation->email != $USER->email) {
-		//TODO error 'invitation mismatch'
+		//TODO print_error('invitation mismatch');
     }
 	
     // User confirmed, so add them.
