@@ -61,7 +61,7 @@ $string['notifymsg'] = 'Witam, chciałbym poinformować, że użytkownik $a->use
 $string['emailtitleuserenrolled'] = '{$a->userfullname} zaakceptował zaproszenie do {$a->coursefullname}.';
 $string['emailmessageuserenrolled'] = 'Witam,
 
-    {$a->userfullname} ({$a->useremail}) zaakceptował twoje zaproszenie do kursu {$a->coursefullname} jako a "{$a->rolename}". Status tego zaproszenia można sprawdzić, oglądając:
+    {$a->userfullname} ({$a->useremail}) zaakceptował twoje zaproszenie do kursu {$a->coursefullname} w roli "{$a->rolename}". Status tego zaproszenia można sprawdzić, oglądając:
 
         * Listę uczestników: {$a->courseenrolledusersurl}
         * Historię zaproszeń: {$a->invitehistoryurl}
