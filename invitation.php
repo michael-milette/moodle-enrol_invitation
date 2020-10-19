@@ -30,6 +30,7 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
 require_login();
 
 $courseid = required_param('courseid', PARAM_INT);
+$expired = optional_param('expired', null, PARAM_BOOL);
 $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
 
 $inviteid = optional_param('inviteid', 0, PARAM_INT);
@@ -67,7 +68,8 @@ $instance = $invitationmanager->get_invitation_instance($courseid, true);
 // If the user was sent to this page by selecting 'resend invite', then
 // prefill the form with the data used to resend the invite.
 $prefilled = array();
-if ($inviteid) {
+
+if ($inviteid && $inviteid > 0) {
     if ( $invite = $DB->get_record('enrol_invitation', array('courseid' => $courseid, 'id' => $inviteid)) ) {
         $prefilled['roleid'] = $invite->roleid;
         $prefilled['email'] = $invite->email;
@@ -76,7 +78,26 @@ if ($inviteid) {
         $prefilled['show_from_email'] = $invite->show_from_email;
         $prefilled['notify_inviter'] = $invite->notify_inviter;
     } else {
-        print_error('invalidinviteid');
+        print_error('invalidinviteid', 'enrol_invitation', '', $inviteid, 'dberror1');
+    }
+} elseif ($expired) {
+    if ($invites = $DB->get_records('enrol_invitation', array('courseid' => $courseid, 'tokenused' => false)))
+    {
+        $prefilled['roleid'] = 5;
+        $prefilled['email'] = '';
+        foreach ($invites as $e)
+        {
+            if ($e->timeexpiration < time()) {
+                $prefilled['email'] .= $e->email . "\n";
+            }
+        }
+        $prefilled['subject'] = get_string('default_subject', 'enrol_invitation',
+            sprintf('%s: %s', $course->shortname, $course->fullname));
+        $prefilled['message'] = '';
+        $prefilled['show_from_email'] = '';
+        $prefilled['notify_inviter'] = '';
+    } else {
+        print_error('invalidinviteid', 'enrol_invitation', '', $invites, 'dberror2');
     }
 }
 

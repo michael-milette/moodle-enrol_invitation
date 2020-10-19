@@ -149,6 +149,7 @@ $string['historyactions'] = 'Akcje';
 $string['historyundefinedrole'] = 'Nie można znaleźć roli. Proszę wyślij zaproszenie ponownie i wybierz inną rolę.';
 $string['historyexpires_in'] = 'wygasa w ciągu';
 $string['used_by'] = ' przez {$a->username} ({$a->roles}, {$a->useremail}) dnia {$a->timeused}';
+$string['sendtoallexpired'] = 'Wyślij do wszystkich z wygasłym zaproszeniem';
 
 // Invite status strings.
 $string['status_invite_invalid'] = 'Nieprawidłowy';

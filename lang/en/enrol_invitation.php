@@ -164,6 +164,7 @@ $string['historyactions'] = 'Actions';
 $string['historyundefinedrole'] = 'Unable to find role. Please resent invite and choose another role.';
 $string['historyexpires_in'] = 'expires in';
 $string['used_by'] = ' by {$a->username} ({$a->roles}, {$a->useremail}) on {$a->timeused}';
+$string['sendtoallexpired'] = 'Send to all with an expired invitation';
 
 // Invite status strings.
 $string['status_invite_invalid'] = 'Invalid';

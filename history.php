@@ -75,7 +75,6 @@ if (empty($invites)) {
     echo $OUTPUT->notification(
             get_string('noinvitehistory', 'enrol_invitation'), 'info');
 } else {
-
     // Update invitation if the user decided to revoke/extend/resend an invite.
     if ($inviteid && $actionid) {
         if (!$curr_invite = $invites[$inviteid]) {
@@ -109,6 +108,15 @@ if (empty($invites)) {
         // Get the updated invites.
         $invites = $invitationmanager->get_invites();
     }
+
+    $sendtoallexpiredbutton = new single_button(
+        $url = new moodle_url('/enrol/invitation/invitation.php', array('courseid' => $courseid, 'expired' => 'true')),
+        $label = get_string('sendtoallexpired', 'enrol_invitation'),
+        $method = 'post',
+        $primary = false,
+        $attributes = array('id' => 'sendtoallexpired', 'style' => 'width: 400px; float: right; margin-bottom: 10px;'));
+
+    echo html_writer::tag('div', $OUTPUT->render($sendtoallexpiredbutton), array('id' => 'sendtoallexpired', 'style' => 'width: 100%'));
 
     // Columns to display.
     $columns = array(
