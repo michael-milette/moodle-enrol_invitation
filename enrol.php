@@ -42,10 +42,8 @@ $invitation = $DB->get_record('enrol_invitation',
 // If token is valid, enrol the user into the course.
 if (empty($invitation) or empty($invitation->courseid) or $invitation->timeexpiration < time()) {
     $courseid = empty($invitation->courseid) ? $SITE->id : $invitation->courseid;
-//    add_to_log($courseid, 'course', 'invitation expired',
-//        "../enrol/invitation/history.php?courseid=$courseid",
-//        $DB->get_record('course', array('id' => $courseid), 'fullname')->fullname);
-    throw new moodle_exception('expiredtoken', 'enrol_invitation');
+
+    throw new moodle_exception('expiredtoken', 'enrol_invitation', new moodle_url('/my/index.php'));
 }
 
 // Make sure that course exists.

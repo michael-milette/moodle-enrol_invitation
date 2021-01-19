@@ -106,10 +106,6 @@ class invitation_form extends moodleform {
         $mform->setDefault('subject', $default_subject);
 
         // Message field.
-		//
-        // $mform->addElement('textarea', 'message', get_string('message', 'enrol_invitation'),
-        //         array('class' => 'form-invite-message'));
-        
 		$mform->addElement('editor', 'message', get_string('message', 'enrol_invitation'),
                 array('class' => 'form-invite-message'));
 		$mform->setType('message', PARAM_RAW);
@@ -251,7 +247,7 @@ class invitation_form extends moodleform {
      * @return array $parsed_emails    array of emails
      * @throws coding_exception
      */
-    public static function parse_dsv_emails($emails, $delimiters) {
+    public static function parse_dsv_emails(string $emails, string $delimiters) {
         $parsed_emails = array();
         $emails = trim($emails);
         if (preg_match($delimiters, $emails)) {

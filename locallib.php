@@ -35,14 +35,14 @@ class invitation_manager {
      * Course id.
      * @var int
      */
-    private $courseid = null;
+    private $courseid;
 
     /**
      * The invitation enrol instance of a course.
      *
      * @var int
      */
-    private $enrolinstance = null;
+    private $enrolinstance;
 
     /**
      * Constant for revoking an active invitation.
@@ -71,7 +71,7 @@ class invitation_manager {
      * @param boolean $instancemustexist
      * @throws moodle_exception
      */
-    public function __construct($courseid, $instancemustexist = true) {
+    public function __construct(int $courseid, $instancemustexist = true) {
         $this->courseid = $courseid;
         $this->enrolinstance = $this->get_invitation_instance($courseid, $instancemustexist);
     }
@@ -187,6 +187,9 @@ class invitation_manager {
 
                 $message_params->inviteurl = $inviteurl;
                 $message_params->supportemail = $CFG->supportemail;
+
+                $message_params->siteurl = $CFG->wwwroot;
+
                 $message .= get_string('emailmsgtxt', 'enrol_invitation', $message_params);
                 
                 if (!empty($data->message['text'])) {
@@ -245,18 +248,8 @@ class invitation_manager {
                     $contactuser->firstname = $dbuser->firstname;
                     $contactuser->lastname = $dbuser->lastname;
                 }
-                
-                // email_to_user($toUser, $fromUser, $subject, $messageText, $messageHtml, '', '', true);
-                email_to_user($contactuser, $fromuser, $invitation->subject, null, $message);
 
-                // Log activity after sending the email.
-//                if ($resend) {
-//                    add_to_log($course->id, 'course', 'invitation extend',
-//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
-//                } else {
-//                    add_to_log($course->id, 'course', 'invitation send',
-//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
-//                }
+                email_to_user($contactuser, $fromuser, $invitation->subject, null, $message);
             }
         } else {
             throw new moodle_exception('cannotsendinvitation', 'enrol_invitation',
@@ -335,7 +328,7 @@ class invitation_manager {
     /**
      * Return all invites for given course.
      *
-     * @param int $courseid
+     * @param int|null $courseid
      * @return array
      * @throws dml_exception
      */
@@ -361,7 +354,7 @@ class invitation_manager {
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public function get_invitation_instance($courseid, $mustexist = false) {
+    public function get_invitation_instance(int $courseid, $mustexist = false) {
         global $PAGE, $CFG, $DB;
 
         if (($courseid == $this->courseid) and !empty($this->enrolinstance)) {
@@ -563,7 +556,7 @@ function prepare_notice_object($invitation) {
  * @throws coding_exception
  * @throws moodle_exception
  */
-function print_page_tabs($active_tab) {
+function print_page_tabs(string $active_tab) {
     global $COURSE;
 
     $tabs[] = new tabobject('history',

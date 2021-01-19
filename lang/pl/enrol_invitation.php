@@ -34,10 +34,10 @@ $string['emailmsgtxt'] =
     '<h2>Dostęp do szkolenia:</h2>' .
     '<hr />' . 
     '<p>Zostałeś/aś zaproszony/a do udziału w szkoleniu: {$a->fullname}. Musisz kliknąć poniższy link, aby zaakceptować udział w szkoleniu. <br />' .
-    '<b>LINK DOSTĘPOWY:</b> ' . '{$a->inviteurl} <br />' . 
-    'Klikając na link dostępu do strony zamieszczony w tym e-mailu przyjmujesz do wiadomości, że: <br />' .
+    '<b>JEDNORAZOWY LINK DOSTĘPOWY:</b> ' . '{$a->inviteurl} <br />' .
+    'Klikając link dostępu do strony zamieszczony w tym e-mailu przyjmujesz do wiadomości, że: <br />' .
     '* jesteś osobą, do której adresowany był ten e-mail i dla której to zaproszenie jest przeznaczone;<br />' . 
-    '* powyższy link wygaśnie w dniu ({$a->expiration}). Szkolenie rozpoczęte przed powyższym terminem będzie dostępne aż do ukończenia szkolenia.' .
+    '* powyższy link wygaśnie w dniu ({$a->expiration}). Szkolenie zaakceptowane przed powyższym terminem będzie dostępne na stronie {$a->siteurl} aż do ukończenia szkolenia.' .
 
     '<p>Jeśli uważasz, że otrzymałeś tę wiadomość błędnie lub potrzebujesz pomocy, prosimy o kontakt: {$a->supportemail}.</p>';
 
@@ -94,10 +94,11 @@ $string['message_help'] =
     '<h2>Dostęp do szkolenia:</h2>' .
     '<hr />' . 
     'Zostałeś/aś zaproszony/a do udziału w szkoleniu: [site name]. Musisz kliknąć poniższy link, aby zaakceptować udział w szkoleniu. <br />' .
-    '<b>LINK DOSTĘPOWY:</b> ' . '[invite url] <br />' . 
-    'Klikając na link dostępu do strony zamieszczony w tym e-mailu przyjmujesz do wiadomości, że: <br />' .
-    '* jesteś osobą, do której adresowany był ten e-mail i dla której to zaproszenie jest przeznaczone;<br />' . 
-    '* powyższy link wygaśnie w dniu ([expiration date]).' .
+    '<b>JEDNORAZOWY LINK DOSTĘPOWY:</b> ' . '[invite url] <br />' .
+    'Klikając link dostępu do strony zamieszczony w tym e-mailu przyjmujesz do wiadomości, że: <br />' .
+    '* jesteś osobą, do której adresowany był ten e-mail i dla której to zaproszenie jest przeznaczone;<br />' .
+    '* powyższy link wygaśnie w dniu ([expiration date]). Szkolenie zaakceptowane przed powyższym terminem będzie dostępne na stronie [siteurl] aż do ukończenia szkolenia.' .
+
     '<p>Jeśli uważasz, że otrzymałeś tę wiadomość błędnie lub potrzebujesz pomocy, prosimy o kontakt: [support email].</p>';
 
 $string['noinvitationinstanceset'] = 'Nie znaleziono żadnego przypadku rejestracji zaproszenia. Proszę najpierw dodać instancję zaproszenia do swojego kursu.';
