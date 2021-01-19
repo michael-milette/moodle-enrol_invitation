@@ -76,6 +76,31 @@ class enrol_invitation_plugin extends enrol_plugin {
         return true;
     }
 
+    /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     * @param stdClass $instance
+     * @return bool
+     * @throws coding_exception
+     */
+    public function can_hide_show_instance($instance): bool
+    {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/invitation:config', $context);
+    }
+
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     * @throws coding_exception
+     */
+    public function can_delete_instance($instance): bool
+    {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/invitation:config', $context);
+    }
+
      /**
       * Returns link to page which may be used to add new instance of enrolment
       * plugin in course.
