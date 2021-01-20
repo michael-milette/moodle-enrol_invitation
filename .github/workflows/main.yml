@@ -14,3 +14,5 @@ jobs:
       with:
         artifacts: 'moodle-enrol_invitation.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
+        commit: master
+        tag: v1.0.${{ github.run_number }}
