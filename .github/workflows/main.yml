@@ -9,7 +9,6 @@ jobs:
       uses: thedoctor0/zip-release@master
       with:
         filename: 'moodle-enrol_invitation.zip'
-        directory: 'moodle-enrol_invitation/'
         exclusions: '*.git* /*node_modules/* .editorconfig' 
     - uses: ncipollo/release-action@v1
       with:
