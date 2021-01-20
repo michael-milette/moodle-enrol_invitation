@@ -10,3 +10,7 @@ jobs:
       with:
         filename: 'moodle-enrol_invitation.zip'
         exclusions: '*.git* /*node_modules/* .editorconfig'
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: 'moodle-enrol_invitation.zip'
+        
