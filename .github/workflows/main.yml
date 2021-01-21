@@ -12,7 +12,7 @@ jobs:
     - name: Switch back
       run: cd ..
     - name: Archive Release
-      run: zip -r /moodle-enrol_invitation.zip . -x ".git/*" ".github/*"
+      run: zip -r moodle-enrol_invitation.zip . -x ".git/*" ".github/*"
     - uses: ncipollo/release-action@v1
       with:
         artifacts: 'moodle-enrol_invitation.zip'
