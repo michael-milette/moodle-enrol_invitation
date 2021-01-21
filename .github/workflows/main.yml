@@ -12,10 +12,7 @@ jobs:
     - name: Switch back
       run: cd ..
     - name: Archive Release
-      uses: thedoctor0/zip-release@master
-      with:
-        filename: 'moodle-enrol_invitation.zip'
-        exclusions: '*.git* /*node_modules/* .editorconfig .idea' 
+      run: zip -r /moodle-enrol_invitation.zip . -x ".git/*" ".github/*"
     - uses: ncipollo/release-action@v1
       with:
         artifacts: 'moodle-enrol_invitation.zip'
