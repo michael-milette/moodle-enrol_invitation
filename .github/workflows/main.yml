@@ -2,14 +2,20 @@ name: Create Archive
 on: [push, workflow_dispatch]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
+    - name: Create Release Folder
+      run: md moodle-enrol_invitation
+    - name: Switch to Release Folder
+      run: cd moodle-enrol_invitation
     - uses: actions/checkout@master
+    - name: Switch back
+      run: cd..
     - name: Archive Release
       uses: thedoctor0/zip-release@master
       with:
         filename: 'moodle-enrol_invitation.zip'
-        exclusions: '*.git* /*node_modules/* .editorconfig' 
+        exclusions: '*.git* /*node_modules/* .editorconfig .idea' 
     - uses: ncipollo/release-action@v1
       with:
         artifacts: 'moodle-enrol_invitation.zip'
