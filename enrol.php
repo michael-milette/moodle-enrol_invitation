@@ -180,7 +180,7 @@ if (empty($confirm)) {
         $emailinfo = prepare_notice_object($invitation);
         $emailinfo->userfullname = trim($USER->firstname . ' ' . $USER->lastname);
         $emailinfo->useremail = $USER->email;
-        $courseenrolledusersurl = new moodle_url('/enrol/users.php',
+        $courseenrolledusersurl = new moodle_url('/user/index.php',
                 array('id' => $invitation->courseid));
         $emailinfo->courseenrolledusersurl = $courseenrolledusersurl->out(false);
         $invitehistoryurl = new moodle_url('/enrol/invitation/history.php',
