@@ -222,11 +222,23 @@ class invitation_manager {
 
                 // Log activity after sending the email.
                 if ($resend) {
-//                    add_to_log($course->id, 'course', 'invitation extend',
-//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
+                    \enrol_invitation\event\invitation_updated::create([
+                        'objectid' => $course->id,
+                        'context'  => context_course::instance($course->id),
+                        'other'    => [
+                            'email'      => $invitation->email,
+                            'courseid'   => $course->id
+                        ]
+                    ])->trigger();
                 } else {
-//                    add_to_log($course->id, 'course', 'invitation send',
-//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
+                    \enrol_invitation\event\invitation_sent::create([
+                        'objectid' => $course->id,
+                        'context'  => context_course::instance($course->id),
+                        'other'    => [
+                            'email'      => $invitation->email,
+                            'courseid'   => $course->id
+                        ]
+                    ])->trigger();
                 }
             }
         } else {

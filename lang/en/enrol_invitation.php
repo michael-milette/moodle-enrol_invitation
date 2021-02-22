@@ -27,6 +27,14 @@
 $string['pluginname'] = 'Invitation';
 $string['pluginname_desc'] = 'The Invitation module allows sending invitations by email. These invitations can be used only once. Users clicking on the email link are automatically enrolled.';
 
+// Logging strings.
+$string['event_invitation_accepted'] = 'Invitation Accepted';
+$string['event_invitation_attempted'] = 'Invitation Attempted';
+$string['event_invitation_deleted'] = 'Invitation Deleted';
+$string['event_invitation_sent'] = 'Invitation Sent';
+$string['event_invitation_updated'] = 'Invitation Updated';
+$string['event_invitation_viewed'] = 'Invitation Viewed';
+
 // Email message strings.
 $string['reminder'] = 'Reminder: ';
 
