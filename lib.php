@@ -224,15 +224,15 @@ class enrol_invitation_plugin extends enrol_plugin {
         $instance = $ue->enrolmentinstance;
         $params = $manager->get_moodlepage()->url->params();
         $params['ue'] = $ue->id;
-        if ($this->allow_unenrol($instance) && has_capability("enrol/invitation:unenrol", $context)) {
-            $url = new moodle_url('/enrol/invitation/unenroluser.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'),
-                $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
-        }
         if ($this->allow_manage($instance) && has_capability("enrol/invitation:manage", $context)) {
             $url = new moodle_url('/enrol/invitation/editenrolment.php', $params);
             $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url,
                 array('class'=>'editenrollink', 'rel'=>$ue->id));
+        }
+        if ($this->allow_unenrol($instance) && has_capability("enrol/invitation:unenrol", $context)) {
+            $url = new moodle_url('/enrol/invitation/unenroluser.php', $params);
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'),
+                $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
         }
         return $actions;
     }

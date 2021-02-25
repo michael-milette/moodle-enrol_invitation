@@ -209,7 +209,7 @@ class invitation_manager {
                 $contactuser = new stdClass();
                 $contactuser->id = -1; // required by new version of email_to_user since moodle 2.6
                 $contactuser->email = $invitation->email;
-				$contactuser->mailformat = 1; // 0 (zero) text-only emails, 1 (one) for HTML/Text emails.
+				$contactuser->mailformat = 0; // 0 (zero) text-only emails, 1 (one) for HTML/Text emails.
                 $contactuser->firstname = '';
                 $contactuser->lastname = '';
                 $contactuser->maildisplay = true;
@@ -218,15 +218,27 @@ class invitation_manager {
                 $contactuser->middlename = '';
                 $contactuser->alternatename = '';
 
-                email_to_user($contactuser, $fromuser, $invitation->subject, null, $message);
+                email_to_user($contactuser, $fromuser, $invitation->subject, $message);
 
                 // Log activity after sending the email.
                 if ($resend) {
-//                    add_to_log($course->id, 'course', 'invitation extend',
-//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
+                    \enrol_invitation\event\invitation_updated::create([
+                        'objectid' => $course->id,
+                        'context'  => context_course::instance($course->id),
+                        'other'    => [
+                            'email'      => $invitation->email,
+                            'courseid'   => $course->id
+                        ]
+                    ])->trigger();
                 } else {
-//                    add_to_log($course->id, 'course', 'invitation send',
-//                            "../enrol/invitation/history.php?courseid=$course->id", $course->fullname);
+                    \enrol_invitation\event\invitation_sent::create([
+                        'objectid' => $course->id,
+                        'context'  => context_course::instance($course->id),
+                        'other'    => [
+                            'email'      => $invitation->email,
+                            'courseid'   => $course->id
+                        ]
+                    ])->trigger();
                 }
             }
         } else {

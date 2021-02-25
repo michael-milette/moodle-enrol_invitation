@@ -61,7 +61,7 @@ $manager = new course_enrolment_manager($PAGE, $course, $filter);
 $table = new course_enrolment_users_table($manager, $PAGE);
 
 // The URL of the enrolled users page for the course.
-$usersurl = new moodle_url('/enrol/users.php', array('id' => $course->id));
+$usersurl = new moodle_url('/user/index.php', array('id' => $course->id));
 // The URl to return the user too after this screen.
 $returnurl = new moodle_url($usersurl, $manager->get_url_params()+$table->get_url_params());
 // The URL of this page.

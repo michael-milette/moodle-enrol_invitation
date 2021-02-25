@@ -42,9 +42,16 @@ $invitation = $DB->get_record('enrol_invitation',
 // If token is valid, enrol the user into the course.
 if (empty($invitation) or empty($invitation->courseid) or $invitation->timeexpiration < time()) {
     $courseid = empty($invitation->courseid) ? $SITE->id : $invitation->courseid;
-//    add_to_log($courseid, 'course', 'invitation expired',
-//        "../enrol/invitation/history.php?courseid=$courseid",
-//        $DB->get_record('course', array('id' => $courseid), 'fullname')->fullname);
+
+	\enrol_invitation\event\invitation_attempted::create([
+		'objectid' => $courseid,
+		'context'  => $PAGE->context,
+		'other'    => [
+			'courseid' => $courseid,
+			'errormsg' => 'expired'
+		]
+	])->trigger();
+
     throw new moodle_exception('expiredtoken', 'enrol_invitation');
 }
 
@@ -98,8 +105,13 @@ if (empty($confirm)) {
     // Print out a heading.
     echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
-//    add_to_log($invitation->courseid, 'course', 'invitation view',
-//        "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
+	\enrol_invitation\event\invitation_viewed::create([
+		'objectid' => $course->id,
+		'context'  => context_course::instance($course->id),
+		'other'    => [
+			'courseid'   => $course->id
+		]
+	])->trigger();
 
     $accepturl = new moodle_url('/enrol/invitation/enrol.php',
             array('token' => $invitation->token, 'confirm' => true));
@@ -125,16 +137,28 @@ if (empty($confirm)) {
     exit;
 } else {
     if ($invitation->email != $USER->email) {
-//        add_to_log($invitation->courseid, 'course', 'invitation mismatch',
-//            "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
+		\enrol_invitation\event\invitation_attempted::create([
+			'objectid' => $invitation->courseid,
+			'context'  => $context,
+			'other'    => [
+				'courseid' => $invitation->courseid,
+				'errormsg' => 'email does not match'
+			]
+		])->trigger();
     }
     // User confirmed, so add them.
     require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
     $invitationmanager = new invitation_manager($invitation->courseid);
     $invitationmanager->enroluser($invitation);
 
-//    add_to_log($invitation->courseid, 'course', 'invitation claim',
-//        "../enrol/invitation/history.php?courseid=$invitation->courseid", $course->fullname);
+	\enrol_invitation\event\invitation_accepted::create([
+		'objectid' => $invitation->courseid,
+		'context'  => $context,
+		'other'    => [
+			'courseid' => $invitation->courseid,
+			'errormsg' => 'email does not match'
+		]
+	])->trigger();
 
     // Set token as used and mark which user was assigned the token.
     $invitation->tokenused = true;
@@ -156,7 +180,7 @@ if (empty($confirm)) {
         $emailinfo = prepare_notice_object($invitation);
         $emailinfo->userfullname = trim($USER->firstname . ' ' . $USER->lastname);
         $emailinfo->useremail = $USER->email;
-        $courseenrolledusersurl = new moodle_url('/enrol/users.php',
+        $courseenrolledusersurl = new moodle_url('/user/index.php',
                 array('id' => $invitation->courseid));
         $emailinfo->courseenrolledusersurl = $courseenrolledusersurl->out(false);
         $invitehistoryurl = new moodle_url('/enrol/invitation/history.php',
