@@ -49,16 +49,22 @@ $string['instructormsg'] =
 // Invite form strings.
 $string['assignrole'] = 'Przypisz rolę';
 $string['defaultrole'] = 'Rola domyślna';
+$string['defaultinvitevalues'] = 'Default invitation values';
 $string['defaultrole_desc'] = 'Wybierz rolę, która powinna być przypisana użytkownikom podczas rejestracji zaproszeń.';
 $string['default_subject'] = 'Zaproszenie na kurs {$a}';
 $string['editenrollment'] = 'Edycja zapisów';
 $string['header_email'] = 'Kogo chcesz zaprosić?';
 $string['emailaddressnumber'] = 'Adresy e-mail';
-
+$string['registeredonly'] = 'Send invitiation only for registered users';
+$string['registeredonly_help'] = 'Invitation will be sent only to emails, which belongs to registered users.';
 $string['notifymsg'] = 'Witam, chciałbym poinformować, że użytkownik $a->username, z e-mailem $a->email zaakceptował dostęp do twojego kursu, $a->course';
-
+$string['usedefaultvalues'] = 'Use invitation with default values';
 $string['emailtitleuserenrolled'] = '{$a->userfullname} zaakceptował zaproszenie do {$a->coursefullname}.';
+$string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that you have received this message in error or are in need of
+                                               assistance, please contact:</span>
+                    <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
 $string['emailmessageuserenrolled'] = 'Witam,
+    
 
     {$a->userfullname} ({$a->useremail}) zaakceptował twoje zaproszenie do kursu {$a->coursefullname} jako a "{$a->rolename}". Status tego zaproszenia można sprawdzić, oglądając:
 

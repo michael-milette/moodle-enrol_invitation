@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,23 +23,22 @@
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 require('../../config.php');
 require_once('edit_form.php');
 
-$courseid   = required_param('courseid', PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
 $instanceid = optional_param('id', 0, PARAM_INT); // Instanceid.
 
-$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id);
 
 require_login($course);
 require_capability('enrol/invitation:config', $context);
 
-$PAGE->set_url('/enrol/invitation/edit.php', array('courseid'=>$course->id, 'id'=>$instanceid));
+$PAGE->set_url('/enrol/invitation/edit.php', array('courseid' => $course->id, 'id' => $instanceid));
 $PAGE->set_pagelayout('admin');
 
-$return = new moodle_url('/enrol/instances.php', array('id'=>$course->id));
+$return = new moodle_url('/enrol/instances.php', array('id' => $course->id));
 if (!enrol_is_enabled('invitation')) {
     redirect($return);
 }
@@ -46,30 +46,49 @@ if (!enrol_is_enabled('invitation')) {
 $plugin = enrol_get_plugin('invitation');
 
 if ($instanceid) {
-    $instance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'invitation', 'id'=>$instanceid), '*', MUST_EXIST);
+    $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'invitation', 'id' => $instanceid), '*', MUST_EXIST);
+    $instance->customtext1 = array('text' => $instance->customtext1);
+    $instance->role_group['customint2'] = $instance->customint2;
 } else {
     require_capability('moodle/course:enrolconfig', $context);
     // No instance yet, we have to add new instance.
-    navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
+    navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id' => $course->id)));
     $instance = new stdClass();
-    $instance->id       = null;
+    $instance->id = null;
     $instance->courseid = $course->id;
 }
 
-$mform = new enrol_invitation_edit_form(null, array($instance, $plugin, $context));
+$mform = new enrol_invitation_edit_form(null, array($instance, $plugin, $context),
+        'post', '', array('class' => 'mform-invite'));
+$mform->set_data($instance);
 
 if ($mform->is_cancelled()) {
     redirect($return);
-
 } else if ($data = $mform->get_data()) {
     if ($instance->id) {
-        $instance->status         = $data->status;
-        $instance->name           = $data->name;
-        $instance->timemodified   = time();
+        $instance->status = $data->status;
+        $instance->name = $data->name;
+        $instance->customint1 = $data->customint1;
+        $instance->customint2 = $data->role_group['customint2'];
+        $instance->customtext1 = $data->customtext1['text'];
+        $instance->customchar1 = $data->customchar1;
+        property_exists($data, "customint3")? $instance->customint3 = $data->customint3:"";
+        property_exists($data, "customint4")? $instance->customint4 = $data->customint4:"";
+        $instance->customint5 = $data->customint5;
+        $instance->timemodified = time();
         $DB->update_record('enrol', $instance);
     } else {
-        $fields = array('status'=>$data->status,
-                        'name'=>$data->name);
+        $fields = array('status' => $data->status,
+            'name' => $data->name,'customint5'=>$data->customint5);
+        if ($data->customint1 == 1) {
+            $fields['customint1'] = $data->customint1;
+            $fields['customint2'] = $data->role_group['customint2'];
+            $fields['customtext1'] = $data->customtext1['text'];
+            $fields['customchar1'] = $data->customchar1;
+            $fields['customint3'] = $data->customint3;
+            $fields['customint4'] = $data->customint4;
+        }
+
         $plugin->add_instance($course, $fields);
     }
 

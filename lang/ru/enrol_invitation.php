@@ -27,6 +27,7 @@
 
 $string['assignrole'] = 'Назначить роль';
 $string['cannotsendmoreinvitationfortoday'] = 'Ни одного приглашения не было отправлено сегодня. Попробуйте зайти позже.';
+$string['defaultinvitevalues'] = 'Default invitation values';
 $string['defaultrole'] = 'Роль по умолчанию';
 $string['defaultrole_desc'] = 'Выберите роль, которая должна быть назначена пользователю во время приглашения';
 $string['editenrolment'] = 'Редактировать способ записи на курс';
@@ -78,8 +79,13 @@ $string['status_desc'] = 'Разрешить по умолчанию польз�
 $string['unenrol'] = 'Исключенные пользователи';//??
 $string['unenroluser'] = 'Вы действительно хотите исключить "{$a->user}" из курса "{$a->course}"?';
 $string['unenrolselfconfirm'] = 'Вы действительно хотите исключить себя из курса "{$a}"?';
-
+$string['registeredonly'] = 'Send invitiation only for registered users';
+$string['registeredonly_help'] = 'Invitation will be sent only to emails, which belongs to registered users.';
 $string['reminder'] = 'Напоминание: ';
+$string['usedefaultvalues'] = 'Use invitation with default values';
+$string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that you have received this message in error or are in need of
+                                               assistance, please contact:</span>
+                    <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
 $string['emailmsgtxt'] =
     'Инструкции:' . "\n" .
     '------------------------------------------------------------' . "\n" .

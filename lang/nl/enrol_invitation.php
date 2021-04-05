@@ -27,6 +27,7 @@
 
 $string['assignrole'] = 'Toegekende rol';
 $string['cannotsendmoreinvitationfortoday'] = 'De uitnodigingen zijn op voor vandaag, probeer het morgen.';
+$string['defaultinvitevalues'] = 'Default invitation values';
 $string['defaultrole'] = 'Standaard toegekende rol';
 $string['defaultrole_desc'] = 'Selecteer de rol die toegekend moet worden aan gebruikers tijdens de aanmelding op uitnodiging';
 $string['editenrolment'] = 'Bewerk aanmelding';
@@ -72,3 +73,9 @@ $string['status_desc'] = 'Sta docenten standaard toe om gebruikers uit te nodige
 $string['unenrol'] = 'Meld de gebruiker af';
 $string['unenroluser'] = 'Wilt u "{$a->user}" inderdaad afmelden voor de cursus "{$a->course}"?';
 $string['unenrolselfconfirm'] = 'Wilt u zich inderdaad afmelden voor de cursus "{$a}"?';
+$string['registeredonly'] = 'Send invitiation only for registered users';
+$string['registeredonly_help'] = 'Invitation will be sent only to emails, which belongs to registered users.';
+$string['usedefaultvalues'] = 'Use invitation with default values';
+$string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that you have received this message in error or are in need of
+                                               assistance, please contact:</span>
+                    <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';

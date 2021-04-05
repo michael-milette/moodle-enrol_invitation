@@ -26,7 +26,7 @@
 require('../../config.php');
 require($CFG->dirroot . '/enrol/invitation/locallib.php');
 
-require_login(null, false);
+//require_login(null, false);
 
 // Check if param token exist. Support checking for both old
 // "enrolinvitationtoken" token name and new "token" parameters.
@@ -77,7 +77,7 @@ $instance = $invitationmanager->get_invitation_instance($invitation->courseid);
 // First multiple check related to the invitation plugin config.
 // @Todo better handle exceptions here.
 
-if (isguestuser()) {
+if (!$invitation->userid||isguestuser()) {
     // Can not enrol guest!!
     echo $OUTPUT->header();
 
@@ -136,7 +136,8 @@ if (empty($confirm)) {
     echo $OUTPUT->footer();
     exit;
 } else {
-    if ($invitation->email != $USER->email) {
+    $user = (!isloggedin() or isguestuser())&&$invitation->userid ? $DB->get_record('user',array('id'=>$invitation->userid)):$USER;
+    if ($invitation->email != $user->email) {
 		\enrol_invitation\event\invitation_attempted::create([
 			'objectid' => $invitation->courseid,
 			'context'  => $context,
@@ -163,23 +164,17 @@ if (empty($confirm)) {
     // Set token as used and mark which user was assigned the token.
     $invitation->tokenused = true;
     $invitation->timeused = time();
-    $invitation->userid = $USER->id;
+    $invitation->userid = $user->id;
     $DB->update_record('enrol_invitation', $invitation);
 
     if (!empty($invitation->notify_inviter)) {
         // Send an email to the user who sent the invitation.
         $inviter = $DB->get_record('user', array('id' => $invitation->inviterid));
-
-        $contactuser = new stdClass();
-        $contactuser->email = $inviter->email;
-		$contactuser->id = $invitation->inviterid; // required by new version of email_to_user since moodle 2.6
-        $contactuser->firstname = $inviter->firstname;
-        $contactuser->lastname = $inviter->lastname;
-        $contactuser->maildisplay = true;
+        $inviter->maildisplay= true;
 
         $emailinfo = prepare_notice_object($invitation);
-        $emailinfo->userfullname = trim($USER->firstname . ' ' . $USER->lastname);
-        $emailinfo->useremail = $USER->email;
+        $emailinfo->userfullname = trim($user->firstname . ' ' . $user->lastname);
+        $emailinfo->useremail = $user->email;
         $courseenrolledusersurl = new moodle_url('/user/index.php',
                 array('id' => $invitation->courseid));
         $emailinfo->courseenrolledusersurl = $courseenrolledusersurl->out(false);
@@ -193,7 +188,7 @@ if (empty($confirm)) {
         $siteurl = new moodle_url('/');
         $emailinfo->siteurl = $siteurl->out(false);
 
-        email_to_user($contactuser, get_admin(),
+        email_to_user($inviter, get_admin(),
                 get_string('emailtitleuserenrolled', 'enrol_invitation', $emailinfo),
                 get_string('emailmessageuserenrolled', 'enrol_invitation', $emailinfo));
     }

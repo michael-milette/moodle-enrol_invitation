@@ -89,7 +89,8 @@ class invitation_form extends moodleform {
         $mform->setType('email', PARAM_TEXT);
         // Check for correct email formating later in validation() function.
         $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation'));
-
+        $this->_customdata['registeredonly']?$mform->addElement('static', 'email_registered', '', get_string('registeredonly_help', 'enrol_invitation')):null;
+       
         // Ssubject field.
         $mform->addElement('text', 'subject', get_string('subject', 'enrol_invitation'),
                 array('class' => 'form-invite-subject'));
@@ -208,6 +209,111 @@ class invitation_form extends moodleform {
             $record = $DB->get_record('role', array('id' => $roleid));
             $record->name = $rolename;  // User might have customised name.
             $retval[$record->archetype][] = $record;
+        }
+
+        return $retval;
+    }
+
+    /**
+     * Provides custom validation rules.
+     *  - Validating the email field here, rather than in definition, to allow
+     *    multiple email addresses to be specified.
+     *  - Validating that access end date is in the future.
+     *
+     * @param array $data
+     * @param array $files
+     *
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = array();
+        $delimiters = "/[;, \r\n]/";
+        $email_list = self::parse_dsv_emails($data['email'], $delimiters);
+
+        if (empty($email_list)) {
+            $errors['email'] = get_string('err_email', 'form');
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Parses a string containing delimiter seperated values for email addresses.
+     * Returns an empty array if an invalid email is found.
+     *
+     * @param string $emails           string of emails to be parsed
+     * @param string $delimiters       list of delimiters as regex
+     * @return array $parsed_emails    array of emails
+     */
+    public static function parse_dsv_emails($emails, $delimiters) {
+        $parsed_emails = array();
+        $emails = trim($emails);
+        if (preg_match($delimiters, $emails)) {
+            // Multiple email addresses specified.
+            $dsv_emails = preg_split($delimiters, $emails, null, PREG_SPLIT_NO_EMPTY);
+            foreach ($dsv_emails as $email_value) {
+                $email_value = trim($email_value);
+                if (!clean_param($email_value, PARAM_EMAIL)) {
+                    return array();
+                }
+                $parsed_emails[] = $email_value;
+            }
+        } else if (clean_param($emails, PARAM_EMAIL)) {
+            // Single email.
+            return (array)$emails;
+        } else {
+            return array();
+        }
+
+        return $parsed_emails;
+    }
+}
+
+class invitation_email_form extends moodleform {
+    /**
+     * The form definition.
+     */
+    public function definition() {
+        global $CFG, $DB, $USER;
+        $mform = & $this->_form;
+        // Get rid of "Collapse all" in Moodle 2.5+.
+        if (method_exists($mform, 'setDisableShortforms')) {
+            $mform->setDisableShortforms(true);
+        }
+        // Add some hidden fields.
+        $course = $this->_customdata['course'];
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
+        $mform->setDefault('courseid', $course->id);
+
+        // Email address field.
+        $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
+        $mform->addElement('textarea', 'email', get_string('emailaddressnumber', 'enrol_invitation'),
+                array('maxlength' => 1000, 'class' => 'form-invite-email', 'style' => 'resize: both;'));
+        $mform->addRule('email', null, 'required', null, 'client');
+        $mform->setType('email', PARAM_TEXT);
+        // Check for correct email formating later in validation() function.
+        $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation'));
+        $this->_customdata['registeredonly']?$mform->addElement('static', 'email_registered', '', get_string('registeredonly_help', 'enrol_invitation')):null;
+        $this->add_action_buttons(false, get_string('inviteusers', 'enrol_invitation'));
+    }
+
+    /**
+     * Overriding get_data, because we need to be able to handle daysexpire,
+     * which is not defined as a regular form element.
+     *
+     * @return object
+     */
+    public function get_data() {
+        $retval = parent::get_data();
+
+        // Check if form validated, and if user submitted daysexpire from POST.
+        if (!empty($retval) && isset($_POST['daysexpire'])) {
+            if (in_array($_POST['daysexpire'], self::$daysexpire_options)) {
+                // Cannot indicate to user a real error message, so just slightly
+                // ignore user setting.
+                $retval->daysexpire = $_POST['daysexpire'];
+            }
         }
 
         return $retval;

@@ -39,28 +39,26 @@ $string['event_invitation_viewed'] = 'Invitation Viewed';
 $string['reminder'] = 'Reminder: ';
 
 $string['emailmsgtxt'] =
-    'INSTRUCTIONS:' . "\n" .
-    '------------------------------------------------------------' . "\n" .
-    'You have been invited to access the site: {$a->fullname}. You will ' .
+    '<h2>{$a->fullname} invitation</h2><p>You have been invited to access the site: {$a->fullname}. You will ' .
     'need to log in to confirm your access to the site. Be advised that by ' .
     'clicking on the site access link provided in this ' .
-    'email you are acknowledging that:' . "\n" .
-    ' --you are the person to whom this email was addressed and for whom this' .
-    '   invitation is intended;' . "\n" .
-    ' --the link below will expire on ({$a->expiration}).' . "\n\n" .
-    'ACCESS LINK:' . "\n" .
-    '------------------------------------------------------------' . "\n" .
-    '{$a->inviteurl}' . "\n\n" .
-    'If you believe that you have received this message in error or are in need ' .
-    'of assistance, please contact: {$a->supportemail}.';
+    'email you are acknowledging that:</p>' .
+    '<ul><li>you are the person to whom this email was addressed and for whom this' .
+    '   invitation is intended;</li>'.
+    ' <li>the link below will expire on <b>{$a->expiration}</b>.</li>';
+    
+$string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that you have received this message in error or are in need of
+                                               assistance, please contact:</span>
+                    <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
 
 $string['instructormsg'] =
-    'MESSAGE FROM INSTRUCTOR:' . "\n" .
-    '------------------------------------------------------------' . "\n" .
-    '{$a}' . "\n\n";
+    '<h2>Message from instructor</h2>' . 
+    '{$a}';
 
 // Invite form strings.
 $string['assignrole'] = 'Assign role';
+$string['defaultinvitevalues'] = 'Default invitation values';
+$string['usedefaultvalues'] = 'Use invitation with default values';
 $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during invitation enrollments';
 $string['default_subject'] = 'Invitation for {$a}';
@@ -124,6 +122,8 @@ $string['noinvitationinstanceset'] = 'No invitation enrollment instance has been
 $string['nopermissiontosendinvitation'] = 'No permission to send invitation';
 $string['norole'] = 'Please choose a role.';
 $string['notify_inviter'] = 'Notify me at {$a->email} when invited users accept this invitation';
+$string['registeredonly'] = 'Send invitiation only for registered users';
+$string['registeredonly_help'] = 'Invitation will be sent only to emails, which belongs to registered users.';
 $string['header_role'] = 'What role do you want to assign to the invitee?';
 $string['email_clarification'] = 'You may specify multiple email addresses by separating
     them with semi-colons, commas, spaces, or new lines';

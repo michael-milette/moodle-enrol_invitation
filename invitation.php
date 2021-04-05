@@ -80,13 +80,28 @@ if ($inviteid) {
     }
 }
 
-$mform = new invitation_form(null, array('course' => $course, 'prefilled' => $prefilled),
+if($instance->customint1==1){
+        $mform = new invitation_email_form(null, array('course' => $course, 'prefilled' => $prefilled,'registeredonly'=>$instance->customint5),
         'post', '', array('class' => 'mform-invite'));
+}else{
+    $mform = new invitation_form(null, array('course' => $course, 'prefilled' => $prefilled,'registeredonly'=>$instance->customint5),
+        'post', '', array('class' => 'mform-invite'));
+}
+
 $mform->set_data($invitationmanager);
 
 $data = $mform->get_data();
-if ($data and confirm_sesskey()) {
 
+if($data&&$instance->customint1==1){
+        $data->role_group=array('roleid'=>$instance->customint2);
+        $data->subject=$instance->customchar1;
+        $data->message=$instance->customtext1;
+        $data->show_from_email=$instance->customint3;
+        $data->notify_inviter=$instance->customint4;
+}
+
+if ($data and confirm_sesskey()) {
+    $data->registeredonly=$instance->customint5;
     // Check for the invitation of multiple users.
     $delimiters = "/[;, \r\n]/";
     $email_list = invitation_form::parse_dsv_emails($data->email, $delimiters);
@@ -96,7 +111,6 @@ if ($data and confirm_sesskey()) {
         $data->email = $email;
         $invitationmanager->send_invitations($data);
     }
-
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
     $courseret = new single_button($courseurl, get_string('returntocourse',
                             'enrol_invitation'), 'get');
