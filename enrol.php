@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,12 +23,10 @@
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 require('../../config.php');
 require($CFG->dirroot . '/enrol/invitation/locallib.php');
 
 //require_login(null, false);
-
 // Check if param token exist. Support checking for both old
 // "enrolinvitationtoken" token name and new "token" parameters.
 $enrolinvitationtoken = optional_param('enrolinvitationtoken', null, PARAM_ALPHANUM);
@@ -43,14 +42,14 @@ $invitation = $DB->get_record('enrol_invitation',
 if (empty($invitation) or empty($invitation->courseid) or $invitation->timeexpiration < time()) {
     $courseid = empty($invitation->courseid) ? $SITE->id : $invitation->courseid;
 
-	\enrol_invitation\event\invitation_attempted::create([
-		'objectid' => $courseid,
-		'context'  => $PAGE->context,
-		'other'    => [
-			'courseid' => $courseid,
-			'errormsg' => 'expired'
-		]
-	])->trigger();
+    \enrol_invitation\event\invitation_attempted::create([
+        'objectid' => $courseid,
+        'context' => $PAGE->context,
+        'other' => [
+            'courseid' => $courseid,
+            'errormsg' => 'expired'
+        ]
+    ])->trigger();
 
     throw new moodle_exception('expiredtoken', 'enrol_invitation');
 }
@@ -62,7 +61,7 @@ $context = context_course::instance($course->id);
 // Set up page.
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/enrol/invitation/enrol.php',
-        array('token' => $enrolinvitationtoken)));
+                array('token' => $enrolinvitationtoken)));
 $PAGE->set_pagelayout('course');
 $PAGE->set_course($course);
 $pagetitle = get_string('invitation_acceptance_title', 'enrol_invitation');
@@ -77,7 +76,7 @@ $instance = $invitationmanager->get_invitation_instance($invitation->courseid);
 // First multiple check related to the invitation plugin config.
 // @Todo better handle exceptions here.
 
-if (!$invitation->userid||isguestuser()) {
+if (!$invitation->userid && isguestuser()) {
     // Can not enrol guest!!
     echo $OUTPUT->header();
 
@@ -85,11 +84,10 @@ if (!$invitation->userid||isguestuser()) {
     echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
     echo $OUTPUT->box_start('generalbox', 'notice');
-
     $notice_object = prepare_notice_object($invitation);
     echo get_string('loggedinnot', 'enrol_invitation', $notice_object);
     $loginbutton = new single_button(new moodle_url($CFG->wwwroot
-            . '/login/index.php'), get_string('login'));
+                    . '/login/index.php'), get_string('login'));
 
     echo $OUTPUT->render($loginbutton);
     echo $OUTPUT->box_end();
@@ -99,19 +97,19 @@ if (!$invitation->userid||isguestuser()) {
 
 // Have invitee confirm their acceptance of the site invitation.
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
-if (empty($confirm)) {
+if ($instance->customint6 == 1 && empty($confirm)) {
     echo $OUTPUT->header();
 
     // Print out a heading.
     echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
-	\enrol_invitation\event\invitation_viewed::create([
-		'objectid' => $course->id,
-		'context'  => context_course::instance($course->id),
-		'other'    => [
-			'courseid'   => $course->id
-		]
-	])->trigger();
+    \enrol_invitation\event\invitation_viewed::create([
+        'objectid' => $course->id,
+        'context' => context_course::instance($course->id),
+        'other' => [
+            'courseid' => $course->id
+        ]
+    ])->trigger();
 
     $accepturl = new moodle_url('/enrol/invitation/enrol.php',
             array('token' => $invitation->token, 'confirm' => true));
@@ -127,8 +125,8 @@ if (empty($confirm)) {
     // If invitation has "daysexpire" set, then give notice.
     if (!empty($invitation->daysexpire)) {
         $invitationacceptance .= html_writer::tag('p',
-                get_string('daysexpire_notice', 'enrol_invitation',
-                        $invitation->daysexpire));
+                        get_string('daysexpire_notice', 'enrol_invitation',
+                                $invitation->daysexpire));
     }
 
     echo $OUTPUT->confirm($invitationacceptance, $accept, $cancel);
@@ -136,63 +134,88 @@ if (empty($confirm)) {
     echo $OUTPUT->footer();
     exit;
 } else {
-    $user = (!isloggedin() or isguestuser())&&$invitation->userid ? $DB->get_record('user',array('id'=>$invitation->userid)):$USER;
+    $user = (!isloggedin() or isguestuser()) && $invitation->userid ? $DB->get_record('user', array('id' => $invitation->userid)) : $USER;
     if ($invitation->email != $user->email) {
-		\enrol_invitation\event\invitation_attempted::create([
-			'objectid' => $invitation->courseid,
-			'context'  => $context,
-			'other'    => [
-				'courseid' => $invitation->courseid,
-				'errormsg' => 'email does not match'
-			]
-		])->trigger();
+        \enrol_invitation\event\invitation_attempted::create([
+            'objectid' => $invitation->courseid,
+            'context' => $context,
+            'other' => [
+                'courseid' => $invitation->courseid,
+                'errormsg' => 'email does not match'
+            ]
+        ])->trigger();
     }
     // User confirmed, so add them.
     require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
-    $invitationmanager = new invitation_manager($invitation->courseid);
-    $invitationmanager->enroluser($invitation);
+     $invitationmanager = new invitation_manager($invitation->courseid);
+      $invitationmanager->enroluser($invitation);
 
-	\enrol_invitation\event\invitation_accepted::create([
-		'objectid' => $invitation->courseid,
-		'context'  => $context,
-		'other'    => [
-			'courseid' => $invitation->courseid,
-			'errormsg' => 'email does not match'
-		]
-	])->trigger();
+      \enrol_invitation\event\invitation_accepted::create([
+      'objectid' => $invitation->courseid,
+      'context'  => $context,
+      'other'    => [
+      'courseid' => $invitation->courseid,
+      'errormsg' => 'email does not match'
+      ]
+      ])->trigger();
 
-    // Set token as used and mark which user was assigned the token.
-    $invitation->tokenused = true;
-    $invitation->timeused = time();
-    $invitation->userid = $user->id;
-    $DB->update_record('enrol_invitation', $invitation);
+      // Set token as used and mark which user was assigned the token.
+      $invitation->tokenused = true;
+      $invitation->timeused = time();
+      $invitation->userid = $user->id;
+      $DB->update_record('enrol_invitation', $invitation);
 
-    if (!empty($invitation->notify_inviter)) {
-        // Send an email to the user who sent the invitation.
-        $inviter = $DB->get_record('user', array('id' => $invitation->inviterid));
-        $inviter->maildisplay= true;
+      if (!empty($invitation->notify_inviter)) {
+      // Send an email to the user who sent the invitation.
+      $inviter = $DB->get_record('user', array('id' => $invitation->inviterid));
+      $inviter->maildisplay= true;
 
-        $emailinfo = prepare_notice_object($invitation);
-        $emailinfo->userfullname = trim($user->firstname . ' ' . $user->lastname);
-        $emailinfo->useremail = $user->email;
-        $courseenrolledusersurl = new moodle_url('/user/index.php',
-                array('id' => $invitation->courseid));
-        $emailinfo->courseenrolledusersurl = $courseenrolledusersurl->out(false);
-        $invitehistoryurl = new moodle_url('/enrol/invitation/history.php',
-                array('courseid' => $invitation->courseid));
-        $emailinfo->invitehistoryurl = $invitehistoryurl->out(false);
+      $emailinfo = prepare_notice_object($invitation);
+      $emailinfo->userfullname = trim($user->firstname . ' ' . $user->lastname);
+      $emailinfo->useremail = $user->email;
+      $courseenrolledusersurl = new moodle_url('/user/index.php',
+      array('id' => $invitation->courseid));
+      $emailinfo->courseenrolledusersurl = $courseenrolledusersurl->out(false);
+      $invitehistoryurl = new moodle_url('/enrol/invitation/history.php',
+      array('courseid' => $invitation->courseid));
+      $emailinfo->invitehistoryurl = $invitehistoryurl->out(false);
 
-        $course = $DB->get_record('course', array('id' => $invitation->courseid));
-        $emailinfo->coursefullname = sprintf('%s: %s', $course->shortname, $course->fullname);
-        $emailinfo->sitename = $SITE->fullname;
-        $siteurl = new moodle_url('/');
-        $emailinfo->siteurl = $siteurl->out(false);
+      $course = $DB->get_record('course', array('id' => $invitation->courseid));
+      $emailinfo->coursefullname = sprintf('%s: %s', $course->shortname, $course->fullname);
+      $emailinfo->sitename = $SITE->fullname;
+      $siteurl = new moodle_url('/');
+      $emailinfo->siteurl = $siteurl->out(false);
 
-        email_to_user($inviter, get_admin(),
-                get_string('emailtitleuserenrolled', 'enrol_invitation', $emailinfo),
-                get_string('emailmessageuserenrolled', 'enrol_invitation', $emailinfo));
+      email_to_user($inviter, get_admin(),
+      get_string('emailtitleuserenrolled', 'enrol_invitation', $emailinfo),
+      get_string('emailmessageuserenrolled', 'enrol_invitation', $emailinfo));
+      } 
+
+    if ($instance->customint6 == 0&&(!isloggedin() or isguestuser()) ) {
+        echo $OUTPUT->header();
+
+        // Print out a heading.
+        echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
+
+        $SESSION->wantsurl = (string) new moodle_url('/course/view.php', array('id' => $invitation->courseid));
+
+        $loginbutton = new single_button(new moodle_url($CFG->wwwroot
+                    . '/login/index.php'), get_string('login'));
+        $cancel = new single_button(new moodle_url('/'),
+                get_string('close', 'enrol_invitation'), 'get');
+
+        $notice_object = prepare_notice_object($invitation);
+
+        $invitationacceptance = get_string('successenroled',
+                'enrol_invitation', $notice_object);
+
+
+        echo $OUTPUT->confirm($invitationacceptance, $loginbutton, $cancel);
+        echo $OUTPUT->footer();
+        exit;
+    } else {
+     
+        $courseurl = new moodle_url('/course/view.php', array('id' => $invitation->courseid));
+        redirect($courseurl);
     }
-
-    $courseurl = new moodle_url('/course/view.php', array('id' => $invitation->courseid));
-    redirect($courseurl);
 }

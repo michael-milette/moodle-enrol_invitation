@@ -39,7 +39,8 @@ $string['event_invitation_viewed'] = 'Invitation Viewed';
 $string['reminder'] = 'Reminder: ';
 
 $string['emailmsgtxt'] =
-    '<h2>{$a->fullname} invitation</h2><p>You have been invited to access the site: {$a->fullname}. You will ' .
+    '<h2>{$a->fullname} invitation</h2><p>You have been invited to access the site:<b>{$a->fullname}</b>. '.
+    'Course is available from <b>{$a->start}</b> to <b>{$a->end}</b> , on location <b>{$a->location}</b>. You will ' .
     'need to log in to confirm your access to the site. Be advised that by ' .
     'clicking on the site access link provided in this ' .
     'email you are acknowledging that:</p>' .
@@ -65,9 +66,10 @@ $string['default_subject'] = 'Invitation for {$a}';
 $string['editenrollment'] = 'Edit enrollment';
 $string['header_email'] = 'Who do you want to invite?';
 $string['emailaddressnumber'] = 'Email address';
+$string['close'] = 'Close';
 
 $string['notifymsg'] = 'Hello, I would like to inform you that user $a->username, with email $a->email has successful gained access to your course, $a->course';
-
+$string['successenroled'] = 'You have been successfully enrolled to the course {$a->coursefullname}';
 
 $string['emailtitleuserenrolled'] = '{$a->userfullname} has accepted invitation to {$a->coursefullname}.';
 $string['emailmessageuserenrolled'] = 'Hello,
@@ -133,7 +135,7 @@ $string['status_desc'] = 'Allow users to invite people to enroll into a course b
 $string['unenrol'] = 'Unenroll user';
 $string['unenroluser'] = 'Do you really want to unenroll "{$a->user}" from course "{$a->course}"?';
 $string['unenrolselfconfirm'] = 'Do you really want to unenroll yourself from course "{$a}"?';
-
+$string['enrolconfimation'] = 'Require student confirmation of enrloment';
 // After invite sent strings.
 $string['invitationsuccess'] = 'Invitation successfully sent';
 $string['revoke_invite_sucess'] = 'Invitation sucessfully revoked';

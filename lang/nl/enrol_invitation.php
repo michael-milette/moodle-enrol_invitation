@@ -79,3 +79,6 @@ $string['usedefaultvalues'] = 'Use invitation with default values';
 $string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that you have received this message in error or are in need of
                                                assistance, please contact:</span>
                     <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
+$string['enrolconfimation'] = 'Is required confirmation of enrolment?';
+$string['successenroled'] = 'You have been successfully enrolled to the course {$a}';
+$string['close'] = 'Close';

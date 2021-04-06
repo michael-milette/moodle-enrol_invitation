@@ -188,3 +188,6 @@ $string['about_hour'] = 'около часа';
 $string['about_x_hours'] = 'около {$a} часов';
 $string['a_day'] = '1 день';
 $string['x_days'] = '{$a} дней';
+$string['enrolconfimation'] = 'Is required confirmation of enrolment?';
+$string['successenroled'] = 'You have been successfully enrolled to the course {$a}';
+$string['close'] = 'Close';

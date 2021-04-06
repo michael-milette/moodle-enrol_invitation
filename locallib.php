@@ -164,17 +164,26 @@ class invitation_manager {
                 $invitation->show_from_email = empty($data->show_from_email) ? 0 : 1;
 
                 // Construct message: custom (if any) + template.
+
                 $message = '';
 
                 $message_params = new stdClass();
+                if ($location = $DB->get_record('course_format_options', array('courseid' => $course->id, 'format' => 'event', 'name' => 'location'))) {
+                    $message_params->location = $location->value;
+                }else{
+                    $message_params->location="";
+                }
                 $message_params->fullname = sprintf('%s: %s', $course->shortname, $course->fullname);
-                $message_params->expiration = date('d-m-Y', $invitation->timeexpiration);
+                $message_params->start = date('d-m-Y, h:i:s', $course->startdate);
+                $message_params->end = date('d-m-Y, h:i:s', $course->enddate);
+            
+                $message_params->expiration = date('d-m-Y, h:i:s', $invitation->timeexpiration);
                 $inviteurl = new moodle_url('/enrol/invitation/enrol.php',
                         array('token' => $token));
                 $inviteurl = $inviteurl->out(false);
 
                 $message_params->inviteurl = $inviteurl;
-                $message_params->supportemail= $CFG->supportemail;
+                $message_params->supportemail = $CFG->supportemail;
                 $message_params->supportemailtext = get_string('emailmsgunsubscribe', 'enrol_invitation', $message_params);
                 $message_params->acceptinvitation = get_string('invitationacceptancebutton', 'enrol_invitation');
                 $message .= get_string('emailmsgtxt', 'enrol_invitation', $message_params);
@@ -204,13 +213,13 @@ class invitation_manager {
                     $fromuser->middlename = '';
                     $fromuser->alternatename = '';
                 }
-                $userexits=false;
+                $userexits = false;
                 //check if user exists
                 if ($contactuser = $DB->get_record('user', array('email' => $invitation->email))) {
                     $contactuser->mailformat = 1;
                     $contactuser->maildisplay = true;
-                    $invitation->userid=$contactuser->id;
-                    $userexits=true;
+                    $invitation->userid = $contactuser->id;
+                    $userexits = true;
                 } else {
                     // Send invitation to the user.
                     $contactuser = new stdClass();
@@ -225,8 +234,8 @@ class invitation_manager {
                     $contactuser->middlename = '';
                     $contactuser->alternatename = '';
                 }
-                
-                if (!$resend&&($data->registeredonly!=1||$data->registeredonly=1&&$userexits==true)) {
+
+                if (!$resend && ($data->registeredonly != 1 || $data->registeredonly = 1 && $userexits == true)) {
                     $DB->insert_record('enrol_invitation', $invitation);
                     email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
                 }
@@ -241,7 +250,7 @@ class invitation_manager {
                             'courseid' => $course->id
                         ]
                     ])->trigger();
-                } elseif($data->registeredonly!=1||$data->registeredonly=1&&$userexits==true) {
+                } elseif ($data->registeredonly != 1 || $data->registeredonly = 1 && $userexits == true) {
                     \enrol_invitation\event\invitation_sent::create([
                         'objectid' => $course->id,
                         'context' => context_course::instance($course->id),
@@ -387,15 +396,15 @@ class invitation_manager {
             // before midnight.
             $timeend += 86399;
         }
-        if((!isloggedin() or isguestuser())&&$invitation->userid){
-            $user=$DB->get_record('user',array('id'=>$invitation->userid));
-        }elseif(isloggedin()){
-            $user=$USER;
-        }else{
-                $notice_object = prepare_notice_object($invitation);
-                throw new moodle_exception('loggedinnot', 'enrol_invitation',$notice_object);
+        if ((!isloggedin() or isguestuser()) && $invitation->userid) {
+            $user = $DB->get_record('user', array('id' => $invitation->userid));
+        } elseif (isloggedin()) {
+            $user = $USER;
+        } else {
+            $notice_object = prepare_notice_object($invitation);
+            throw new moodle_exception('loggedinnot', 'enrol_invitation', $notice_object);
         }
-        
+
         $enrol = enrol_get_plugin('invitation');
         $enrol->enrol_user($this->enrolinstance, $user->id,
                 $invitation->roleid, 0, $timeend);
@@ -805,7 +814,7 @@ class invitation_manager {
                                 <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
                                   <tbody>
                                     <tr>
-                                      <td><a href=\"{$messageparams->inviteurl}\">$messageparams->acceptinvitation</a></td>
+                                      <td><a href=\"{$messageparams->inviteurl}\" class=\"btn btn-primary\">{$messageparams->acceptinvitation}</a></td>
                                     </tr>
                                   </tbody>
                                 </table>

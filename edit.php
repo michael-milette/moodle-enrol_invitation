@@ -75,11 +75,12 @@ if ($mform->is_cancelled()) {
         property_exists($data, "customint3")? $instance->customint3 = $data->customint3:"";
         property_exists($data, "customint4")? $instance->customint4 = $data->customint4:"";
         $instance->customint5 = $data->customint5;
+        $instance->customint6 = $data->customint6;
         $instance->timemodified = time();
         $DB->update_record('enrol', $instance);
     } else {
         $fields = array('status' => $data->status,
-            'name' => $data->name,'customint5'=>$data->customint5);
+            'name' => $data->name,'customint5'=>$data->customint5,'customint6'=>$data->customint6);
         if ($data->customint1 == 1) {
             $fields['customint1'] = $data->customint1;
             $fields['customint2'] = $data->role_group['customint2'];

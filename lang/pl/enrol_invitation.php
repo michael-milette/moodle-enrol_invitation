@@ -192,3 +192,6 @@ $string['about_hour'] = 'about 1 hour';
 $string['about_x_hours'] = 'about {$a} hours';
 $string['a_day'] = '1 day';
 $string['x_days'] = '{$a} days';
+$string['enrolconfimation'] = 'Is required confirmation of enrolment?';
+$string['successenroled'] = 'You have been successfully enrolled to the course {$a}';
+$string['close'] = 'Close';

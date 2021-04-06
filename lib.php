@@ -156,7 +156,7 @@ class enrol_invitation_plugin extends enrol_plugin {
 
         if (has_capability('enrol/invitation:config', $context)) {
             $editlink = new moodle_url("/enrol/invitation/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('i/edit', get_string('edit'), 'core', array('class'=>'icon')));
+            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core', array('class'=>'icon')));
         }
 
         return $icons;
@@ -235,5 +235,16 @@ class enrol_invitation_plugin extends enrol_plugin {
                 $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
         }
         return $actions;
+    }
+    
+        /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/invitation:config', $context);
     }
 }

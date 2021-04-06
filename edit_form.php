@@ -61,14 +61,16 @@ class enrol_invitation_edit_form extends moodleform {
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
 
-                $optionsd = array(0 => get_string('no'),
-            1 => get_string('yes'));
-        $mform->addElement('select', 'customint5', get_string('registeredonly', 'enrol_invitation'), $optionsd);
-        $mform->setDefault('customint5', 0);
-        // Set roles.
-        $mform->addElement('header', 'header_default', get_string('defaultinvitevalues', 'enrol_invitation'));
         $optionsd = array(0 => get_string('no'),
             1 => get_string('yes'));
+        
+        $mform->addElement('select', 'customint5', get_string('registeredonly', 'enrol_invitation'), $optionsd);
+        $mform->setDefault('customint5', 0);
+
+        $mform->addElement('select', 'customint6', get_string('enrolconfimation', 'enrol_invitation'), $optionsd);
+        $mform->setDefault('customint6', 0);
+        // Set roles.
+        $mform->addElement('header', 'header_default', get_string('defaultinvitevalues', 'enrol_invitation'));
         $mform->addElement('select', 'customint1', get_string('usedefaultvalues', 'enrol_invitation'), $optionsd);
         $mform->setDefault('customint1', 0);
 
@@ -88,7 +90,7 @@ class enrol_invitation_edit_form extends moodleform {
                                 $role_string, $role->id);
             }
         }
-        
+
         $mform->setDefault('customint2', 3);
         $mform->addGroup($role_group, 'role_group', $label);
 
