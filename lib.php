@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,7 +26,6 @@
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -61,7 +61,7 @@ class enrol_invitation_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @return boolean              Returns true.
      */
-    public function allow_unenrol(stdClass $instance) {        
+    public function allow_unenrol(stdClass $instance) {
         return true;
     }
 
@@ -76,29 +76,29 @@ class enrol_invitation_plugin extends enrol_plugin {
         return true;
     }
 
-     /**
-      * Returns link to page which may be used to add new instance of enrolment
-      * plugin in course.
-      * 
-      * @param int $courseid
-      * @return moodle_url page url
-      */
+    /**
+     * Returns link to page which may be used to add new instance of enrolment
+     * plugin in course.
+     * 
+     * @param int $courseid
+     * @return moodle_url page url
+     */
     public function get_newinstance_link($courseid) {
         global $DB;
 
         $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context)
-                or !has_capability('enrol/invitation:config', $context)) {
+                or!has_capability('enrol/invitation:config', $context)) {
             return null;
         }
 
         // We don't want more than one instance per course.
-        if ($DB->record_exists('enrol', array('courseid'=>$courseid, 'enrol'=>'invitation'))) {
+        if ($DB->record_exists('enrol', array('courseid' => $courseid, 'enrol' => 'invitation'))) {
             return null;
         }
 
-        return new moodle_url('/enrol/invitation/edit.php', array('courseid'=>$courseid));
+        return new moodle_url('/enrol/invitation/edit.php', array('courseid' => $courseid));
     }
 
     /**
@@ -111,12 +111,44 @@ class enrol_invitation_plugin extends enrol_plugin {
     public function add_instance($course, array $fields = null) {
         global $DB;
 
-        if ($result = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'invitation'))) {
+        if ($result = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'invitation'))) {
             // Instance already exists, so just give id.
             return $result->id;
         }
 
         return parent::add_instance($course, $fields);
+    }
+
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        global $DB;
+
+        if ($instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => $this->get_name()))) {
+            $instanceid = $instance->id;
+        } else {
+            $instanceid = $this->add_instance($course, (array)$data);
+        }
+        $step->set_mapping('enrol', $oldid, $instanceid);
+    }
+
+    /**
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $oldinstancestatus
+     * @param int $userid
+     */
+    public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+        $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
     }
 
     /**
@@ -128,12 +160,12 @@ class enrol_invitation_plugin extends enrol_plugin {
      */
     public function add_course_navigation($instancesnode, stdClass $instance) {
         if ($instance->enrol !== 'invitation') {
-             throw new coding_exception('Invalid enrol instance type!');
+            throw new coding_exception('Invalid enrol instance type!');
         }
 
         $context = context_course::instance($instance->courseid);
         if (has_capability('enrol/invitation:config', $context)) {
-            $managelink = new moodle_url('/enrol/invitation/edit.php', array('courseid'=>$instance->courseid, 'id'=>$instance->id));
+            $managelink = new moodle_url('/enrol/invitation/edit.php', array('courseid' => $instance->courseid, 'id' => $instance->id));
             $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
         }
     }
@@ -155,8 +187,8 @@ class enrol_invitation_plugin extends enrol_plugin {
         $icons = array();
 
         if (has_capability('enrol/invitation:config', $context)) {
-            $editlink = new moodle_url("/enrol/invitation/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core', array('class'=>'icon')));
+            $editlink = new moodle_url("/enrol/invitation/edit.php", array('courseid' => $instance->courseid, 'id' => $instance->id));
+            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core', array('class' => 'icon')));
         }
 
         return $icons;
@@ -170,6 +202,7 @@ class enrol_invitation_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
+        
     }
 
     /**
@@ -202,7 +235,7 @@ class enrol_invitation_plugin extends enrol_plugin {
         $context = context_course::instance($instance->courseid);
         if (has_capability('enrol/invitation:enrol', $context)) {
             $invitelink = new moodle_url('/enrol/invitation/invitation.php',
-                array('courseid'=>$instance->courseid, 'id'=>$instance->id));
+                    array('courseid' => $instance->courseid, 'id' => $instance->id));
             $button = new enrol_user_button($invitelink,
                     get_string('inviteusers', 'enrol_invitation'), 'get');
             return $button;
@@ -227,17 +260,17 @@ class enrol_invitation_plugin extends enrol_plugin {
         if ($this->allow_manage($instance) && has_capability("enrol/invitation:manage", $context)) {
             $url = new moodle_url('/enrol/invitation/editenrolment.php', $params);
             $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url,
-                array('class'=>'editenrollink', 'rel'=>$ue->id));
+                    array('class' => 'editenrollink', 'rel' => $ue->id));
         }
         if ($this->allow_unenrol($instance) && has_capability("enrol/invitation:unenrol", $context)) {
             $url = new moodle_url('/enrol/invitation/unenroluser.php', $params);
             $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'),
-                $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
+                    $url, array('class' => 'unenrollink', 'rel' => $ue->id));
         }
         return $actions;
     }
-    
-        /**
+
+    /**
      * Is it possible to hide/show enrol instance via standard UI?
      *
      * @param stdClass $instance
@@ -247,4 +280,15 @@ class enrol_invitation_plugin extends enrol_plugin {
         $context = context_course::instance($instance->courseid);
         return has_capability('enrol/invitation:config', $context);
     }
+    
+    
+    /**
+     * Get icon mapping for font-awesome.
+     */
+    function enrol_invitation_get_fontawesome_icon_map() {
+        return [
+            'enrol_invitation:invite' => 'fa-plane',
+        ];
+    }
+
 }
