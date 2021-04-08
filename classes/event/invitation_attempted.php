@@ -24,20 +24,33 @@
 namespace enrol_invitation\event;
 defined('MOODLE_INTERNAL') || die();
 
-class invitation_attempted extends \core\event\base {
+class invitation_attempted extends invitation_base {
     protected function init() {
         $this->data['crud'] = 'u'; // c(reate), r(ead), u(pdate), d(elete)
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'enrol_invitation_invitation_manager';
     }
  
+            /**
+     * Create this event on a given invitation.
+     *
+     * @param object $invitation
+     * @return \core\event\base
+     */
+    public static function create_from_invitation($invitation) {
+        $event = self::create(self::base_data($invitation));
+        $event->set_invitation($invitation);
+        return $event;
+    }
     public static function get_name() {
         return get_string('event_invitation_attempted', 'enrol_invitation');
     }
  
     public function get_description() {
-        return "The user with id {$this->userid} attempted to accept an invitation " .
-	        "for course with id '{$this->other['courseid']}' with error '{$this->other['errormsg']}'";
+        $description= "The user with id {$this->userid} attempted to accept an invitation " .
+	        "for course with id '{$this->other['courseid']}'";
+        $description.= property_exists((object)$this->other, "errormsg")?" with error '{$this->other['errormsg']}":"";        
+        return $description;
     }
  
     public function get_url() {

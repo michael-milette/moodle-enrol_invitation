@@ -173,7 +173,7 @@ class invitation_manager {
                 }else{
                     $message_params->location="";
                 }
-                $message_params->fullname = sprintf('%s: %s', $course->shortname, $course->fullname);
+                $message_params->fullname = $course->fullname;
                 $message_params->start = date('d-m-Y, h:i:s', $course->startdate);
                 $message_params->end = date('d-m-Y, h:i:s', $course->enddate);
             
@@ -189,12 +189,14 @@ class invitation_manager {
                 $message .= get_string('emailmsgtxt', 'enrol_invitation', $message_params);
 
                 $message_params->message = $message;
-                $invitation->instructormessage = "";
+                $invitation->message = "";
+                $invitation->timeused = null;
+                 
                 if (!empty($data->message['text'])) {
                     $message .= get_string('instructormsg', 'enrol_invitation',
                             $data->message['text']);
 
-                    $invitation->instructormessage = get_string('instructormsg', 'enrol_invitation',
+                    $invitation->message = get_string('instructormsg', 'enrol_invitation',
                             $data->message['text']);
                 }
 
@@ -236,29 +238,15 @@ class invitation_manager {
                 }
 
                 if (!$resend && ($data->registeredonly != 1 || $data->registeredonly = 1 && $userexits == true)) {
-                    $DB->insert_record('enrol_invitation', $invitation);
+                    $invitation->id=$DB->insert_record('enrol_invitation', $invitation);
                     email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
                 }
 
                 // Log activity after sending the email.
                 if ($resend) {
-                    \enrol_invitation\event\invitation_updated::create([
-                        'objectid' => $course->id,
-                        'context' => context_course::instance($course->id),
-                        'other' => [
-                            'email' => $invitation->email,
-                            'courseid' => $course->id
-                        ]
-                    ])->trigger();
+                    \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
                 } elseif ($data->registeredonly != 1 || $data->registeredonly = 1 && $userexits == true) {
-                    \enrol_invitation\event\invitation_sent::create([
-                        'objectid' => $course->id,
-                        'context' => context_course::instance($course->id),
-                        'other' => [
-                            'email' => $invitation->email,
-                            'courseid' => $course->id
-                        ]
-                    ])->trigger();
+                    \enrol_invitation\event\invitation_sent::create_from_invitation($invitation)->trigger();
                 }
             }
         } else {
@@ -822,7 +810,7 @@ class invitation_manager {
                             </tr>
                           </tbody>
                         </table>
-                        {$invitation->instructormessage}
+                        {$invitation->message}
                       </td>
                     </tr>
                   </table>

@@ -24,11 +24,18 @@
 namespace enrol_invitation\event;
 defined('MOODLE_INTERNAL') || die();
 
-class invitation_sent extends \core\event\base {
-    protected function init() {
-        $this->data['crud'] = 'c'; // c(reate), r(ead), u(pdate), d(elete)
-        $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'enrol_invitation_invitation_manager';
+class invitation_sent extends invitation_base {
+ 
+        /**
+     * Create this event on a given invitation.
+     *
+     * @param object $invitation
+     * @return \core\event\base
+     */
+    public static function create_from_invitation($invitation) {
+        $event = self::create(self::base_data($invitation));
+        $event->set_invitation($invitation);
+        return $event;
     }
  
     public static function get_name() {
@@ -41,7 +48,7 @@ class invitation_sent extends \core\event\base {
     }
  
     public function get_url() {
-		return new \moodle_url('/enrol/invitation/invitation.php', array('courseid' => $this->other['courseid']));
+		return new \moodle_url('/enrol/invitation/invitation.php', array('courseid' => $this->invitation['courseid']));
     }
  
 }

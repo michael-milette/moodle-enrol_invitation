@@ -24,11 +24,23 @@
 namespace enrol_invitation\event;
 defined('MOODLE_INTERNAL') || die();
 
-class invitation_deleted extends \core\event\base {
+class invitation_deleted extends invitation_base {
     protected function init() {
         $this->data['crud'] = 'd'; // c(reate), r(ead), u(pdate), d(elete)
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'enrol_invitation_invitation_manager';
+    }
+    
+            /**
+     * Create this event on a given invitation.
+     *
+     * @param object $invitation
+     * @return \core\event\base
+     */
+    public static function create_from_invitation($invitation) {
+        $event = self::create(self::base_data($invitation));
+        $event->set_invitation($invitation);
+        return $event;
     }
  
     public static function get_name() {

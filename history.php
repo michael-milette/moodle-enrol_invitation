@@ -86,14 +86,7 @@ if (empty($invites)) {
             $DB->set_field('enrol_invitation', 'timeexpiration', time()-1,
                     array('courseid' => $curr_invite->courseid, 'id' => $curr_invite->id) );
 
-			\enrol_invitation\event\invitation_deleted::create([
-				'objectid' => $course->id,
-				'context'  => context_course::instance($course->id),
-				'other'    => [
-					'email'      => $curr_invite->email,
-					'courseid'   => $course->id
-				]
-			])->trigger();
+            \enrol_invitation\event\invitation_deleted::create_from_invitation($curr_invite)->trigger();
 
             echo $OUTPUT->notification(get_string('revoke_invite_sucess', 'enrol_invitation'), 'notifysuccess');
 
