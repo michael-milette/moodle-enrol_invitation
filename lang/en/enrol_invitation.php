@@ -67,7 +67,8 @@ $string['editenrollment'] = 'Edit enrollment';
 $string['header_email'] = 'Who do you want to invite?';
 $string['emailaddressnumber'] = 'Email address';
 $string['close'] = 'Close';
-
+$string['err_userlist'] = 'Or you must select users here.';
+$string['err_cohortlist'] = 'Or you must select cohots here.';
 $string['notifymsg'] = 'Hello, I would like to inform you that user $a->username, with email $a->email has successful gained access to your course, $a->course';
 $string['successenroled'] = 'You have been successfully enrolled to the course {$a->coursefullname}';
 

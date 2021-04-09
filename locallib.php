@@ -176,7 +176,7 @@ class invitation_manager {
                 $message_params->fullname = $course->fullname;
                 $message_params->start = date('d-m-Y, h:i:s', $course->startdate);
                 $message_params->end = date('d-m-Y, h:i:s', $course->enddate);
-            
+
                 $message_params->expiration = date('d-m-Y, h:i:s', $invitation->timeexpiration);
                 $inviteurl = new moodle_url('/enrol/invitation/enrol.php',
                         array('token' => $token));
@@ -191,7 +191,7 @@ class invitation_manager {
                 $message_params->message = $message;
                 $invitation->message = "";
                 $invitation->timeused = null;
-                 
+
                 if (!empty($data->message['text'])) {
                     $message .= get_string('instructormsg', 'enrol_invitation',
                             $data->message['text']);
@@ -237,16 +237,20 @@ class invitation_manager {
                     $contactuser->alternatename = '';
                 }
 
-                if (!$resend && ($data->registeredonly != 1 || $data->registeredonly = 1 && $userexits == true)) {
-                    $invitation->id=$DB->insert_record('enrol_invitation', $invitation);
+
+                if (!$resend && ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true)) {
+                    $invitation->id = $DB->insert_record('enrol_invitation', $invitation);
                     email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
                 }
-
+                $userexits ? "" : $invitation->userid = 0;
                 // Log activity after sending the email.
                 if ($resend) {
                     \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
-                } elseif ($data->registeredonly != 1 || $data->registeredonly = 1 && $userexits == true) {
+                } elseif ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true) {
                     \enrol_invitation\event\invitation_sent::create_from_invitation($invitation)->trigger();
+                } else {
+                    $invitation->id = 0;
+                    \enrol_invitation\event\invitation_notsent::create_from_invitation($invitation)->trigger();
                 }
             }
         } else {
@@ -608,7 +612,7 @@ class invitation_manager {
       }
         .btn a {
           background-color: #ffffff;
-          border: solid 1px #3498db;
+          border: 1px solid #3498db;
           border-radius: 5px;
           box-sizing: border-box;
           color: #3498db;
@@ -802,7 +806,7 @@ class invitation_manager {
                                 <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
                                   <tbody>
                                     <tr>
-                                      <td><a href=\"{$messageparams->inviteurl}\" class=\"btn btn-primary\">{$messageparams->acceptinvitation}</a></td>
+                                      <td class=\"btn\"><a href=\"{$messageparams->inviteurl}\" class=\"btn btn-primary\">{$messageparams->acceptinvitation}</a></td>
                                     </tr>
                                   </tbody>
                                 </table>

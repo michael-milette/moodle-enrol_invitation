@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,7 +22,6 @@
  * @copyright  2013 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page.
 }
@@ -37,6 +37,7 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class invitation_form extends moodleform {
+
     /**
      * The form definition.
      */
@@ -51,6 +52,9 @@ class invitation_form extends moodleform {
 
         // Add some hidden fields.
         $course = $this->_customdata['course'];
+         $course = $this->_customdata['course'];
+        $instance = $this->_customdata['instance'];
+        $context = $this->_customdata['context'];
         $prefilled = $this->_customdata['prefilled'];
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
@@ -64,19 +68,19 @@ class invitation_form extends moodleform {
         $role_group = array();
         foreach ($site_roles as $role_type => $roles) {
             $role_type_string = html_writer::tag('div',
-                    get_string('archetype'.$role_type, 'role'),
-                    array('class' => 'label badge-info'));
+                            get_string('archetype' . $role_type, 'role'),
+                            array('class' => 'label badge-info'));
             $role_group[] = &$mform->createElement('static', 'role_type_header',
-                    '', $role_type_string);
+                            '', $role_type_string);
 
             foreach ($roles as $role) {
                 $role_string = $this->format_role_string($role);
                 $role_group[] = &$mform->createElement('radio', 'roleid', '',
-                        $role_string, $role->id);
+                                $role_string, $role->id);
             }
         }
 
-		$mform->setDefault('roleid', 3);
+        $mform->setDefault('roleid', 3);
         $mform->addGroup($role_group, 'role_group', $label);
         $mform->addRule('role_group',
                 get_string('norole', 'enrol_invitation'), 'required');
@@ -85,12 +89,52 @@ class invitation_form extends moodleform {
         $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
         $mform->addElement('textarea', 'email', get_string('emailaddressnumber', 'enrol_invitation'),
                 array('maxlength' => 1000, 'class' => 'form-invite-email', 'style' => 'resize: both;'));
-        $mform->addRule('email', null, 'required', null, 'client');
         $mform->setType('email', PARAM_TEXT);
         // Check for correct email formating later in validation() function.
         $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation'));
-        $this->_customdata['registeredonly']?$mform->addElement('static', 'email_registered', '', get_string('registeredonly_help', 'enrol_invitation')):null;
-       
+        
+        $mform->setType('email', PARAM_TEXT);
+        $options = array(
+            'ajax' => 'enrol_manual/form-potential-user-selector',
+            'multiple' => true,
+            'courseid' => $course->id,
+            'enrolid' => $instance->id,
+            'perpage' => $CFG->maxusersperpage,
+            'userfields' => implode(',', get_extra_user_fields($context)),
+            'valuehtmlcallback' => function($value) {
+                global $OUTPUT;
+                if ($user = \core_user::get_user($value)) {
+                    $useroptiondata = [
+                        'fullname' => fullname($user),
+                        'idnumber' => $user->idnumber,
+                        'email' => $user->email,
+                        'suspended' => 0
+                    ];
+                    return $OUTPUT->render_from_template('enrol_manual/form-potential-user-selector', $useroptiondata);
+                }
+            }
+        );
+        $mform->addElement('autocomplete', 'userlist', get_string('selectusers', 'enrol_manual'), array(), $options);
+
+        if (has_capability('moodle/cohort:manage', $context) || has_capability('moodle/cohort:view', $context)) {
+            // Check to ensure there is at least one visible cohort before displaying the select box.
+            // Ideally it would be better to call external_api::call_external_function('core_cohort_search_cohorts')
+            // (which is used to populate the select box) instead of duplicating logic but there is an issue with globals
+            // being borked (in this case $PAGE) when combining the usage of fragments and call_external_function().
+            require_once($CFG->dirroot . '/cohort/lib.php');
+            $availablecohorts = cohort_get_cohorts($context->id, 0, 1, '');
+            $availablecohorts = $availablecohorts['cohorts'];
+            if (!($context instanceof context_system)) {
+                $availablecohorts = array_merge($availablecohorts,
+                        cohort_get_available_cohorts($context, COHORT_ALL, 0, 1, ''));
+            }
+            if (!empty($availablecohorts)) {
+                $options = ['contextid' => $context->id, 'multiple' => true];
+                $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
+            }
+        }       
+        $this->_customdata['registeredonly'] ? $mform->addElement('static', 'email_registered', '', get_string('registeredonly_help', 'enrol_invitation')) : null;
+
         // Ssubject field.
         $mform->addElement('text', 'subject', get_string('subject', 'enrol_invitation'),
                 array('class' => 'form-invite-subject'));
@@ -102,16 +146,16 @@ class invitation_form extends moodleform {
         $mform->setDefault('subject', $default_subject);
 
         // Message field.
-		//
+        //
         // $mform->addElement('textarea', 'message', get_string('message', 'enrol_invitation'),
         //         array('class' => 'form-invite-message'));
-        
-		$mform->addElement('editor', 'message', get_string('message', 'enrol_invitation'),
+
+        $mform->addElement('editor', 'message', get_string('message', 'enrol_invitation'),
                 array('class' => 'form-invite-message'));
-		$mform->setType('message', PARAM_RAW);
-		
-		
-		// Put help text to show what default message invitee gets.
+        $mform->setType('message', PARAM_RAW);
+
+
+        // Put help text to show what default message invitee gets.
         $mform->addHelpButton('message', 'message', 'enrol_invitation',
                 get_string('message_help_link', 'enrol_invitation'));
 
@@ -128,7 +172,7 @@ class invitation_form extends moodleform {
         $mform->setDefault('notify_inviter', 0);
 
         // Set defaults if the user is resending an invite that expired.
-        if ( !empty($prefilled) ) {
+        if (!empty($prefilled)) {
             $mform->setDefault('role_group[roleid]', $prefilled['roleid']);
             $mform->setDefault('email', $prefilled['email']);
             $mform->setDefault('subject', $prefilled['subject']);
@@ -170,7 +214,7 @@ class invitation_form extends moodleform {
      */
     private function format_role_string($role) {
         $role_string = html_writer::tag('span', $role->name . ':',
-                array('class' => 'role-name'));
+                        array('class' => 'role-name'));
 
         // Role description has a <hr> tag to separate out info for users
         // and admins.
@@ -260,16 +304,46 @@ class invitation_form extends moodleform {
             }
         } else if (clean_param($emails, PARAM_EMAIL)) {
             // Single email.
-            return (array)$emails;
+            return (array) $emails;
         } else {
             return array();
         }
 
         return $parsed_emails;
     }
+
+    public static function parse_userlist_emails($userlist) {
+        global $DB;
+        $parsed_emails = array();
+        if ($userlist) {
+            foreach ($userlist as $userid) {
+                $parsed_emails[] = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST)->email;
+            }
+        }
+        return $parsed_emails;
+    }
+
+    public static function parse_cohortlist_emails($cohortlist) {
+        global $DB;
+        $parsed_emails = array();
+        if ($cohortlist) {
+            foreach ($cohortlist as $cohortid) {
+                $sql = "SELECT cm.userid FROM {cohort_members} cm LEFT JOIN (user) u ON u.id = cm.userid " .
+                        "WHERE cm.cohortid = :cohortid";
+                $params['cohortid'] = $cohortid;
+                $members = $DB->get_fieldset_sql($sql, $params);
+                foreach ($members as $user) {
+                    $parsed_emails[] = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST)->email;
+                }
+            }
+        }
+        return $parsed_emails;
+    }
+
 }
 
 class invitation_email_form extends moodleform {
+
     /**
      * The form definition.
      */
@@ -282,6 +356,8 @@ class invitation_email_form extends moodleform {
         }
         // Add some hidden fields.
         $course = $this->_customdata['course'];
+        $instance = $this->_customdata['instance'];
+        $context = $this->_customdata['context'];
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
         $mform->setDefault('courseid', $course->id);
@@ -290,11 +366,51 @@ class invitation_email_form extends moodleform {
         $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
         $mform->addElement('textarea', 'email', get_string('emailaddressnumber', 'enrol_invitation'),
                 array('maxlength' => 1000, 'class' => 'form-invite-email', 'style' => 'resize: both;'));
-        $mform->addRule('email', null, 'required', null, 'client');
-        $mform->setType('email', PARAM_TEXT);
-        // Check for correct email formating later in validation() function.
+        //$mform->addRule('email', null, 'required', null, 'client');
         $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation'));
-        $this->_customdata['registeredonly']?$mform->addElement('static', 'email_registered', '', get_string('registeredonly_help', 'enrol_invitation')):null;
+        
+        $mform->setType('email', PARAM_TEXT);
+        $options = array(
+            'ajax' => 'enrol_manual/form-potential-user-selector',
+            'multiple' => true,
+            'courseid' => $course->id,
+            'enrolid' => $instance->id,
+            'perpage' => $CFG->maxusersperpage,
+            'userfields' => implode(',', get_extra_user_fields($context)),
+            'valuehtmlcallback' => function($value) {
+                global $OUTPUT;
+                if ($user = \core_user::get_user($value)) {
+                    $useroptiondata = [
+                        'fullname' => fullname($user),
+                        'idnumber' => $user->idnumber,
+                        'email' => $user->email,
+                        'suspended' => 0
+                    ];
+                    return $OUTPUT->render_from_template('enrol_manual/form-potential-user-selector', $useroptiondata);
+                }
+            }
+        );
+        $mform->addElement('autocomplete', 'userlist', get_string('selectusers', 'enrol_manual'), array(), $options);
+
+        if (has_capability('moodle/cohort:manage', $context) || has_capability('moodle/cohort:view', $context)) {
+            // Check to ensure there is at least one visible cohort before displaying the select box.
+            // Ideally it would be better to call external_api::call_external_function('core_cohort_search_cohorts')
+            // (which is used to populate the select box) instead of duplicating logic but there is an issue with globals
+            // being borked (in this case $PAGE) when combining the usage of fragments and call_external_function().
+            require_once($CFG->dirroot . '/cohort/lib.php');
+            $availablecohorts = cohort_get_cohorts($context->id, 0, 1, '');
+            $availablecohorts = $availablecohorts['cohorts'];
+            if (!($context instanceof context_system)) {
+                $availablecohorts = array_merge($availablecohorts,
+                        cohort_get_available_cohorts($context, COHORT_ALL, 0, 1, ''));
+            }
+            if (!empty($availablecohorts)) {
+                $options = ['contextid' => $context->id, 'multiple' => true];
+                $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
+            }
+        }
+        // Check for correct email formating later in validation() function.
+        $this->_customdata['registeredonly'] ? $mform->addElement('static', 'email_registered', '', get_string('registeredonly_help', 'enrol_invitation')) : null;
         $this->add_action_buttons(false, get_string('inviteusers', 'enrol_invitation'));
     }
 
@@ -335,8 +451,10 @@ class invitation_email_form extends moodleform {
         $delimiters = "/[;, \r\n]/";
         $email_list = self::parse_dsv_emails($data['email'], $delimiters);
 
-        if (empty($email_list)) {
+        if (empty($email_list) && empty($data['userlist']) && empty($data['cohortlist'])) {
             $errors['email'] = get_string('err_email', 'form');
+            $errors['userlist'] = get_string('err_userlist', 'enrol_invitation');
+            $errors['cohortlist'] = get_string('err_cohortlist', 'enrol_invitation');
         }
 
         return $errors;
@@ -365,11 +483,12 @@ class invitation_email_form extends moodleform {
             }
         } else if (clean_param($emails, PARAM_EMAIL)) {
             // Single email.
-            return (array)$emails;
+            return (array) $emails;
         } else {
             return array();
         }
 
         return $parsed_emails;
     }
+
 }
