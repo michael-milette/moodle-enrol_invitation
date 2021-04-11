@@ -72,8 +72,8 @@ if ($mform->is_cancelled()) {
         $instance->customint2 = $data->role_group['customint2'];
         $instance->customtext1 = $data->customtext1['text'];
         $instance->customchar1 = $data->customchar1;
-        property_exists($data, "customint3")? $instance->customint3 = $data->customint3:"";
-        property_exists($data, "customint4")? $instance->customint4 = $data->customint4:"";
+        $instance->customint3 = property_exists($data, "customint3")? $data->customint3:0;
+        $instance->customint4 = property_exists($data, "customint4")? $data->customint4:0;
         $instance->customint5 = $data->customint5;
         $instance->customint6 = $data->customint6;
         $instance->timemodified = time();
