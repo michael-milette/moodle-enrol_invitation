@@ -52,7 +52,7 @@ class invitation_form extends moodleform {
 
         // Add some hidden fields.
         $course = $this->_customdata['course'];
-         $course = $this->_customdata['course'];
+        $course = $this->_customdata['course'];
         $instance = $this->_customdata['instance'];
         $context = $this->_customdata['context'];
         $prefilled = $this->_customdata['prefilled'];
@@ -92,7 +92,7 @@ class invitation_form extends moodleform {
         $mform->setType('email', PARAM_TEXT);
         // Check for correct email formating later in validation() function.
         $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation'));
-        
+
         $mform->setType('email', PARAM_TEXT);
         $options = array(
             'ajax' => 'enrol_manual/form-potential-user-selector',
@@ -132,7 +132,7 @@ class invitation_form extends moodleform {
                 $options = ['contextid' => $context->id, 'multiple' => true];
                 $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
             }
-        }       
+        }
         $this->_customdata['registeredonly'] ? $mform->addElement('static', 'email_registered', '', get_string('registeredonly_help', 'enrol_invitation')) : null;
 
         // Ssubject field.
@@ -323,17 +323,19 @@ class invitation_form extends moodleform {
         return $parsed_emails;
     }
 
-    public static function parse_cohortlist_emails($cohortlist) {
+    public static function parse_cohortlist_emails($cohortlist,$course) {
         global $DB;
         $parsed_emails = array();
         if ($cohortlist) {
             foreach ($cohortlist as $cohortid) {
-                $sql = "SELECT cm.userid FROM {cohort_members} cm LEFT JOIN (user) u ON u.id = cm.userid " .
-                        "WHERE cm.cohortid = :cohortid";
+                $context = context_course::instance($course->id);
+                list($esql, $params) = get_enrolled_sql($context);
+                $sql = "SELECT cm.userid FROM {cohort_members} cm LEFT JOIN ($esql) u ON u.id = cm.userid " .
+                        "WHERE cm.cohortid = :cohortid AND u.id IS NULL";
                 $params['cohortid'] = $cohortid;
                 $members = $DB->get_fieldset_sql($sql, $params);
                 foreach ($members as $user) {
-                    $parsed_emails[] = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST)->email;
+                    $parsed_emails[] = $DB->get_record('user', array('id' => $user), '*', MUST_EXIST)->email;
                 }
             }
         }
@@ -368,7 +370,7 @@ class invitation_email_form extends moodleform {
                 array('maxlength' => 1000, 'class' => 'form-invite-email', 'style' => 'resize: both;'));
         //$mform->addRule('email', null, 'required', null, 'client');
         $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation'));
-        
+
         $mform->setType('email', PARAM_TEXT);
         $options = array(
             'ajax' => 'enrol_manual/form-potential-user-selector',

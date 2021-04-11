@@ -243,7 +243,7 @@ class invitation_manager {
                     $invitation->id = $DB->insert_record('enrol_invitation', $invitation);
                     email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
                 }
-                $userexits ? "" : $invitation->userid = 0;
+                $userexits ? "" : $invitation->userid = -1;
                 // Log activity after sending the email.
                 if ($resend) {
                     \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
