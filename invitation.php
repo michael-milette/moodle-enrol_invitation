@@ -108,7 +108,6 @@ if ($data and confirm_sesskey()) {
     $email_list = invitation_form::parse_dsv_emails($data->email, $delimiters);
     $userlistmails=invitation_form::parse_userlist_emails($data->userlist);
     $cohortmails=invitation_form::parse_cohortlist_emails($data->cohortlist,$course);
-    print_object($cohortmails);
     $email_list=array_merge($email_list, $userlistmails,$cohortmails);  
     $email_list = array_unique($email_list);
 
