@@ -206,6 +206,7 @@ class invitation_manager {
                 $fromuser = $USER;
                 if (empty($invitation->show_from_email)) {
                     $fromuser = new stdClass();
+                    $fromuser->id = -1; // required by new version of email_to_user since moodle 2.6
                     $fromuser->email = $CFG->supportemail;
                     $fromuser->firstname = '';
                     $fromuser->lastname = $SITE->fullname;
