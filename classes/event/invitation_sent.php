@@ -48,7 +48,7 @@ class invitation_sent extends invitation_base {
     }
  
     public function get_url() {
-		return new \moodle_url('/enrol/invitation/invitation.php', array('courseid' => $this->invitation['courseid']));
+		return new \moodle_url('/enrol/invitation/invitation.php', array('courseid' => $this->other['courseid']));
     }
  
 }

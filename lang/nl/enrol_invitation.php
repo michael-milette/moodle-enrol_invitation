@@ -32,6 +32,7 @@ $string['defaultrole'] = 'Standaard toegekende rol';
 $string['defaultrole_desc'] = 'Selecteer de rol die toegekend moet worden aan gebruikers tijdens de aanmelding op uitnodiging';
 $string['editenrolment'] = 'Bewerk aanmelding';
 $string['emailaddressnumber'] = 'Email adres {$a}';
+$string['fromuserconfig'] = 'Default invitation from user';
 $string['emailmessageinvitation'] = '{$a->managername} heeft je uitgenodigd om deel te nemen aan {$a->fullname}. 
 
 Log in op {$a->siteurl} en gebruik daarna deze link: {$a->enrolurl}

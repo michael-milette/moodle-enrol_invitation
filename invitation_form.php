@@ -367,9 +367,10 @@ class invitation_email_form extends moodleform {
         // Email address field.
         $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
         $mform->addElement('textarea', 'email', get_string('emailaddressnumber', 'enrol_invitation'),
-                array('maxlength' => 1000, 'class' => 'form-invite-email', 'style' => 'resize: both;'));
+                array('maxlength' => 1000, 'rows' => '5','cols'=>65));
         //$mform->addRule('email', null, 'required', null, 'client');
-        $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation'));
+        $registeredonly= $this->_customdata['registeredonly'] ? "<br />".get_string('registeredonly_help', 'enrol_invitation') : '';
+        $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation').$registeredonly);
 
         $mform->setType('email', PARAM_TEXT);
         $options = array(
@@ -412,7 +413,6 @@ class invitation_email_form extends moodleform {
             }
         }
         // Check for correct email formating later in validation() function.
-        $this->_customdata['registeredonly'] ? $mform->addElement('static', 'email_registered', '', get_string('registeredonly_help', 'enrol_invitation')) : null;
         $this->add_action_buttons(false, get_string('inviteusers', 'enrol_invitation'));
     }
 

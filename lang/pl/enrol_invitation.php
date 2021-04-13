@@ -29,7 +29,7 @@ $string['pluginname_desc'] = 'Moduł Zaproszenie umożliwia wysyłanie zaprosze�
 
 // Email message strings.
 $string['reminder'] = 'Przypomnienie: ';
-
+$string['fromuserconfig'] = 'Default invitation from user';
 $string['emailmsgtxt'] =
     '<h2>Dostęp do szkolenia:</h2>' .
     '<hr />' . 

@@ -32,6 +32,7 @@ $string['defaultrole'] = 'Роль по умолчанию';
 $string['defaultrole_desc'] = 'Выберите роль, которая должна быть назначена пользователю во время приглашения';
 $string['editenrolment'] = 'Редактировать способ записи на курс';
 #obsolete $string['emailaddressnumber'] = 'Email  {$a}';
+$string['fromuserconfig'] = 'Default invitation from user';
 $string['emailmessageinvitation'] = '{$a->managername} приглашает Вас присоединиться к курсу {$a->fullname}.
 
 Для этого просто перейдите по данной ссылке: {$a->enrolurl}

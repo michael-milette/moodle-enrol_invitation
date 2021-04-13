@@ -116,7 +116,6 @@ class invitation_manager {
 
             // Get course record, to be used later.
             $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
-
             if (!empty($data->email)) {
 
                 // Create a new token only if we are not resending an active invite.
@@ -205,16 +204,10 @@ class invitation_manager {
                 // Change FROM to be $CFG->supportemail if user has show_from_email off.
                 $fromuser = $USER;
                 if (empty($invitation->show_from_email)) {
-                    $fromuser = new stdClass();
-                    $fromuser->id = -1; // required by new version of email_to_user since moodle 2.6
+                    $fromuser = $DB->get_record('user',array('id'=>get_config('enrol_invitation', 'fromuser')));
                     $fromuser->email = $CFG->supportemail;
-                    $fromuser->firstname = '';
-                    $fromuser->lastname = $SITE->fullname;
                     $fromuser->maildisplay = true;
-                    $fromuser->firstnamephonetic = '';
-                    $fromuser->lastnamephonetic = '';
-                    $fromuser->middlename = '';
-                    $fromuser->alternatename = '';
+                    $fromuser->sender=$USER;
                 }
                 $userexits = false;
                 //check if user exists

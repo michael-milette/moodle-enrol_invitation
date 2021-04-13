@@ -97,6 +97,7 @@ $string['inviteexpiration'] = 'Invitation expiration';
 $string['inviteexpiration_desc'] = 'Length of time that an invitation is valid (in seconds). Default is 2 weeks.';
 
 $string['show_from_email'] = 'Allow invited user to contact me at {$a->email} (your address will be on the "FROM" field. If not selected, the "FROM" field will be {$a->supportemail})';
+$string['fromuserconfig'] = 'Default invitation from user';
 $string['inviteusers'] = 'Invite user';
 $string['maxinviteerror'] = 'It must be a number.';
 $string['maxinviteperday'] = 'Maximum invitation per day';
