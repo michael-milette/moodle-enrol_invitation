@@ -169,8 +169,8 @@ class invitation_manager {
                 $message_params = new stdClass();
                 if ($location = $DB->get_record('course_format_options', array('courseid' => $course->id, 'format' => 'event', 'name' => 'location'))) {
                     $message_params->location = $location->value;
-                }else{
-                    $message_params->location="";
+                } else {
+                    $message_params->location = "";
                 }
                 $message_params->fullname = $course->fullname;
                 $message_params->start = date('d-m-Y, h:i:s', $course->startdate);
@@ -204,10 +204,10 @@ class invitation_manager {
                 // Change FROM to be $CFG->supportemail if user has show_from_email off.
                 $fromuser = $USER;
                 if (empty($invitation->show_from_email)) {
-                    $fromuser = $DB->get_record('user',array('id'=>2));
+                    $fromuser = $DB->get_record('user', array('id' => 2));
                     $fromuser->email = $CFG->supportemail;
                     $fromuser->maildisplay = true;
-                    $fromuser->sender=$USER;
+                    $fromuser->sender = $USER;
                 }
                 $userexits = false;
                 //check if user exists
@@ -231,20 +231,21 @@ class invitation_manager {
                     $contactuser->alternatename = '';
                 }
 
-
-                if (!$resend && ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true)) {
-                    $invitation->id = $DB->insert_record('enrol_invitation', $invitation);
-                    email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
-                }
-                $userexits ? "" : $invitation->userid = -1;
-                // Log activity after sending the email.
-                if ($resend) {
-                    \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
-                } elseif ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true) {
-                    \enrol_invitation\event\invitation_sent::create_from_invitation($invitation)->trigger();
-                } else {
-                    $invitation->id = 0;
-                    \enrol_invitation\event\invitation_notsent::create_from_invitation($invitation)->trigger();
+                if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser) || $userexits == false) {
+                    if (!$resend && ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true)) {
+                        $invitation->id = $DB->insert_record('enrol_invitation', $invitation);
+                        email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
+                    }
+                    $userexits ? "" : $invitation->userid = -1;
+                    // Log activity after sending the email.
+                    if ($resend) {
+                        \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
+                    } elseif ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true) {
+                        \enrol_invitation\event\invitation_sent::create_from_invitation($invitation)->trigger();
+                    } else {
+                        $invitation->id = 0;
+                        \enrol_invitation\event\invitation_notsent::create_from_invitation($invitation)->trigger();
+                    }
                 }
             }
         } else {
