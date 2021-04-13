@@ -204,7 +204,7 @@ class invitation_manager {
                 // Change FROM to be $CFG->supportemail if user has show_from_email off.
                 $fromuser = $USER;
                 if (empty($invitation->show_from_email)) {
-                    $fromuser = $DB->get_record('user',array('id'=>get_config('enrol_invitation', 'fromuser')));
+                    $fromuser = $DB->get_record('user',array('id'=>2));
                     $fromuser->email = $CFG->supportemail;
                     $fromuser->maildisplay = true;
                     $fromuser->sender=$USER;

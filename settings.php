@@ -42,7 +42,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('enrol_invitation/inviteexpiration',
         get_string('inviteexpiration', 'enrol_invitation'), get_string('inviteexpiration_desc', 'enrol_invitation'), 1209600, PARAM_INT));
     
-       
+      /* 
         list($sort, $sortparams) = users_order_by_sql('u');
         if (!empty($sortparams)) {
             throw new coding_exception('users_order_by_sql returned some query parameters. ' .
@@ -63,5 +63,5 @@ if ($ADMIN->fulltree) {
             }
         }
         
-     $settings->add(new admin_setting_configselect_autocomplete('enrol_invitation/fromuser', new lang_string('fromuserconfig', 'enrol_invitation'), new lang_string('fromuserconfig', 'enrol_invitation'), 2, $choices));
+     $settings->add(new admin_setting_configselect_autocomplete('enrol_invitation/fromuser', new lang_string('fromuserconfig', 'enrol_invitation'), new lang_string('fromuserconfig', 'enrol_invitation'), 2, $choices));*/
 }
