@@ -173,10 +173,10 @@ class invitation_manager {
                     $message_params->location = "";
                 }
                 $message_params->fullname = $course->fullname;
-                $message_params->start = date('d-m-Y, h:i:s', $course->startdate);
-                $message_params->end = date('d-m-Y, h:i:s', $course->enddate);
+                $message_params->start = userdate($course->startdate, "%d-%m-%Y %I:%M %p");
+                $message_params->end = userdate($course->enddate,"%d-%m-%Y %I:%M %p");
 
-                $message_params->expiration = date('d-m-Y, h:i:s', $invitation->timeexpiration);
+                $message_params->expiration = userdate($invitation->timeexpiration, "%d-%m-%Y %I:%M %p");
                 $inviteurl = new moodle_url('/enrol/invitation/enrol.php',
                         array('token' => $token));
                 $inviteurl = $inviteurl->out(false);

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -69,25 +68,25 @@ if ($mform->is_cancelled()) {
         $instance->status = $data->status;
         $instance->name = $data->name;
         $instance->customint1 = $data->customint1;
-        $instance->customint2 = $data->role_group['customint2'];
+        $instance->customint2 = property_exists($data, "role_group") ? $data->role_group['customint2'] : 5;
         $instance->customtext1 = $data->customtext1['text'];
         $instance->customchar1 = $data->customchar1;
-        $instance->customint3 = property_exists($data, "customint3")? $data->customint3:0;
-        $instance->customint4 = property_exists($data, "customint4")? $data->customint4:0;
+        $instance->customint3 = property_exists($data, "customint3") ? $data->customint3 : 0;
+        $instance->customint4 = property_exists($data, "customint4") ? $data->customint4 : 0;
         $instance->customint5 = $data->customint5;
         $instance->customint6 = $data->customint6;
         $instance->timemodified = time();
         $DB->update_record('enrol', $instance);
     } else {
         $fields = array('status' => $data->status,
-            'name' => $data->name,'customint5'=>$data->customint5,'customint6'=>$data->customint6);
+            'name' => $data->name, 'customint5' => $data->customint5, 'customint6' => $data->customint6);
         if ($data->customint1 == 1) {
             $fields['customint1'] = $data->customint1;
-            $fields['customint2'] = $data->role_group['customint2'];
+            $fields['customint2'] = property_exists($data, "role_group") ? $data->role_group['customint2'] : 5;
             $fields['customtext1'] = $data->customtext1['text'];
             $fields['customchar1'] = $data->customchar1;
-            $fields['customint3'] = $data->customint3;
-            $fields['customint4'] = $data->customint4;
+            $fields['customint3'] = property_exists($data, "customint3") ? $data->customint3 : 0;
+            $fields['customint4'] = property_exists($data, "customint4") ? $data->customint4 : 0;
         }
 
         $plugin->add_instance($course, $fields);

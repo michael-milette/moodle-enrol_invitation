@@ -41,8 +41,10 @@ $invitation = $DB->get_record('enrol_invitation',
 // If token is valid, enrol the user into the course.
 if (empty($invitation) or empty($invitation->courseid) or $invitation->timeexpiration < time()) {
     $courseid = empty($invitation->courseid) ? $SITE->id : $invitation->courseid;
-    $invitation->errormsg = 'expired';
-    \enrol_invitation\event\invitation_attempted::create_from_invitation($invitation)->trigger();
+    $invitationn = $DB->get_record('enrol_invitation',
+            array('token' => $enrolinvitationtoken));
+    $invitationn->errormsg = 'expired';
+    \enrol_invitation\event\invitation_attempted::create_from_invitation($invitationn)->trigger();
     throw new moodle_exception('expiredtoken', 'enrol_invitation');
 }
 
@@ -120,30 +122,30 @@ if ($instance->customint6 == 1 && empty($confirm)) {
     echo $OUTPUT->footer();
     exit;
 } else {
-    
-    
+
+
     $user = (!isloggedin() or isguestuser()) && $invitation->userid ? $DB->get_record('user', array('id' => $invitation->userid)) : $USER;
-   
+
 
     if ($invitation->email != $user->email) {
-        (!isloggedin() or isguestuser()) && $invitation->userid ? $notlogged="and wasn't logged in.":$notlogged="";
-        $invitation->errormsg='email does not match'.$notlogged;
-         \enrol_invitation\event\invitation_attempted::create_from_invitation($invitation)->trigger();
+        (!isloggedin() or isguestuser()) && $invitation->userid ? $notlogged = "and wasn't logged in." : $notlogged = "";
+        $invitation->errormsg = 'email does not match' . $notlogged;
+        \enrol_invitation\event\invitation_attempted::create_from_invitation($invitation)->trigger();
     }
-    
-    (!isloggedin() or isguestuser()) && $invitation->userid ? (property_exists($invitation, "errormsg")?$invitation->errormsg.="and wasn't logged in.":$invitation->errormsg="and wasn't logged in."):null;
-   
+
+    (!isloggedin() or isguestuser()) && $invitation->userid ? (property_exists($invitation, "errormsg") ? $invitation->errormsg .= "and wasn't logged in." : $invitation->errormsg = "and wasn't logged in.") : null;
+
     // User confirmed, so add them.
     require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
     $invitationmanager = new invitation_manager($invitation->courseid);
     $invitationmanager->enroluser($invitation);
-    
-   
+
+
 
     // Set token as used and mark which user was assigned the token.
     $invitation->tokenused = true;
     $invitation->timeused = time();
-    $invitation->userid = $user->id; 
+    $invitation->userid = $user->id;
     \enrol_invitation\event\invitation_accepted::create_from_invitation($invitation)->trigger();
     $DB->update_record('enrol_invitation', $invitation);
 

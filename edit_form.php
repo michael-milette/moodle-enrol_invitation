@@ -63,7 +63,7 @@ class enrol_invitation_edit_form extends moodleform {
 
         $optionsd = array(0 => get_string('no'),
             1 => get_string('yes'));
-        
+
         $mform->addElement('select', 'customint5', get_string('registeredonly', 'enrol_invitation'), $optionsd);
         $mform->setDefault('customint5', 0);
 
@@ -90,10 +90,8 @@ class enrol_invitation_edit_form extends moodleform {
                                 $role_string, $role->id);
             }
         }
-
         $mform->setDefault('customint2', 3);
         $mform->addGroup($role_group, 'role_group', $label);
-
         // Ssubject field.
         $mform->addElement('text', 'customchar1', get_string('subject', 'enrol_invitation'),
                 array('class' => 'form-invite-subject'));
@@ -124,8 +122,10 @@ class enrol_invitation_edit_form extends moodleform {
         $temp->supportemail = $CFG->supportemail;
         $mform->addElement('checkbox', 'customint3', '',
                 get_string('show_from_email', 'enrol_invitation', $temp));
+        $mform->setDefault('customint3', 0);
         $mform->addElement('checkbox', 'customint4', '',
                 get_string('notify_inviter', 'enrol_invitation', $temp));
+        $mform->setDefault('customint4', 0);
         $this->add_action_buttons(true, ($instance->id ? null : get_string('addinstance', 'enrol')));
 
         $mform->disabledIf('role_group', 'customint1', 'eq', 0);
@@ -186,6 +186,32 @@ class enrol_invitation_edit_form extends moodleform {
         }
 
         return $retval;
+    }
+
+    /**
+     * Form validation.
+     *
+     * @param array $data
+     * @param array $files
+     *
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if (!empty($data['customint1'])) {
+            if (empty($data['role_group'])) {
+                $errors['role_group'] = get_string('err_required', 'form');
+            }
+            if (empty($data['customchar1'])) {
+                $errors['customchar1'] = get_string('err_required', 'form');
+            }
+            if (empty($data['customtext1']['text'])) {
+                $errors['customtext1'] = get_string('err_required', 'form');
+            }
+        }
+
+        return $errors;
     }
 
 }
