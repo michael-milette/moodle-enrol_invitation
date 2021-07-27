@@ -33,7 +33,7 @@ $string['defaultrole_desc'] = 'Selecteer de rol die toegekend moet worden aan ge
 $string['editenrolment'] = 'Bewerk aanmelding';
 $string['emailaddressnumber'] = 'Email adres {$a}';
 $string['fromuserconfig'] = 'Default invitation from user';
-$string['emailmessageinvitation'] = '{$a->managername} heeft je uitgenodigd om deel te nemen aan {$a->fullname}. 
+$string['emailmessageinvitation'] = '{$a->managername} heeft je uitgenodigd om deel te nemen aan {$a->fullname}.
 
 Log in op {$a->siteurl} en gebruik daarna deze link: {$a->enrolurl}
 
@@ -42,7 +42,7 @@ Als je nog geen login hebt kun je deze zelf aanmaken.
 {$a->sitename}
 -----------------------------';
 $string['emailmessageuserenrolled'] = '{$a->userfullname} heeft zich aangemeld voor {$a->coursefullname}.
-    
+
 Volg deze snelkoppeling om de nieuwe aanmeldingen te bekijken: {$a->courseenrolledusersurl}
 
 {$a->sitename}
@@ -83,3 +83,8 @@ $string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that 
 $string['enrolconfimation'] = 'Is required confirmation of enrolment?';
 $string['successenroled'] = 'You have been successfully enrolled to the course {$a}';
 $string['close'] = 'Close';
+$string['invitationrejectbutton'] = 'Reject invitation';
+$string['event_invitation_rejected'] = 'Invitation Rejected';
+$string['status_invite_rejected'] = 'Rejected';
+$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as
+    a "{$a->rolename}" for yours account with email {$a->email} was rejected.';

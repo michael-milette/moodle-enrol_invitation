@@ -34,6 +34,7 @@ $string['event_invitation_deleted'] = 'Invitation Deleted';
 $string['event_invitation_sent'] = 'Invitation Sent';
 $string['event_invitation_updated'] = 'Invitation Updated';
 $string['event_invitation_viewed'] = 'Invitation Viewed';
+$string['event_invitation_rejected'] = 'Invitation Rejected';
 
 // Email message strings.
 $string['reminder'] = 'Reminder: ';
@@ -47,13 +48,13 @@ $string['emailmsgtxt'] =
     '<ul><li>you are the person to whom this email was addressed and for whom this' .
     '   invitation is intended;</li>'.
     ' <li>the link below will expire on <b>{$a->expiration}</b>.</li>';
-    
+
 $string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that you have received this message in error or are in need of
                                                assistance, please contact:</span>
                     <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
 
 $string['instructormsg'] =
-    '<h2>Message from instructor</h2>' . 
+    '<h2>Message from instructor</h2>' .
     '{$a}';
 
 // Invite form strings.
@@ -155,10 +156,13 @@ $string['loggedinnot'] = '<p>This invitation to access "{$a->coursefullname}" as
     <p>
         Before you can accept this invitation you must be logged in.
     </p>';
+    $string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as
+    a "{$a->rolename}" for yours account with email {$a->email} was rejected.';
 $string['invitationacceptance'] = '<p>This invitation to access
     "{$a->coursefullname}" as a "{$a->rolename}" is intended for {$a->email}.
     If you are not the intended recipient, please do not accept this invitation.</p>';
 $string['invitationacceptancebutton'] = 'Accept invitation';
+$string['invitationrejectbutton'] = 'Reject invitation';
 
 // Invite history strings.
 $string['invitehistory'] = 'Invite history';
@@ -182,6 +186,7 @@ $string['status_invite_used_expiration'] = '(access ends on {$a})';
 $string['status_invite_revoked'] = 'Revoked';
 $string['status_invite_resent'] = 'Resent';
 $string['status_invite_active'] = 'Active';
+$string['status_invite_rejected'] = 'Rejected';
 
 // Invite action strings.
 $string['action_revoke_invite'] = 'Revoke invite';

@@ -120,9 +120,9 @@ $string['message_help'] =
 	' - подтверждаете, что Вы тот(та), кому было адресовано это письмо и/или для кого оно было предназначено;' . "<br />" .
     ' - срок действия ссылки, приведённой ниже, истечёт [expiration date].' . "<br /><br />" .
     'Ссылка для доступа:' . "<br />" .
-    '<hr />' . 
+    '<hr />' .
     '[invite url]' . "<br /><br />" .
-    'Если Вы считаете, что получили это письмо по ошибке, или Вам нужна помощь, пожалуйста свяжитесь со службой поддержки сайта по адресу:  [support email].';   
+    'Если Вы считаете, что получили это письмо по ошибке, или Вам нужна помощь, пожалуйста свяжитесь со службой поддержки сайта по адресу:  [support email].';
 $string['norole'] = 'Пожалуйста, выберите роль.';
 $string['notify_inviter'] = 'Сообщать мне по адресу {$a->email} когда приглашённые пользователи примут приглашение';
 $string['header_role'] = 'Какую роль Вы хотели бы назначить приглашаемому?';
@@ -192,3 +192,8 @@ $string['x_days'] = '{$a} дней';
 $string['enrolconfimation'] = 'Is required confirmation of enrolment?';
 $string['successenroled'] = 'You have been successfully enrolled to the course {$a}';
 $string['close'] = 'Close';
+$string['invitationrejectbutton'] = 'Reject invitation';
+$string['event_invitation_rejected'] = 'Invitation Rejected';
+$string['status_invite_rejected'] = 'Rejected';
+$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as
+    a "{$a->rolename}" for yours account with email {$a->email} was rejected.';

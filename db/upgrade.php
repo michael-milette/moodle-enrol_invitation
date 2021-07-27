@@ -258,6 +258,28 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
         // Invitation savepoint reached.
         upgrade_plugin_savepoint(true, 2013030102, 'enrol', 'invitation');
     }
+/**
+ * Update status field to db for better tracking of statuses
+ * @package    enrol_invitation
+ * @author     2021 Lukas Celinak (lukascelinak@gmail.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+    if ($oldversion < 2021072700) {
+        $table = new xmldb_table('enrol_invitation');
+
+        //  Add status column.
+        $fields[] = new xmldb_field('status', XMLDB_TYPE_CHAR, '50', null, null, null, null, 'timeused');
+
+        foreach ($fields as $field) {
+            // Conditionally launch add field subject.
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+        }
+
+        // Invitation savepoint reached.
+        upgrade_plugin_savepoint(true, 2021072700, 'enrol', 'invitation');
+    }
 
     return true;
 }

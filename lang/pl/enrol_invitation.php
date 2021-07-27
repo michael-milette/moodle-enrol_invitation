@@ -32,11 +32,11 @@ $string['reminder'] = 'Przypomnienie: ';
 $string['fromuserconfig'] = 'Default invitation from user';
 $string['emailmsgtxt'] =
     '<h2>Dostęp do szkolenia:</h2>' .
-    '<hr />' . 
+    '<hr />' .
     '<p>Zostałeś/aś zaproszony/a do udziału w szkoleniu: {$a->fullname}. Musisz kliknąć poniższy link, aby zaakceptować udział w szkoleniu. <br />' .
-    '<b>LINK DOSTĘPOWY:</b> ' . '{$a->inviteurl} <br />' . 
+    '<b>LINK DOSTĘPOWY:</b> ' . '{$a->inviteurl} <br />' .
     'Klikając na link dostępu do strony zamieszczony w tym e-mailu przyjmujesz do wiadomości, że: <br />' .
-    '* jesteś osobą, do której adresowany był ten e-mail i dla której to zaproszenie jest przeznaczone;<br />' . 
+    '* jesteś osobą, do której adresowany był ten e-mail i dla której to zaproszenie jest przeznaczone;<br />' .
     '* powyższy link wygaśnie w dniu ({$a->expiration}).' .
 
     '<p>Jeśli uważasz, że otrzymałeś tę wiadomość błędnie lub potrzebujesz pomocy, prosimy o kontakt: {$a->supportemail}.</p>';
@@ -64,7 +64,7 @@ $string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that 
                                                assistance, please contact:</span>
                     <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
 $string['emailmessageuserenrolled'] = 'Witam,
-    
+
 
     {$a->userfullname} ({$a->useremail}) zaakceptował twoje zaproszenie do kursu {$a->coursefullname} jako a "{$a->rolename}". Status tego zaproszenia można sprawdzić, oglądając:
 
@@ -195,3 +195,8 @@ $string['x_days'] = '{$a} days';
 $string['enrolconfimation'] = 'Is required confirmation of enrolment?';
 $string['successenroled'] = 'You have been successfully enrolled to the course {$a}';
 $string['close'] = 'Close';
+$string['invitationrejectbutton'] = 'Reject invitation';
+$string['event_invitation_rejected'] = 'Invitation Rejected';
+$string['status_invite_rejected'] = 'Rejected';
+$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as
+    a "{$a->rolename}" for yours account with email {$a->email} was rejected.';

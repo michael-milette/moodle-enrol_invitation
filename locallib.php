@@ -76,7 +76,7 @@ class invitation_manager {
      *
      * It's mostly useful to add a link in a block menu - by default icon is
      * displayed.
-     * 
+     *
      * @param boolean $withicon - set to false to not display the icon
      * @return
      */
@@ -179,12 +179,17 @@ class invitation_manager {
                 $message_params->expiration = userdate($invitation->timeexpiration, "%d-%m-%Y %I:%M %p");
                 $inviteurl = new moodle_url('/enrol/invitation/enrol.php',
                         array('token' => $token));
-                $inviteurl = $inviteurl->out(false);
 
-                $message_params->inviteurl = $inviteurl;
+                $rejecturl = new moodle_url('/enrol/invitation/enrol.php',
+                        array('token' => $token, 'reject'=>1));
+
+                $message_params->inviteurl = $inviteurl->out(false);
+                $message_params->rejecturl = $rejecturl->out(false);
                 $message_params->supportemail = $CFG->supportemail;
                 $message_params->supportemailtext = get_string('emailmsgunsubscribe', 'enrol_invitation', $message_params);
                 $message_params->acceptinvitation = get_string('invitationacceptancebutton', 'enrol_invitation');
+                $message_params->rejectinvitation = get_string('invitationrejectbutton', 'enrol_invitation');
+
                 $message .= get_string('emailmsgtxt', 'enrol_invitation', $message_params);
 
                 $message_params->message = $message;
@@ -295,7 +300,9 @@ class invitation_manager {
             return get_string('status_invite_invalid', 'enrol_invitation');
         }
 
-        if ($invite->tokenused) {
+        // TO DO redefinition for statuses storing in enrol_invitation history
+        if(is_null($invite->status)){
+          if ($invite->tokenused) {
             // Invite was used already.
             $status = get_string('status_invite_used', 'enrol_invitation');
             return $status;
@@ -305,6 +312,11 @@ class invitation_manager {
         } else {
             return get_string('status_invite_active', 'enrol_invitation');
         }
+        }
+        else{
+          return get_string('status_invite_'.$invite->status, 'enrol_invitation');
+        }
+
         // TO DO: add status_invite_revoked and status_invite_resent status.
     }
 
@@ -452,13 +464,13 @@ class invitation_manager {
       /* -------------------------------------
           GLOBAL RESETS
       ------------------------------------- */
-      
+
       /*All the styling goes here*/
-      
+
       img {
         border: none;
         -ms-interpolation-mode: bicubic;
-        max-width: 100%; 
+        max-width: 100%;
       }
 
       body {
@@ -470,7 +482,7 @@ class invitation_manager {
         margin: 0;
         padding: 0;
         -ms-text-size-adjust: 100%;
-        -webkit-text-size-adjust: 100%; 
+        -webkit-text-size-adjust: 100%;
       }
 
       table {
@@ -481,7 +493,7 @@ class invitation_manager {
         table td {
           font-family: sans-serif;
           font-size: 12px;
-          vertical-align: top; 
+          vertical-align: top;
       }
 
       /* -------------------------------------
@@ -490,7 +502,7 @@ class invitation_manager {
 
       .body {
         background-color: #f6f6f6;
-        width: 100%; 
+        width: 100%;
       }
 
       /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
@@ -500,7 +512,7 @@ class invitation_manager {
         /* makes it centered */
         max-width: 800px;
         padding: 10px;
-        width: 1024px; 
+        width: 1024px;
       }
 
       /* This should also be a block element, so that it will fill 100% of the .container */
@@ -509,7 +521,7 @@ class invitation_manager {
         display: block;
         margin: 0 auto;
         max-width: 800px;
-        padding: 10px; 
+        padding: 10px;
       }
 
       /* -------------------------------------
@@ -518,12 +530,12 @@ class invitation_manager {
       .main {
         background: #ffffff;
         border-radius: 3px;
-        width: 100%; 
+        width: 100%;
       }
 
       .wrapper {
         box-sizing: border-box;
-        padding: 20px; 
+        padding: 20px;
       }
 
       .content-block {
@@ -535,7 +547,7 @@ class invitation_manager {
         clear: both;
         margin-top: 10px;
         text-align: center;
-        width: 100%; 
+        width: 100%;
       }
         .footer td,
         .footer p,
@@ -543,7 +555,7 @@ class invitation_manager {
         .footer a {
           color: #999999;
           font-size: 10px;
-          text-align: center; 
+          text-align: center;
       }
 
       /* -------------------------------------
@@ -558,14 +570,14 @@ class invitation_manager {
         font-weight: 400;
         line-height: 1.4;
         margin: 0;
-        margin-bottom: 30px; 
+        margin-bottom: 30px;
       }
 
       h1 {
         font-size: 35px;
         font-weight: 300;
         text-align: center;
-        text-transform: capitalize; 
+        text-transform: capitalize;
       }
 
       p,
@@ -575,18 +587,18 @@ class invitation_manager {
         font-size: 14px;
         font-weight: normal;
         margin: 0;
-        margin-bottom: 15px; 
+        margin-bottom: 15px;
       }
         p li,
         ul li,
         ol li {
           list-style-position: inside;
-          margin-left: 5px; 
+          margin-left: 5px;
       }
 
       a {
         color: #3498db;
-        text-decoration: underline; 
+        text-decoration: underline;
       }
 
       /* -------------------------------------
@@ -598,12 +610,12 @@ class invitation_manager {
         .btn > tbody > tr > td {
           padding-bottom: 15px; }
         .btn table {
-          width: auto; 
+          width: auto;
       }
         .btn table td {
           background-color: #ffffff;
           border-radius: 5px;
-          text-align: center; 
+          text-align: center;
       }
         .btn a {
           background-color: #ffffff;
@@ -618,52 +630,62 @@ class invitation_manager {
           margin: 0;
           padding: 12px 25px;
           text-decoration: none;
-          text-transform: capitalize; 
+          text-transform: capitalize;
       }
 
       .btn-primary table td {
-        background-color: #3498db; 
+        background-color: #3498db;
       }
 
       .btn-primary a {
         background-color: #3498db;
         border-color: #3498db;
-        color: #ffffff; 
+        color: #ffffff;
+      }
+
+      .btn-danger table td {
+        background-color: #dc3545;
+      }
+
+      .btn-danger a {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #ffffff;
       }
 
       /* -------------------------------------
           OTHER STYLES THAT MIGHT BE USEFUL
       ------------------------------------- */
       .last {
-        margin-bottom: 0; 
+        margin-bottom: 0;
       }
 
       .first {
-        margin-top: 0; 
+        margin-top: 0;
       }
 
       .align-center {
-        text-align: center; 
+        text-align: center;
       }
 
       .align-right {
-        text-align: right; 
+        text-align: right;
       }
 
       .align-left {
-        text-align: left; 
+        text-align: left;
       }
 
       .clear {
-        clear: both; 
+        clear: both;
       }
 
       .mt0 {
-        margin-top: 0; 
+        margin-top: 0;
       }
 
       .mb0 {
-        margin-bottom: 0; 
+        margin-bottom: 0;
       }
 
       .preheader {
@@ -676,17 +698,17 @@ class invitation_manager {
         overflow: hidden;
         mso-hide: all;
         visibility: hidden;
-        width: 0; 
+        width: 0;
       }
 
       .powered-by a {
-        text-decoration: none; 
+        text-decoration: none;
       }
 
       hr {
         border: 0;
         border-bottom: 1px solid #f6f6f6;
-        margin: 20px 0; 
+        margin: 20px 0;
       }
 
       /* -------------------------------------
@@ -695,7 +717,7 @@ class invitation_manager {
       @media only screen and (max-width: 620px) {
         table[class=body] h1 {
           font-size: 28px !important;
-          margin-bottom: 10px !important; 
+          margin-bottom: 10px !important;
         }
         table[class=body] p,
         table[class=body] ul,
@@ -703,34 +725,34 @@ class invitation_manager {
         table[class=body] td,
         table[class=body] span,
         table[class=body] a {
-          font-size: 16px !important; 
+          font-size: 16px !important;
         }
         table[class=body] .wrapper,
         table[class=body] .article {
-          padding: 10px !important; 
+          padding: 10px !important;
         }
         table[class=body] .content {
-          padding: 0 !important; 
+          padding: 0 !important;
         }
         table[class=body] .container {
           padding: 0 !important;
-          width: 100% !important; 
+          width: 100% !important;
         }
         table[class=body] .main {
           border-left-width: 0 !important;
           border-radius: 0 !important;
-          border-right-width: 0 !important; 
+          border-right-width: 0 !important;
         }
         table[class=body] .btn table {
-          width: 100% !important; 
+          width: 100% !important;
         }
         table[class=body] .btn a {
-          width: 100% !important; 
+          width: 100% !important;
         }
         table[class=body] .img-responsive {
           height: auto !important;
           max-width: 100% !important;
-          width: auto !important; 
+          width: auto !important;
         }
       }
 
@@ -739,7 +761,7 @@ class invitation_manager {
       ------------------------------------- */
       @media all {
         .ExternalClass {
-          width: 100%; 
+          width: 100%;
         }
         .ExternalClass,
         .ExternalClass p,
@@ -747,7 +769,7 @@ class invitation_manager {
         .ExternalClass font,
         .ExternalClass td,
         .ExternalClass div {
-          line-height: 100%; 
+          line-height: 100%;
         }
         .apple-link a {
           color: inherit !important;
@@ -755,7 +777,7 @@ class invitation_manager {
           font-size: inherit !important;
           font-weight: inherit !important;
           line-height: inherit !important;
-          text-decoration: none !important; 
+          text-decoration: none !important;
         }
         #MessageViewBody a {
           color: inherit;
@@ -766,12 +788,12 @@ class invitation_manager {
           line-height: inherit;
         }
         .btn-primary table td:hover {
-          background-color: #34495e !important; 
+          background-color: #34495e !important;
         }
         .btn-primary a:hover {
           background-color: #34495e !important;
-          border-color: #34495e !important; 
-        } 
+          border-color: #34495e !important;
+        }
       }
 
     </style>
@@ -809,6 +831,21 @@ class invitation_manager {
                             </tr>
                           </tbody>
                         </table>
+                        <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-danger\">
+                          <tbody>
+                            <tr>
+                              <td align=\"left\">
+                                <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
+                                  <tbody>
+                                    <tr>
+                                      <td class=\"btn\"><a href=\"{$messageparams->rejecturl}\" class=\"btn btn-danger\">{$messageparams->rejectinvitation}</a></td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                         {$invitation->message}
                       </td>
                     </tr>
@@ -832,7 +869,7 @@ class invitation_manager {
                 </tr>
                 <tr>
                   <td class=\"content-block powered-by\">
-                  
+
                   </td>
                 </tr>
               </table>
@@ -854,7 +891,7 @@ class invitation_manager {
 /**
  * Reports the approximate distance in time between two times given in seconds
  * or in a valid ISO string like.
- * 
+ *
  * For example, if the distance is 47 minutes, it'll return
  * "about 1 hour". See the source for the complete wording list.
  *
@@ -867,7 +904,7 @@ class invitation_manager {
  * http://www.8tiny.com/source/akelos/lib/AkActionView/helpers/date_helper.php.source.txt
  *
  * Which was in term inspired by Ruby on Rails' similarly called function.
- * 
+ *
  * @param int $from_time
  * @param int $to_time
  * @param boolean $include_seconds
@@ -935,7 +972,7 @@ function prepare_notice_object($invitation) {
         //In case something gone wrong we will do this the old way
         $role = $DB->get_record('role', array('id' => $invitation->roleid));
         $noticeobject->rolename = $role->name; //empty in new Moodle versions
-        // role description is not used anywhere in plugin 
+        // role description is not used anywhere in plugin
         // and is also empty in new Moodle versions
         $noticeobject->roledescription = strip_tags($role->description);
     }
@@ -944,7 +981,7 @@ function prepare_notice_object($invitation) {
 
 /**
  * Prints out tabs and highlights the appropiate current tab.
- * 
+ *
  * @param string $active_tab  Either 'invite' or 'history'
  */
 function print_page_tabs($active_tab) {

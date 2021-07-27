@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -91,6 +90,50 @@ if (!$invitation->userid && isguestuser()) {
 
 // Have invitee confirm their acceptance of the site invitation.
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
+
+/**
+ * Implementation for posibility to reject invitation
+ * @package    enrol_invitation
+ * @copyright  2021 Lukas Celinak (lukascelinak@gmail.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+$reject = optional_param('reject', 0, PARAM_BOOL);
+
+if($reject==1){
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('event_invitation_rejected', 'enrol_invitation'), 2, 'headingblock');
+
+        echo $OUTPUT->box_start('generalbox', 'notice');
+        $user = (!isloggedin() or isguestuser()) && $invitation->userid ? $DB->get_record('user', array('id' => $invitation->userid)) : $USER;
+
+
+        if ($invitation->email != $user->email) {
+            (!isloggedin() or isguestuser()) && $invitation->userid ? $notlogged = "and wasn't logged in." : $notlogged = "";
+            $invitation->errormsg = 'email does not match' . $notlogged;
+            \enrol_invitation\event\invitation_rejected::create_from_invitation($invitation)->trigger();
+        }
+
+        (!isloggedin() or isguestuser()) && $invitation->userid ? (property_exists($invitation, "errormsg") ? $invitation->errormsg .= "and wasn't logged in." : $invitation->errormsg = "and wasn't logged in.") : null;
+        require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
+
+        // Set token as used and mark which user was assigned the token.
+        $invitation->tokenused = true;
+        $invitation->timeused = time();
+        $invitation->userid = $user->id;
+
+        // Set the status to rejected and log event
+        $invitation->status = "rejected";
+        \enrol_invitation\event\invitation_rejected::create_from_invitation($invitation)->trigger();
+        $DB->update_record('enrol_invitation', $invitation);
+
+        $notice_object = prepare_notice_object($invitation);
+        echo get_string('invtitation_rejected_notice', 'enrol_invitation', $notice_object);
+
+        echo $OUTPUT->box_end();
+        echo $OUTPUT->footer();
+        exit;
+}
+
 if ($instance->customint6 == 1 && empty($confirm)) {
     echo $OUTPUT->header();
 
