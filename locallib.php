@@ -888,7 +888,7 @@ class invitation_manager {
 
     public function check_invitation_rejected($userid,$courseid){
       global $DB;
-      if ($DB->get_record('enrol_invitation',array('course'=>$courseid,'userid'=>$userid,'status'=>"rejected"))){
+      if ($DB->get_record('enrol_invitation',array('courseid'=>$courseid,'userid'=>$userid,'status'=>"rejected"))){
         return true;
       }else {return false;}
     }
