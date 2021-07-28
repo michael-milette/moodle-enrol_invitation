@@ -236,7 +236,7 @@ class invitation_manager {
                     $contactuser->alternatename = '';
                 }
 
-                if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser)&&$this->check_invitation_rejected($invitation->userid,$invitation->courseid) || $userexits == false) {
+                if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser)&&!$this->check_invitation_rejected($invitation->userid,$invitation->courseid) || $userexits == false) {
                     if (!$resend && ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true)) {
                         $invitation->id = $DB->insert_record('enrol_invitation', $invitation);
                         email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
@@ -245,7 +245,7 @@ class invitation_manager {
                     // Log activity after sending the email.
                     if ($resend) {
                         \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
-                    } elseif ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true && $invitation->status != "rejected") {
+                    } elseif ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true && !$this->check_invitation_rejected($invitation->userid,$invitation->courseid)) {
                         \enrol_invitation\event\invitation_sent::create_from_invitation($invitation)->trigger();
                     } else {
                         $invitation->id = 0;
@@ -888,7 +888,7 @@ class invitation_manager {
 
     public function check_invitation_rejected($userid,$courseid){
       global $DB;
-      if ($DB->get_record('enrol_invitation',array('courseid'=>$courseid,'userid'=>$userid,'status'=>"rejected"))){
+      if ($DB->record_exists('enrol_invitation',array('courseid'=>$courseid,'userid'=>$userid,'status'=>"rejected"))){
         return true;
       }else {return false;}
     }
