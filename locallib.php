@@ -236,7 +236,7 @@ class invitation_manager {
                     $contactuser->alternatename = '';
                 }
 
-                if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser) || $userexits == false) {
+                if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser)&&$invitation->status != "rejected" || $userexits == false) {
                     if (!$resend && ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true)) {
                         $invitation->id = $DB->insert_record('enrol_invitation', $invitation);
                         email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
@@ -245,7 +245,7 @@ class invitation_manager {
                     // Log activity after sending the email.
                     if ($resend) {
                         \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
-                    } elseif ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true) {
+                    } elseif ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true && $invitation->status != "rejected") {
                         \enrol_invitation\event\invitation_sent::create_from_invitation($invitation)->trigger();
                     } else {
                         $invitation->id = 0;
@@ -455,7 +455,7 @@ class invitation_manager {
 
     public function generate_html_message($invitation, $messageparams) {
         $htmlmail = "<!doctype html>
-<html>
+  <html>
   <head>
     <meta name=\"viewport\" content=\"width=device-width\" />
     <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
@@ -882,10 +882,13 @@ class invitation_manager {
       </tr>
     </table>
   </body>
-</html>";
+  </html>";
         return $htmlmail;
     }
 
+    public function check_invitation_rejected(){
+
+    }
 }
 
 /**
