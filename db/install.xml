@@ -17,7 +17,8 @@
         <FIELD NAME="timeexpiration" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="when invitation should expire" PREVIOUS="timesent" NEXT="timeused"/>
         <FIELD NAME="timeused" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="timeexpiration" NEXT="inviterid"/>
         <FIELD NAME="inviterid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="the user sending the invitation" PREVIOUS="timeused" NEXT="subject"/>
-        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="inviterid" NEXT="message"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" PREVIOUS="inviterid" NEXT="subject"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="status" NEXT="message"/>
         <FIELD NAME="message" TYPE="text" NOTNULL="false" SEQUENCE="false" PREVIOUS="subject" NEXT="notify_inviter"/>
         <FIELD NAME="notify_inviter" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, will sent email to inviter that invite was used" PREVIOUS="message" NEXT="show_from_email"/>
         <FIELD NAME="show_from_email" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, when email is sent will show inviter's email in the &quot;FROM&quot; field" PREVIOUS="notify_inviter"/>
