@@ -264,7 +264,7 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
  * @author     2021 Lukas Celinak (lukascelinak@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-    if ($oldversion < 2021072700) {
+    if ($oldversion < 2021073000) {
         $table = new xmldb_table('enrol_invitation');
 
         //  Add status column.
