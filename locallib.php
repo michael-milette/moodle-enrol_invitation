@@ -136,7 +136,7 @@ class invitation_manager {
                 $invitation->token = $token;
                 $invitation->tokenused = false;
                 $invitation->roleid = $resend ? $data->roleid : $data->role_group['roleid'];
-
+                $invitation->status="";
                 // Set time.
                 $timesent = time();
                 $invitation->timesent = $timesent;
@@ -239,11 +239,13 @@ class invitation_manager {
                 if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser)&&!$this->check_invitation_rejected($invitation->userid,$invitation->courseid) || $userexits == false) {
                     if (!$resend && ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true)) {
                         $invitation->id = $DB->insert_record('enrol_invitation', $invitation);
+                        $invitation->status="sent";
                         email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
                     }
                     $userexits ? "" : $invitation->userid = -1;
                     // Log activity after sending the email.
                     if ($resend) {
+                      $invitation->status="sent";
                         \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
                     } elseif ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true && !$this->check_invitation_rejected($invitation->userid,$invitation->courseid)) {
                         \enrol_invitation\event\invitation_sent::create_from_invitation($invitation)->trigger();
