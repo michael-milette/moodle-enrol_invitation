@@ -136,7 +136,7 @@ class invitation_manager {
                 $invitation->token = $token;
                 $invitation->tokenused = false;
                 $invitation->roleid = $resend ? $data->roleid : $data->role_group['roleid'];
-                $invitation->status="";
+                $invitation->status=null;
                 // Set time.
                 $timesent = time();
                 $invitation->timesent = $timesent;
@@ -303,7 +303,7 @@ class invitation_manager {
         }
 
         // TO DO redefinition for statuses storing in enrol_invitation history
-        if(is_null($invite->status)){
+        if(empty($invite->status)){
           if ($invite->tokenused) {
             // Invite was used already.
             $status = get_string('status_invite_used', 'enrol_invitation');
