@@ -272,8 +272,7 @@ class invitation_manager {
      */
     public function get_access_expiration($invite) {
         $expiration = '';
-
-        if (empty($invite->userid)) {
+        if (empty($invite->userid)||$invite->tokenused==0) {
             return $expiration;
         }
 
