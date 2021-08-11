@@ -412,6 +412,14 @@ class invitation_email_form extends moodleform {
                 $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
             }
         }
+        $mform->addElement('editor', 'message', get_string('message', 'enrol_invitation'),
+        array('class' => 'form-invite-message'));
+        $mform->setType('message', PARAM_RAW);
+
+
+        // Put help text to show what default message invitee gets.
+        $mform->addHelpButton('message', 'message', 'enrol_invitation',
+        get_string('message_help_link', 'enrol_invitation'));
         // Check for correct email formating later in validation() function.
         $this->add_action_buttons(false, get_string('inviteusers', 'enrol_invitation'));
     }
