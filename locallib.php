@@ -426,7 +426,6 @@ class invitation_manager {
     public function who_used_invite($invite) {
         global $DB;
         $ret_val = new stdClass();
-
         if (empty($invite->userid) || empty($invite->tokenused) ||
                 empty($invite->courseid) || empty($invite->timeused)) {
             return false;
@@ -442,7 +441,7 @@ class invitation_manager {
 
         // Find their roles for course.
         $ret_val->roles = get_user_roles_in_course($invite->userid, $invite->courseid);
-        if (empty($ret_val->roles)) {
+        if (empty($ret_val->roles)&&$invite->status!="rejected") {
             // If no roles, then they must have been booted out later.
             return false;
         }

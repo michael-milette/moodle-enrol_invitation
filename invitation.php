@@ -96,7 +96,6 @@ $data = $mform->get_data();
 if($data&&$instance->customint1==1){
         $data->role_group=array('roleid'=>$instance->customint2);
         $data->subject=$instance->customchar1;
-        $data->message=$instance->customtext1;
         $data->show_from_email=$instance->customint3;
         $data->notify_inviter=$instance->customint4;
 }
