@@ -1,12 +1,12 @@
 <?php
-// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -18,8 +18,10 @@
  * Strings for component 'enrol_invitation'
  *
  * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @author     Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -60,20 +62,17 @@ $string['registeredonly_help'] = 'Invitation will be sent only to emails, which 
 $string['notifymsg'] = 'Witam, chciałbym poinformować, że użytkownik $a->username, z e-mailem $a->email zaakceptował dostęp do twojego kursu, $a->course';
 $string['usedefaultvalues'] = 'Use invitation with default values';
 $string['emailtitleuserenrolled'] = '{$a->userfullname} zaakceptował zaproszenie do {$a->coursefullname}.';
-$string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that you have received this message in error or are in need of
-                                               assistance, please contact:</span>
-                    <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
+$string['emailmsgunsubscribe'] = '<span class=\"apple-link\">If you believe that you have received this message in error or are in need of assistance, please contact:</span><br>
+<a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
 $string['emailmessageuserenrolled'] = 'Witam,
+{$a->userfullname} ({$a->useremail}) zaakceptował twoje zaproszenie do kursu {$a->coursefullname} jako a "{$a->rolename}". Status tego zaproszenia można sprawdzić, oglądając:
 
+    * Listę uczestników: {$a->courseenrolledusersurl}
+    * Historię zaproszeń: {$a->invitehistoryurl}
 
-    {$a->userfullname} ({$a->useremail}) zaakceptował twoje zaproszenie do kursu {$a->coursefullname} jako a "{$a->rolename}". Status tego zaproszenia można sprawdzić, oglądając:
-
-        * Listę uczestników: {$a->courseenrolledusersurl}
-        * Historię zaproszeń: {$a->invitehistoryurl}
-
-    {$a->sitename}
-    -------------
-    {$a->supportemail}';
+{$a->sitename}
+-------------
+{$a->supportemail}';
 
 $string['enrolenddate'] = 'Data końca dostępu';
 $string['enrolenddate_help'] = 'If enabled, will be the date the invitee will no longer be able to access the site.';
@@ -136,15 +135,9 @@ $string['returntoinvite'] = 'Wyślij kolejne zaproszenie';
 // Processing invitation acceptance strings.
 $string['invitation_acceptance_title'] = 'Invitation acceptance';
 $string['expiredtoken'] = 'Invitation token is expired or has already been used.';
-$string['loggedinnot'] = '<p>This invitation to access "{$a->coursefullname}" as
-    a "{$a->rolename}" is intended for {$a->email}. If you are not the
-    intended recipient, please do not accept this invitation.</p>
-    <p>
-        Before you can accept this invitation you must be logged in.
-    </p>';
-$string['invitationacceptance'] = '<p>This invitation to access
-    "{$a->coursefullname}" as a "{$a->rolename}" is intended for {$a->email}.
-    If you are not the intended recipient, please do not accept this invitation.</p>';
+$string['loggedinnot'] = '<p>This invitation to access "{$a->coursefullname}" as a "{$a->rolename}" is intended for {$a->email}. If you are not the intended recipient, please do not accept this invitation.</p>
+<p>Before you can accept this invitation you must be logged in.</p>';
+$string['invitationacceptance'] = '<p>This invitation to access "{$a->coursefullname}" as a "{$a->rolename}" is intended for {$a->email}. If you are not the intended recipient, please do not accept this invitation.</p>';
 $string['invitationacceptancebutton'] = 'Accept invitation';
 
 // Invite history strings.
@@ -198,5 +191,4 @@ $string['close'] = 'Close';
 $string['invitationrejectbutton'] = 'Reject invitation';
 $string['event_invitation_rejected'] = 'Invitation Rejected';
 $string['status_invite_rejected'] = 'Rejected';
-$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as
-    a "{$a->rolename}" for yours account with email {$a->email} was rejected.';
+$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as a "{$a->rolename}" for yours account with email {$a->email} was rejected.';

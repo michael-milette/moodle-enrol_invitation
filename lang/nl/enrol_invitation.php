@@ -1,27 +1,26 @@
 <?php
-
-// This file is not a part of Moodle - http://moodle.org/
-// This is a none core contributed module.
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// This is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// The GNU General Public License
-// can be see at <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Strings for component 'enrol_invitation'
  *
- * @package    enrol
- * @subpackage invitation
+ * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @author     Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -77,14 +76,12 @@ $string['unenrolselfconfirm'] = 'Wilt u zich inderdaad afmelden voor de cursus "
 $string['registeredonly'] = 'Send invitiation only for registered users';
 $string['registeredonly_help'] = 'Invitation will be sent only to emails, which belongs to registered users.';
 $string['usedefaultvalues'] = 'Use invitation with default values';
-$string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that you have received this message in error or are in need of
-                                               assistance, please contact:</span>
-                    <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
+$string['emailmsgunsubscribe'] = '<span class=\"apple-link\">If you believe that you have received this message in error or are in need of assistance, please contact:</span><br>
+<a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
 $string['enrolconfimation'] = 'Is required confirmation of enrolment?';
 $string['successenroled'] = 'You have been successfully enrolled to the course {$a}';
 $string['close'] = 'Close';
 $string['invitationrejectbutton'] = 'Reject invitation';
 $string['event_invitation_rejected'] = 'Invitation Rejected';
 $string['status_invite_rejected'] = 'Rejected';
-$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as
-    a "{$a->rolename}" for yours account with email {$a->email} was rejected.';
+$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as a "{$a->rolename}" for yours account with email {$a->email} was rejected.';

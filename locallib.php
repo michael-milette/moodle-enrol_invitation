@@ -1,13 +1,12 @@
 <?php
-
-// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -19,9 +18,12 @@
  * Local library file to include classes and functions used.
  *
  * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
+ * @author     Rex Lorenzo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -78,7 +80,7 @@ class invitation_manager {
      * displayed.
      *
      * @param boolean $withicon - set to false to not display the icon
-     * @return
+     * @return string
      */
     public function get_menu_link($withicon = true) {
         global $OUTPUT;
@@ -136,7 +138,7 @@ class invitation_manager {
                 $invitation->token = $token;
                 $invitation->tokenused = false;
                 $invitation->roleid = $resend ? $data->roleid : $data->role_group['roleid'];
-                $invitation->status=null;
+                $invitation->status = null;
                 // Set time.
                 $timesent = time();
                 $invitation->timesent = $timesent;
@@ -166,45 +168,40 @@ class invitation_manager {
 
                 $message = '';
 
-                $message_params = new stdClass();
-                if ($location = $DB->get_record('course_format_options', array('courseid' => $course->id, 'format' => 'event', 'name' => 'location'))) {
-                    $message_params->location = $location->value;
+                $messageparams = new stdClass();
+                if ($location = $DB->get_record('course_format_options',
+                        array('courseid' => $course->id, 'format' => 'event', 'name' => 'location'))) {
+                    $messageparams->location = $location->value;
                 } else {
-                    $message_params->location = "";
+                    $messageparams->location = "";
                 }
-                $message_params->fullname = $course->fullname;
-                $message_params->start = userdate($course->startdate, "%d-%m-%Y %I:%M %p");
-                $message_params->end = userdate($course->enddate,"%d-%m-%Y %I:%M %p");
+                $messageparams->fullname = $course->fullname;
+                $messageparams->start = userdate($course->startdate, "%d-%m-%Y %I:%M %p");
+                $messageparams->end = userdate($course->enddate, "%d-%m-%Y %I:%M %p");
 
-                $message_params->expiration = userdate($invitation->timeexpiration, "%d-%m-%Y %I:%M %p");
-                $inviteurl = new moodle_url('/enrol/invitation/enrol.php',
-                        array('token' => $token));
+                $messageparams->expiration = userdate($invitation->timeexpiration, "%d-%m-%Y %I:%M %p");
+                $inviteurl = new moodle_url('/enrol/invitation/enrol.php', array('token' => $token));
+                $rejecturl = new moodle_url('/enrol/invitation/enrol.php', array('token' => $token, 'reject' => 1));
 
-                $rejecturl = new moodle_url('/enrol/invitation/enrol.php',
-                        array('token' => $token, 'reject'=>1));
+                $messageparams->inviteurl = $inviteurl->out(false);
+                $messageparams->rejecturl = $rejecturl->out(false);
+                $messageparams->supportemail = $CFG->supportemail;
+                $messageparams->supportemailtext = get_string('emailmsgunsubscribe', 'enrol_invitation', $messageparams);
+                $messageparams->acceptinvitation = get_string('invitationacceptancebutton', 'enrol_invitation');
+                $messageparams->rejectinvitation = get_string('invitationrejectbutton', 'enrol_invitation');
 
-                $message_params->inviteurl = $inviteurl->out(false);
-                $message_params->rejecturl = $rejecturl->out(false);
-                $message_params->supportemail = $CFG->supportemail;
-                $message_params->supportemailtext = get_string('emailmsgunsubscribe', 'enrol_invitation', $message_params);
-                $message_params->acceptinvitation = get_string('invitationacceptancebutton', 'enrol_invitation');
-                $message_params->rejectinvitation = get_string('invitationrejectbutton', 'enrol_invitation');
+                $message .= get_string('emailmsgtxt', 'enrol_invitation', $messageparams);
 
-                $message .= get_string('emailmsgtxt', 'enrol_invitation', $message_params);
-
-                $message_params->message = $message;
+                $messageparams->message = $message;
                 $invitation->message = "";
                 $invitation->timeused = null;
 
                 if (!empty($data->message['text'])) {
-                    $message .= get_string('instructormsg', 'enrol_invitation',
-                            $data->message['text']);
-
-                    $invitation->message = get_string('instructormsg', 'enrol_invitation',
-                            $data->message['text']);
+                    $message .= get_string('instructormsg', 'enrol_invitation', $data->message['text']);
+                    $invitation->message = get_string('instructormsg', 'enrol_invitation', $data->message['text']);
                 }
 
-                $messagehtml = $this->generate_html_message($invitation, $message_params);
+                $messagehtml = $this->generate_html_message($invitation, $messageparams);
 
                 // Change FROM to be $CFG->supportemail if user has show_from_email off.
                 $fromuser = $USER;
@@ -214,8 +211,8 @@ class invitation_manager {
                     $fromuser->maildisplay = true;
                     $fromuser->sender = $USER;
                 }
-                $userexits = false;
-                //check if user exists
+
+                // Check if user exists.
                 if ($contactuser = $DB->get_record('user', array('email' => $invitation->email))) {
                     $contactuser->mailformat = 1;
                     $contactuser->maildisplay = true;
@@ -224,9 +221,9 @@ class invitation_manager {
                 } else {
                     // Send invitation to the user.
                     $contactuser = new stdClass();
-                    $contactuser->id = -1; // required by new version of email_to_user since moodle 2.6
+                    $contactuser->id = -1; // Required by new version of email_to_user since moodle 2.6.
                     $contactuser->email = $invitation->email;
-                    $contactuser->mailformat = 1; // 0 (zero) text-only emails, 1 (one) for HTML/Text emails.
+                    $contactuser->mailformat = 1; // 0 (zero): text-only emails, 1 (one): for HTML/Text emails.
                     $contactuser->firstname = '';
                     $contactuser->lastname = '';
                     $contactuser->maildisplay = true;
@@ -234,20 +231,24 @@ class invitation_manager {
                     $contactuser->lastnamephonetic = '';
                     $contactuser->middlename = '';
                     $contactuser->alternatename = '';
+                    $userexits = false;
                 }
 
-                if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser)&&!$this->check_invitation_rejected($invitation->userid,$invitation->courseid) || $userexits == false) {
+                if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser)
+                        && !$this->check_invitation_rejected($invitation->userid, $invitation->courseid)
+                        || $userexits == false) {
                     if (!$resend && ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true)) {
                         $invitation->id = $DB->insert_record('enrol_invitation', $invitation);
-                        $invitation->status="sent";
+                        $invitation->status = 'sent';
                         email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
                     }
-                    $userexits ? "" : $invitation->userid = -1;
+                    $userexits ? '' : $invitation->userid = -1;
                     // Log activity after sending the email.
                     if ($resend) {
-                      $invitation->status="sent";
+                        $invitation->status = 'sent';
                         \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
-                    } elseif ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true && !$this->check_invitation_rejected($invitation->userid,$invitation->courseid)) {
+                    } else if ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true
+                            && !$this->check_invitation_rejected($invitation->userid, $invitation->courseid)) {
                         \enrol_invitation\event\invitation_sent::create_from_invitation($invitation)->trigger();
                     } else {
                         $invitation->id = 0;
@@ -262,17 +263,14 @@ class invitation_manager {
     }
 
     /**
-     * Checks if user who accepted invite has an access expiration for their
-     * enrollment.
+     * Checks if user who accepted invite has an access expiration for their enrollment.
      *
-     * @param object $invite    Database record
-     *
-     * @return string           Returns expiration string. Blank if no
-     *                          restriction.
+     * @param object $invite Database record
+     * @return string        Returns expiration string. Blank if no restriction.
      */
     public function get_access_expiration($invite) {
         $expiration = '';
-        if (empty($invite->userid)||$invite->tokenused==0) {
+        if (empty($invite->userid) || $invite->tokenused == 0) {
             return $expiration;
         }
 
@@ -283,8 +281,7 @@ class invitation_manager {
             $expiration = get_string('status_invite_used_noaccess', 'enrol_invitation');
         } else if ($timeend > 0) {
             // Access will end on a certain date.
-            $expiration = get_string('status_invite_used_expiration',
-                    'enrol_invitation', date('M j, Y', $timeend));
+            $expiration = get_string('status_invite_used_expiration', 'enrol_invitation', date('M j, Y', $timeend));
         }
         return $expiration;
     }
@@ -292,7 +289,7 @@ class invitation_manager {
     /**
      * Returns status of given invite.
      *
-     * @param object $invite    Database record
+     * @param object $invite    Database record.
      *
      * @return string           Returns invite status string.
      */
@@ -301,30 +298,28 @@ class invitation_manager {
             return get_string('status_invite_invalid', 'enrol_invitation');
         }
 
-        // TO DO redefinition for statuses storing in enrol_invitation history
-        if(empty($invite->status)){
-          if ($invite->tokenused) {
-            // Invite was used already.
-            $status = get_string('status_invite_used', 'enrol_invitation');
-            return $status;
-        } else if ($invite->timeexpiration < time()) {
-            // Invite is expired.
-            return get_string('status_invite_expired', 'enrol_invitation');
+        // TODO: Redefinition for statuses storing in enrol_invitation history.
+        if (empty($invite->status)) {
+            if ($invite->tokenused) {
+                // Invite was used already.
+                return get_string('status_invite_used', 'enrol_invitation');
+            } else if ($invite->timeexpiration < time()) {
+                // Invite is expired.
+                return get_string('status_invite_expired', 'enrol_invitation');
+            } else {
+                return get_string('status_invite_active', 'enrol_invitation');
+            }
         } else {
-            return get_string('status_invite_active', 'enrol_invitation');
-        }
-        }
-        else{
-          return get_string('status_invite_'.$invite->status, 'enrol_invitation');
+            return get_string('status_invite_'.$invite->status, 'enrol_invitation');
         }
 
-        // TO DO: add status_invite_revoked and status_invite_resent status.
+        // TODO: Add status_invite_revoked and status_invite_resent status.
     }
 
     /**
      * Return all invites for given course.
      *
-     * @param int $courseid
+     * @param int $courseid optional course id.
      * @return array
      */
     public function get_invites($courseid = null) {
@@ -388,44 +383,41 @@ class invitation_manager {
         $timeend = 0;
         if (!empty($invitation->daysexpire)) {
             // Get today's date as a timestamp. Ignore the current time.
-            $today = strtotime(date('Y/m/d'));
+            $today = strtotime(date('Y-m-d'));
             // Get the day in the future.
             $timeend = strtotime(sprintf('+%d days', $invitation->daysexpire), $today);
-            // But make sure the timestamp is for the end of that day. Remember
-            // that 86400 is the total seconds in a day. So -1 that is right
-            // before midnight.
+            // But make sure the timestamp is for the end of that day. Remember that 86400 is the total seconds in a day.
+            // So -1 that is right before midnight.
             $timeend += 86399;
         }
         if ((!isloggedin() or isguestuser()) && $invitation->userid) {
             $user = $DB->get_record('user', array('id' => $invitation->userid));
-        } elseif (isloggedin()) {
+        } else if (isloggedin()) {
             $user = $USER;
         } else {
-            $notice_object = prepare_notice_object($invitation);
-            throw new moodle_exception('loggedinnot', 'enrol_invitation', $notice_object);
+            $noticeobject = preparenoticeobject($invitation);
+            throw new moodle_exception('loggedinnot', 'enrol_invitation', $noticeobject);
         }
 
         $enrol = enrol_get_plugin('invitation');
-        $enrol->enrol_user($this->enrolinstance, $user->id,
-                $invitation->roleid, 0, $timeend);
+        $enrol->enrol_user($this->enrolinstance, $user->id, $invitation->roleid, 0, $timeend);
     }
 
     /**
      * Figures out who used an invite.
      *
-     * @param object $invite    Invitation record
-     *
-     * @return object           Returns an object with following values:
-     *                          ['username'] - name of who used invite
-     *                          ['useremail'] - email of who used invite
-     *                          ['roles'] - roles the user has for course that
-     *                                      they were invited
-     *                          ['timeused'] - formatted string of time used
-     *                          Returns false on error or if invite wasn't used.
+     * @param object $invite Invitation record
+     * @return object        Returns an object with following values:
+     *                       ['username'] - name of who used invite
+     *                       ['useremail'] - email of who used invite
+     *                       ['roles'] - roles the user has for course that
+     *                                   they were invited
+     *                       ['timeused'] - formatted string of time used
+     *                       Returns false on error or if invite wasn't used.
      */
     public function who_used_invite($invite) {
         global $DB;
-        $ret_val = new stdClass();
+        $retval = new stdClass();
         if (empty($invite->userid) || empty($invite->tokenused) ||
                 empty($invite->courseid) || empty($invite->timeused)) {
             return false;
@@ -436,369 +428,371 @@ class invitation_manager {
         if (empty($user)) {
             return false;
         }
-        $ret_val->username = sprintf('%s %s', $user->firstname, $user->lastname);
-        $ret_val->useremail = $user->email;
+        $retval->username = sprintf('%s %s', $user->firstname, $user->lastname);
+        $retval->useremail = $user->email;
 
         // Find their roles for course.
-        $ret_val->roles = get_user_roles_in_course($invite->userid, $invite->courseid);
-        if (empty($ret_val->roles)&&$invite->status!="rejected") {
+        $retval->roles = get_user_roles_in_course($invite->userid, $invite->courseid);
+        if (empty($retval->roles) && $invite->status != 'rejected') {
             // If no roles, then they must have been booted out later.
             return false;
         }
-        $ret_val->roles = strip_tags($ret_val->roles);
+        $retval->roles = strip_tags($retval->roles);
 
         // Format string when invite was used.
-        $ret_val->timeused = date('M j, Y g:ia', $invite->timeused);
+        $retval->timeused = date('M j, Y g:ia', $invite->timeused);
 
-        return $ret_val;
+        return $retval;
     }
 
     public function generate_html_message($invitation, $messageparams) {
         $htmlmail = "<!doctype html>
-  <html>
-  <head>
-    <meta name=\"viewport\" content=\"width=device-width\" />
-    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-    <title>{$invitation->subject}</title>
-    <style>
-      /* -------------------------------------
-          GLOBAL RESETS
-      ------------------------------------- */
+<html>
+<head>
+<meta name=\"viewport\" content=\"width=device-width\" />
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+<title>{$invitation->subject}</title>
+<style>
+    /* -------------------------------------
+        GLOBAL RESETS
+    ------------------------------------- */
 
-      /*All the styling goes here*/
+    /*All the styling goes here*/
 
-      img {
-        border: none;
-        -ms-interpolation-mode: bicubic;
-        max-width: 100%;
-      }
+    img {
+    border: none;
+    -ms-interpolation-mode: bicubic;
+    max-width: 100%;
+    }
 
-      body {
-        background-color: #f6f6f6;
+    body {
+    background-color: #f6f6f6;
+    font-family: sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    }
+
+    table {
+    border-collapse: separate;
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+    width: 100%; }
+    table td {
         font-family: sans-serif;
-        -webkit-font-smoothing: antialiased;
-        font-size: 14px;
-        line-height: 1.4;
-        margin: 0;
-        padding: 0;
-        -ms-text-size-adjust: 100%;
-        -webkit-text-size-adjust: 100%;
-      }
+        font-size: 12px;
+        vertical-align: top;
+    }
 
-      table {
-        border-collapse: separate;
-        mso-table-lspace: 0pt;
-        mso-table-rspace: 0pt;
-        width: 100%; }
-        table td {
-          font-family: sans-serif;
-          font-size: 12px;
-          vertical-align: top;
-      }
+    /* -------------------------------------
+        BODY & CONTAINER
+    ------------------------------------- */
 
-      /* -------------------------------------
-          BODY & CONTAINER
-      ------------------------------------- */
+    .body {
+    background-color: #f6f6f6;
+    width: 100%;
+    }
 
-      .body {
-        background-color: #f6f6f6;
-        width: 100%;
-      }
+    /* Set a max-width, and make it display as block so it will automatically stretch to that width,
+     * but will also shrink down on a phone or something.
+     */
+    .container {
+    display: block;
+    margin: 0 auto !important;
+    /* makes it centered */
+    max-width: 800px;
+    padding: 10px;
+    width: 1024px;
+    }
 
-      /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
-      .container {
-        display: block;
-        margin: 0 auto !important;
-        /* makes it centered */
-        max-width: 800px;
-        padding: 10px;
-        width: 1024px;
-      }
+    /* This should also be a block element, so that it will fill 100% of the .container */
+    .content {
+    box-sizing: border-box;
+    display: block;
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 10px;
+    }
 
-      /* This should also be a block element, so that it will fill 100% of the .container */
-      .content {
-        box-sizing: border-box;
-        display: block;
-        margin: 0 auto;
-        max-width: 800px;
-        padding: 10px;
-      }
+    /* -------------------------------------
+        HEADER, FOOTER, MAIN
+    ------------------------------------- */
+    .main {
+    background: #ffffff;
+    border-radius: 3px;
+    width: 100%;
+    }
 
-      /* -------------------------------------
-          HEADER, FOOTER, MAIN
-      ------------------------------------- */
-      .main {
-        background: #ffffff;
-        border-radius: 3px;
-        width: 100%;
-      }
+    .wrapper {
+    box-sizing: border-box;
+    padding: 20px;
+    }
 
-      .wrapper {
-        box-sizing: border-box;
-        padding: 20px;
-      }
+    .content-block {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    }
 
-      .content-block {
-        padding-bottom: 10px;
-        padding-top: 10px;
-      }
-
-      .footer {
-        clear: both;
-        margin-top: 10px;
+    .footer {
+    clear: both;
+    margin-top: 10px;
+    text-align: center;
+    width: 100%;
+    }
+    .footer td,
+    .footer p,
+    .footer span,
+    .footer a {
+        color: #999999;
+        font-size: 10px;
         text-align: center;
-        width: 100%;
-      }
-        .footer td,
-        .footer p,
-        .footer span,
-        .footer a {
-          color: #999999;
-          font-size: 10px;
-          text-align: center;
-      }
+    }
 
-      /* -------------------------------------
-          TYPOGRAPHY
-      ------------------------------------- */
-      h1,
-      h2,
-      h3,
-      h4 {
-        color: #000000;
-        font-family: sans-serif;
-        font-weight: 400;
-        line-height: 1.4;
-        margin: 0;
-        margin-bottom: 30px;
-      }
+    /* -------------------------------------
+        TYPOGRAPHY
+    ------------------------------------- */
+    h1,
+    h2,
+    h3,
+    h4 {
+    color: #000000;
+    font-family: sans-serif;
+    font-weight: 400;
+    line-height: 1.4;
+    margin: 0;
+    margin-bottom: 30px;
+    }
 
-      h1 {
-        font-size: 35px;
-        font-weight: 300;
+    h1 {
+    font-size: 35px;
+    font-weight: 300;
+    text-align: center;
+    text-transform: capitalize;
+    }
+
+    p,
+    ul,
+    ol {
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0;
+    margin-bottom: 15px;
+    }
+    p li,
+    ul li,
+    ol li {
+        list-style-position: inside;
+        margin-left: 5px;
+    }
+
+    a {
+    color: #3498db;
+    text-decoration: underline;
+    }
+
+    /* -------------------------------------
+        BUTTONS
+    ------------------------------------- */
+    .btn {
+    box-sizing: border-box;
+    width: 100%; }
+    .btn > tbody > tr > td {
+        padding-bottom: 15px; }
+    .btn table {
+        width: auto;
+    }
+    .btn table td {
+        background-color: #ffffff;
+        border-radius: 5px;
         text-align: center;
-        text-transform: capitalize;
-      }
-
-      p,
-      ul,
-      ol {
-        font-family: sans-serif;
-        font-size: 14px;
-        font-weight: normal;
-        margin: 0;
-        margin-bottom: 15px;
-      }
-        p li,
-        ul li,
-        ol li {
-          list-style-position: inside;
-          margin-left: 5px;
-      }
-
-      a {
+    }
+    .btn a {
+        background-color: #ffffff;
+        border: 1px solid #3498db;
+        border-radius: 5px;
+        box-sizing: border-box;
         color: #3498db;
-        text-decoration: underline;
-      }
-
-      /* -------------------------------------
-          BUTTONS
-      ------------------------------------- */
-      .btn {
-        box-sizing: border-box;
-        width: 100%; }
-        .btn > tbody > tr > td {
-          padding-bottom: 15px; }
-        .btn table {
-          width: auto;
-      }
-        .btn table td {
-          background-color: #ffffff;
-          border-radius: 5px;
-          text-align: center;
-      }
-        .btn a {
-          background-color: #ffffff;
-          border: 1px solid #3498db;
-          border-radius: 5px;
-          box-sizing: border-box;
-          color: #3498db;
-          cursor: pointer;
-          display: inline-block;
-          font-size: 14px;
-          font-weight: bold;
-          margin: 0;
-          padding: 12px 25px;
-          text-decoration: none;
-          text-transform: capitalize;
-      }
-
-      .btn-primary table td {
-        background-color: #3498db;
-      }
-
-      .btn-primary a {
-        background-color: #3498db;
-        border-color: #3498db;
-        color: #ffffff;
-      }
-
-      .btn-danger table td {
-        background-color: #dc3545;
-      }
-
-      .btn-danger a {
-        background-color: #dc3545;
-        border-color: #dc3545;
-        color: #ffffff;
-      }
-
-      /* -------------------------------------
-          OTHER STYLES THAT MIGHT BE USEFUL
-      ------------------------------------- */
-      .last {
-        margin-bottom: 0;
-      }
-
-      .first {
-        margin-top: 0;
-      }
-
-      .align-center {
-        text-align: center;
-      }
-
-      .align-right {
-        text-align: right;
-      }
-
-      .align-left {
-        text-align: left;
-      }
-
-      .clear {
-        clear: both;
-      }
-
-      .mt0 {
-        margin-top: 0;
-      }
-
-      .mb0 {
-        margin-bottom: 0;
-      }
-
-      .preheader {
-        color: transparent;
-        display: none;
-        height: 0;
-        max-height: 0;
-        max-width: 0;
-        opacity: 0;
-        overflow: hidden;
-        mso-hide: all;
-        visibility: hidden;
-        width: 0;
-      }
-
-      .powered-by a {
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: bold;
+        margin: 0;
+        padding: 12px 25px;
         text-decoration: none;
-      }
+        text-transform: capitalize;
+    }
 
-      hr {
-        border: 0;
-        border-bottom: 1px solid #f6f6f6;
-        margin: 20px 0;
-      }
+    .btn-primary table td {
+    background-color: #3498db;
+    }
 
-      /* -------------------------------------
-          RESPONSIVE AND MOBILE FRIENDLY STYLES
-      ------------------------------------- */
-      @media only screen and (max-width: 620px) {
-        table[class=body] h1 {
-          font-size: 28px !important;
-          margin-bottom: 10px !important;
-        }
-        table[class=body] p,
-        table[class=body] ul,
-        table[class=body] ol,
-        table[class=body] td,
-        table[class=body] span,
-        table[class=body] a {
-          font-size: 16px !important;
-        }
-        table[class=body] .wrapper,
-        table[class=body] .article {
-          padding: 10px !important;
-        }
-        table[class=body] .content {
-          padding: 0 !important;
-        }
-        table[class=body] .container {
-          padding: 0 !important;
-          width: 100% !important;
-        }
-        table[class=body] .main {
-          border-left-width: 0 !important;
-          border-radius: 0 !important;
-          border-right-width: 0 !important;
-        }
-        table[class=body] .btn table {
-          width: 100% !important;
-        }
-        table[class=body] .btn a {
-          width: 100% !important;
-        }
-        table[class=body] .img-responsive {
-          height: auto !important;
-          max-width: 100% !important;
-          width: auto !important;
-        }
-      }
+    .btn-primary a {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: #ffffff;
+    }
 
-      /* -------------------------------------
-          PRESERVE THESE STYLES IN THE HEAD
-      ------------------------------------- */
-      @media all {
-        .ExternalClass {
-          width: 100%;
-        }
-        .ExternalClass,
-        .ExternalClass p,
-        .ExternalClass span,
-        .ExternalClass font,
-        .ExternalClass td,
-        .ExternalClass div {
-          line-height: 100%;
-        }
-        .apple-link a {
-          color: inherit !important;
-          font-family: inherit !important;
-          font-size: inherit !important;
-          font-weight: inherit !important;
-          line-height: inherit !important;
-          text-decoration: none !important;
-        }
-        #MessageViewBody a {
-          color: inherit;
-          text-decoration: none;
-          font-size: inherit;
-          font-family: inherit;
-          font-weight: inherit;
-          line-height: inherit;
-        }
-        .btn-primary table td:hover {
-          background-color: #34495e !important;
-        }
-        .btn-primary a:hover {
-          background-color: #34495e !important;
-          border-color: #34495e !important;
-        }
-      }
+    .btn-danger table td {
+    background-color: #dc3545;
+    }
 
-    </style>
-  </head>
-  <body class=\"\">
+    .btn-danger a {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #ffffff;
+    }
+
+    /* -------------------------------------
+        OTHER STYLES THAT MIGHT BE USEFUL
+    ------------------------------------- */
+    .last {
+    margin-bottom: 0;
+    }
+
+    .first {
+    margin-top: 0;
+    }
+
+    .align-center {
+    text-align: center;
+    }
+
+    .align-right {
+    text-align: right;
+    }
+
+    .align-left {
+    text-align: left;
+    }
+
+    .clear {
+    clear: both;
+    }
+
+    .mt0 {
+    margin-top: 0;
+    }
+
+    .mb0 {
+    margin-bottom: 0;
+    }
+
+    .preheader {
+    color: transparent;
+    display: none;
+    height: 0;
+    max-height: 0;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    mso-hide: all;
+    visibility: hidden;
+    width: 0;
+    }
+
+    .powered-by a {
+    text-decoration: none;
+    }
+
+    hr {
+    border: 0;
+    border-bottom: 1px solid #f6f6f6;
+    margin: 20px 0;
+    }
+
+    /* -------------------------------------
+        RESPONSIVE AND MOBILE FRIENDLY STYLES
+    ------------------------------------- */
+    @media only screen and (max-width: 620px) {
+    table[class=body] h1 {
+        font-size: 28px !important;
+        margin-bottom: 10px !important;
+    }
+    table[class=body] p,
+    table[class=body] ul,
+    table[class=body] ol,
+    table[class=body] td,
+    table[class=body] span,
+    table[class=body] a {
+        font-size: 16px !important;
+    }
+    table[class=body] .wrapper,
+    table[class=body] .article {
+        padding: 10px !important;
+    }
+    table[class=body] .content {
+        padding: 0 !important;
+    }
+    table[class=body] .container {
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    table[class=body] .main {
+        border-left-width: 0 !important;
+        border-radius: 0 !important;
+        border-right-width: 0 !important;
+    }
+    table[class=body] .btn table {
+        width: 100% !important;
+    }
+    table[class=body] .btn a {
+        width: 100% !important;
+    }
+    table[class=body] .img-responsive {
+        height: auto !important;
+        max-width: 100% !important;
+        width: auto !important;
+    }
+    }
+
+    /* -------------------------------------
+        PRESERVE THESE STYLES IN THE HEAD
+    ------------------------------------- */
+    @media all {
+    .ExternalClass {
+        width: 100%;
+    }
+    .ExternalClass,
+    .ExternalClass p,
+    .ExternalClass span,
+    .ExternalClass font,
+    .ExternalClass td,
+    .ExternalClass div {
+        line-height: 100%;
+    }
+    .apple-link a {
+        color: inherit !important;
+        font-family: inherit !important;
+        font-size: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+        text-decoration: none !important;
+    }
+    #MessageViewBody a {
+        color: inherit;
+        text-decoration: none;
+        font-size: inherit;
+        font-family: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+    }
+    .btn-primary table td:hover {
+        background-color: #34495e !important;
+    }
+    .btn-primary a:hover {
+        background-color: #34495e !important;
+        border-color: #34495e !important;
+    }
+    }
+
+</style>
+</head>
+<body class=\"\">
     <span class=\"preheader\">{$invitation->subject}</span>
     <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"body\">
       <tr>
@@ -886,11 +880,13 @@ class invitation_manager {
         return $htmlmail;
     }
 
-    public function check_invitation_rejected($userid,$courseid){
-      global $DB;
-      if ($DB->record_exists('enrol_invitation',array('courseid'=>$courseid,'userid'=>$userid,'status'=>"rejected"))){
-        return true;
-      }else {return false;}
+    public function check_invitation_rejected($userid, $courseid) {
+        global $DB;
+        if ($DB->record_exists('enrol_invitation', ['courseid' => $courseid, 'userid' => $userid, 'status' => 'rejected'])) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
@@ -904,62 +900,62 @@ class invitation_manager {
  *  Integers are interpreted as seconds. So,
  * <tt>$date_helper->distance_of_time_in_words(50)</tt> returns "less than a minute".
  *
- * Set <tt>include_seconds</tt> to true if you want more detailed approximations if distance < 1 minute
+ * Set <tt>includeseconds</tt> to true if you want more detailed approximations if distance < 1 minute
  *
  * Code borrowed/inspired from:
  * http://www.8tiny.com/source/akelos/lib/AkActionView/helpers/date_helper.php.source.txt
  *
  * Which was in term inspired by Ruby on Rails' similarly called function.
  *
- * @param int $from_time
- * @param int $to_time
- * @param boolean $include_seconds
+ * @param int $fromtime
+ * @param int $totime
+ * @param boolean $includeseconds
  * @return string
  */
-function distance_of_time_in_words($from_time, $to_time = 0, $include_seconds = false) {
-    $from_time = is_numeric($from_time) ? $from_time : strtotime($from_time);
-    $to_time = is_numeric($to_time) ? $to_time : strtotime($to_time);
-    $distance_in_minutes = round((abs($to_time - $from_time)) / 60);
-    $distance_in_seconds = round(abs($to_time - $from_time));
+function distance_of_time_in_words($fromtime, $totime = 0, $includeseconds = false) {
+    $fromtime = is_numeric($fromtime) ? $fromtime : strtotime($fromtime);
+    $totime = is_numeric($totime) ? $totime : strtotime($totime);
+    $distanceinminutes = round((abs($totime - $fromtime)) / 60);
+    $distanceinseconds = round(abs($totime - $fromtime));
 
-    if ($distance_in_minutes <= 1) {
-        if ($include_seconds) {
-            if ($distance_in_seconds < 5) {
+    if ($distanceinminutes <= 1) {
+        if ($includeseconds) {
+            if ($distanceinseconds < 5) {
                 return get_string('less_than_x_seconds', 'enrol_invitation', 5);
-            } else if ($distance_in_seconds < 10) {
+            } else if ($distanceinseconds < 10) {
                 return get_string('less_than_x_seconds', 'enrol_invitation', 10);
-            } else if ($distance_in_seconds < 20) {
+            } else if ($distanceinseconds < 20) {
                 return get_string('less_than_x_seconds', 'enrol_invitation', 20);
-            } else if ($distance_in_seconds < 40) {
+            } else if ($distanceinseconds < 40) {
                 return get_string('half_minute', 'enrol_invitation');
-            } else if ($distance_in_seconds < 60) {
+            } else if ($distanceinseconds < 60) {
                 return get_string('less_minute', 'enrol_invitation');
             } else {
                 return get_string('a_minute', 'enrol_invitation');
             }
         }
-        return ($distance_in_minutes == 0) ? get_string('less_minute', 'enrol_invitation') : get_string('a_minute', 'enrol_invitation');
-    } else if ($distance_in_minutes <= 45) {
-        return get_string('x_minutes', 'enrol_invitation', $distance_in_minutes);
-    } else if ($distance_in_minutes < 90) {
+        return ($distanceinminutes == 0) ? get_string('less_minute', 'enrol_invitation') :
+                get_string('a_minute', 'enrol_invitation');
+    } else if ($distanceinminutes <= 45) {
+        return get_string('x_minutes', 'enrol_invitation', $distanceinminutes);
+    } else if ($distanceinminutes < 90) {
         return get_string('about_hour', 'enrol_invitation');
-    } else if ($distance_in_minutes < 1440) {
-        return get_string('about_x_hours', 'enrol_invitation', round($distance_in_minutes / 60));
-    } else if ($distance_in_minutes < 2880) {
+    } else if ($distanceinminutes < 1440) {
+        return get_string('about_x_hours', 'enrol_invitation', round($distanceinminutes / 60));
+    } else if ($distanceinminutes < 2880) {
         return get_string('a_day', 'enrol_invitation');
     } else {
-        return get_string('x_days', 'enrol_invitation', round($distance_in_minutes / 1440));
+        return get_string('x_days', 'enrol_invitation', round($distanceinminutes / 1440));
     }
 }
 
 /**
- * Setups the object used in the notice strings for when a user is accepting
- * a site invitation.
+ * Setups the object used in the notice strings for when a user is accepting a site invitation.
  *
  * @param object $invitation
  * @return object
  */
-function prepare_notice_object($invitation) {
+function preparenoticeobject($invitation) {
     global $CFG, $course, $DB;
 
     $noticeobject = new stdClass();
@@ -967,19 +963,17 @@ function prepare_notice_object($invitation) {
     $noticeobject->coursefullname = $course->fullname;
     $noticeobject->supportemail = $CFG->supportemail;
 
-    // Get role name for use in acceptance message.
-    //role name is no longer defined in `role` table. It is scattered around database.
+    // Get role name for use in acceptance message. Role name is no longer defined in `role` table. It is scattered around database.
     $context = context_course::instance($course->id);
-    $roles = get_default_enrol_roles($context); //fetching roles using API
+    $roles = get_default_enrol_roles($context); // Fetching roles using API.
     if (array_key_exists($invitation->roleid, $roles)) {
-        //Normally we should have roles here
+        // Normally we should have roles here.
         $noticeobject->rolename = $roles[$invitation->roleid];
     } else {
-        //In case something gone wrong we will do this the old way
+        // In case something gone wrong we will do this the old way.
         $role = $DB->get_record('role', array('id' => $invitation->roleid));
-        $noticeobject->rolename = $role->name; //empty in new Moodle versions
-        // role description is not used anywhere in plugin
-        // and is also empty in new Moodle versions
+        $noticeobject->rolename = $role->name; // Empty in new Moodle versions.
+        // Role description is not used anywhere in plugin and is also empty in new Moodle versions.
         $noticeobject->roledescription = strip_tags($role->description);
     }
     return $noticeobject;
@@ -988,20 +982,18 @@ function prepare_notice_object($invitation) {
 /**
  * Prints out tabs and highlights the appropiate current tab.
  *
- * @param string $active_tab  Either 'invite' or 'history'
+ * @param string $activetab  Either 'invite' or 'history'
  */
-function print_page_tabs($active_tab) {
-    global $CFG, $COURSE;
+function print_page_tabs($activetab) {
+    global $COURSE;
 
     $tabs[] = new tabobject('history',
-            new moodle_url('/enrol/invitation/history.php',
-                    array('courseid' => $COURSE->id)),
+            new moodle_url('/enrol/invitation/history.php', array('courseid' => $COURSE->id)),
             get_string('invitehistory', 'enrol_invitation'));
     $tabs[] = new tabobject('invite',
-            new moodle_url('/enrol/invitation/invitation.php',
-                    array('courseid' => $COURSE->id)),
+            new moodle_url('/enrol/invitation/invitation.php', array('courseid' => $COURSE->id)),
             get_string('inviteusers', 'enrol_invitation'));
 
     // Display tabs here.
-    print_tabs(array($tabs), $active_tab);
+    print_tabs(array($tabs), $activetab);
 }

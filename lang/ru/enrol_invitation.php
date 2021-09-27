@@ -1,27 +1,26 @@
 <?php
-
-// This file is not a part of Moodle - http://moodle.org/
-// This is a none core contributed module.
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// This is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// The GNU General Public License
-// can be see at <http://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Strings for component 'enrol_invitation'
  *
- * @package    enrol
- * @subpackage invitation
+ * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @author     Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,7 +30,7 @@ $string['defaultinvitevalues'] = 'Default invitation values';
 $string['defaultrole'] = 'Роль по умолчанию';
 $string['defaultrole_desc'] = 'Выберите роль, которая должна быть назначена пользователю во время приглашения';
 $string['editenrolment'] = 'Редактировать способ записи на курс';
-#obsolete $string['emailaddressnumber'] = 'Email  {$a}';
+// Obsolete $string['emailaddressnumber'] = 'Email  {$a}'; // .
 $string['fromuserconfig'] = 'Default invitation from user';
 $string['emailmessageinvitation'] = '{$a->managername} приглашает Вас присоединиться к курсу {$a->fullname}.
 
@@ -53,7 +52,6 @@ $string['emailmessageuserenrolled'] = 'Здравствуйте,
     -------------
     {$a->supportemail}';
 
-
 $string['emailssent'] = 'Письмо(а) были отосланы.';
 $string['emailtitleinvitation'] = 'Вы были приглашены присоединиться к курсу {$a->fullname}.';
 $string['emailtitleuserenrolled'] = '{$a->userfullname} принял(а) приглашение на  {$a->coursefullname}.';
@@ -67,7 +65,7 @@ $string['enrolstartdate'] = 'Дата начала';
 $string['enrolstartdate_help'] = 'Если этот параметр включен, пользователи могут быть зачислены только с этой даты.';
 $string['expiredtoken'] = 'Приглашение уже было использовано, или его срок действия истёк.';
 $string['invitationpagehelp'] = '<ul><li>Сегодня было отослано {$a}.</li><li>Каждое приглашение может быть разослано только 1 раз.</li></ul>';
-$string['inviteusers'] = 'Приглашенные пользователи'; //??
+$string['inviteusers'] = 'Приглашенные пользователи';
 $string['maxinviteerror'] = 'Должно быть число.';
 $string['maxinviteperday'] = 'Максимум приглашений в день ';
 $string['maxinviteperday_help'] = 'Максимум приглашений, который можно отправить в день для курса.';
@@ -77,31 +75,32 @@ $string['pluginname'] = 'Приглашение';
 $string['pluginname_desc'] = 'Модуль Invitation (Приглашение) позволяет отправить пользователю приглашение по электронной почте. Эти приглашения могут быть использованы только один раз. Пользователи, нажав на ссылку электронной почты, автоматически зачисляются на курс.';
 $string['status'] = 'Разрешить учащимся рассылать приглашения';
 $string['status_desc'] = 'Разрешить по умолчанию пользователям приглашать людей записаться на курс.';
-$string['unenrol'] = 'Исключенные пользователи';//??
+$string['unenrol'] = 'Исключенные пользователи';
 $string['unenroluser'] = 'Вы действительно хотите исключить "{$a->user}" из курса "{$a->course}"?';
 $string['unenrolselfconfirm'] = 'Вы действительно хотите исключить себя из курса "{$a}"?';
 $string['registeredonly'] = 'Send invitiation only for registered users';
 $string['registeredonly_help'] = 'Invitation will be sent only to emails, which belongs to registered users.';
 $string['reminder'] = 'Напоминание: ';
 $string['usedefaultvalues'] = 'Use invitation with default values';
-$string['emailmsgunsubscribe'] ='<span class=\"apple-link\">If you believe that you have received this message in error or are in need of
-                                               assistance, please contact:</span>
-                    <br><a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
-$string['emailmsgtxt'] =
-    'Инструкции:' . "\n" .
-    '------------------------------------------------------------' . "\n" .
-    'Вас пригласили на курс: {$a->fullname}. Для получения доступа к сайту, вам нужно будет зарегистрироваться (если Вы не сделали этого раньше) и войти на сайт.'.
-	'Имейте ввиду, что переходя по ссылке, предоставленной в этом письме:' . "\n" .
-	' - подтверждаете, что Вы тот(та), кому было адресовано это письмо и/или для кого оно было предназначено;' . "\n" .
-    ' - срок действия ссылки, приведённой ниже, истечёт {$a->expiration}.' . "\n\n" .
-    'Ссылка для доступа:' . "\n" .
-    '------------------------------------------------------------' . "\n" .
-    '{$a->inviteurl}' . "\n\n" .
-    'Если Вы считаете, что получили это письмо по ошибке, или Вам нужна помощь, пожалуйста свяжитесь со службой поддержки сайта по адресу:  {$a->supportemail}.';
-$string['instructormsg'] =
-    'Сообщение от инструктора:' . "\n" .
-    '------------------------------------------------------------' . "\n" .
-    '{$a}' . "\n\n";
+$string['emailmsgunsubscribe'] = '<span class=\"apple-link\">If you believe that you have received this message in error or are in need of assistance, please contact:</span><br>
+<a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
+$string['emailmsgtxt'] = 'Инструкции:
+------------------------------------------------------------
+Вас пригласили на курс: {$a->fullname}. Для получения доступа к сайту, вам нужно будет зарегистрироваться (если Вы не сделали этого раньше) и войти на сайт.
+Имейте ввиду, что переходя по ссылке, предоставленной в этом письме:
+- подтверждаете, что Вы тот(та), кому было адресовано это письмо и/или для кого оно было предназначено;
+- срок действия ссылки, приведённой ниже, истечёт {$a->expiration}.
+
+Ссылка для доступа:
+------------------------------------------------------------
+{$a->inviteurl}
+
+Если Вы считаете, что получили это письмо по ошибке, или Вам нужна помощь, пожалуйста свяжитесь со службой поддержки сайта по адресу:  {$a->supportemail}.';
+$string['instructormsg'] = 'Сообщение от инструктора:
+------------------------------------------------------------
+{$a}
+
+';
 $string['default_subject'] = 'Приглашение для {$a}';
 $string['editenrollment'] = 'Редактировать запись на курс';
 $string['header_email'] = 'Кого бы вы хотели пригласить?';
@@ -112,17 +111,17 @@ $string['inviteexpiration_desc'] = 'Длительность периода вр
 $string['show_from_email'] = 'Разрешить приглашённому пользователю связаться со мной по адресу {$a->email} (Ваш адрес будет использован в качестве адреса отправителя. Если не выбрано - в качестве адреса отправителя письма будет использован {$a->supportemail})';
 $string['message'] = 'Сообщение';
 $string['message_help_link'] = 'просмотреть какие инструкции били отправлены приглашённым';
-$string['message_help'] =
-    'Инструкции:'.
-    '<hr />'.
-	'Вас пригласили на сайт: [site name]. Для получения доступа к сайту, вам нужно будет зарегистрироваться (если Вы не сделали этого раньше) и войти на сайт.'.
-	'Имейте ввиду, что переходя по ссылке, предоставленной в этом письме:' . "<br />" .
-	' - подтверждаете, что Вы тот(та), кому было адресовано это письмо и/или для кого оно было предназначено;' . "<br />" .
-    ' - срок действия ссылки, приведённой ниже, истечёт [expiration date].' . "<br /><br />" .
-    'Ссылка для доступа:' . "<br />" .
-    '<hr />' .
-    '[invite url]' . "<br /><br />" .
-    'Если Вы считаете, что получили это письмо по ошибке, или Вам нужна помощь, пожалуйста свяжитесь со службой поддержки сайта по адресу:  [support email].';
+$string['message_help'] = 'Инструкции:
+<hr>
+Вас пригласили на сайт: [site name]. Для получения доступа к сайту, вам нужно будет зарегистрироваться (если Вы не сделали этого раньше) и войти на сайт.
+Имейте ввиду, что переходя по ссылке, предоставленной в этом письме:
+- подтверждаете, что Вы тот(та), кому было адресовано это письмо и/или для кого оно было предназначено;
+- срок действия ссылки, приведённой ниже, истечёт [expiration date].
+
+Ссылка для доступа:<br>
+<hr>
+[invite url]<br><br>
+Если Вы считаете, что получили это письмо по ошибке, или Вам нужна помощь, пожалуйста свяжитесь со службой поддержки сайта по адресу:  [support email].';
 $string['norole'] = 'Пожалуйста, выберите роль.';
 $string['notify_inviter'] = 'Сообщать мне по адресу {$a->email} когда приглашённые пользователи примут приглашение';
 $string['header_role'] = 'Какую роль Вы хотели бы назначить приглашаемому?';
@@ -195,5 +194,4 @@ $string['close'] = 'Close';
 $string['invitationrejectbutton'] = 'Reject invitation';
 $string['event_invitation_rejected'] = 'Invitation Rejected';
 $string['status_invite_rejected'] = 'Rejected';
-$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as
-    a "{$a->rolename}" for yours account with email {$a->email} was rejected.';
+$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as a "{$a->rolename}" for yours account with email {$a->email} was rejected.';

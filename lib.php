@@ -1,13 +1,12 @@
 <?php
-
-// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -16,16 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Invitation enrolment plugin.
- *
- * This plugin allows you to send invitation by email. These invitations can be used only once. Users
- * clicking on the email link are automatically enrolled.
+ * Library file to include classes and functions used.
  *
  * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @author     Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -79,7 +78,7 @@ class enrol_invitation_plugin extends enrol_plugin {
     /**
      * Returns link to page which may be used to add new instance of enrolment
      * plugin in course.
-     * 
+     *
      * @param int $courseid
      * @return moodle_url page url
      */
@@ -165,7 +164,7 @@ class enrol_invitation_plugin extends enrol_plugin {
 
         $context = context_course::instance($instance->courseid);
         if (has_capability('enrol/invitation:config', $context)) {
-            $managelink = new moodle_url('/enrol/invitation/edit.php', array('courseid' => $instance->courseid, 'id' => $instance->id));
+            $managelink = new moodle_url('/enrol/invitation/edit.php', ['courseid' => $instance->courseid, 'id' => $instance->id]);
             $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
         }
     }
@@ -187,8 +186,8 @@ class enrol_invitation_plugin extends enrol_plugin {
         $icons = array();
 
         if (has_capability('enrol/invitation:config', $context)) {
-            $editlink = new moodle_url("/enrol/invitation/edit.php", array('courseid' => $instance->courseid, 'id' => $instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core', array('class' => 'icon')));
+            $editlink = new moodle_url("/enrol/invitation/edit.php", ['courseid' => $instance->courseid, 'id' => $instance->id]);
+            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core', ['class' => 'icon']));
         }
 
         return $icons;
@@ -202,7 +201,7 @@ class enrol_invitation_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        
+
     }
 
     /**
@@ -280,18 +279,16 @@ class enrol_invitation_plugin extends enrol_plugin {
         $context = context_course::instance($instance->courseid);
         return has_capability('enrol/invitation:config', $context);
     }
-    
-    
+
+
     /**
      * Get icon mapping for font-awesome.
      */
-    function enrol_invitation_get_fontawesome_icon_map() {
-        return [
-            'enrol_invitation:invite' => 'fa-plane',
-        ];
+    public function enrol_invitation_get_fontawesome_icon_map() {
+        return ['enrol_invitation:invite' => 'fa-plane'];
     }
-    
-    
+
+
     /**
      * Is it possible to delete enrol instance via standard UI?
      *

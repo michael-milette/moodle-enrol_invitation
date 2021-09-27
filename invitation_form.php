@@ -1,13 +1,12 @@
 <?php
-
-// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -19,12 +18,13 @@
  * Form to display invitation.
  *
  * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
+ * @author     Rex Lorenzo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    //  It must be included from a Moodle page.
-}
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once('locallib.php');
 require_once($CFG->dirroot . '/lib/formslib.php');
@@ -63,27 +63,22 @@ class invitation_form extends moodleform {
         // Set roles.
         $mform->addElement('header', 'header_role', get_string('header_role', 'enrol_invitation'));
 
-        $site_roles = $this->get_appropiate_roles($course);
+        $siteroles = $this->get_appropiate_roles($course);
         $label = get_string('assignrole', 'enrol_invitation');
-        $role_group = array();
-        foreach ($site_roles as $role_type => $roles) {
-            $role_type_string = html_writer::tag('div',
-                            get_string('archetype' . $role_type, 'role'),
-                            array('class' => 'label badge-info'));
-            $role_group[] = &$mform->createElement('static', 'role_type_header',
-                            '', $role_type_string);
+        $rolegroup = array();
+        foreach ($siteroles as $roletype => $roles) {
+            $roletypestring = html_writer::tag('div', get_string('archetype' . $roletype, 'role'), ['class' => 'label badge-info']);
+            $rolegroup[] = &$mform->createElement('static', 'role_type_header', '', $roletypestring);
 
             foreach ($roles as $role) {
-                $role_string = $this->format_role_string($role);
-                $role_group[] = &$mform->createElement('radio', 'roleid', '',
-                                $role_string, $role->id);
+                $rolestring = $this->formatrolestring($role);
+                $rolegroup[] = &$mform->createElement('radio', 'roleid', '', $rolestring, $role->id);
             }
         }
 
         $mform->setDefault('roleid', 3);
-        $mform->addGroup($role_group, 'role_group', $label);
-        $mform->addRule('role_group',
-                get_string('norole', 'enrol_invitation'), 'required');
+        $mform->addGroup($rolegroup, 'role_group', $label);
+        $mform->addRule('role_group', get_string('norole', 'enrol_invitation'), 'required');
 
         // Email address field.
         $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
@@ -133,41 +128,36 @@ class invitation_form extends moodleform {
                 $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
             }
         }
-        $this->_customdata['registeredonly'] ? $mform->addElement('static', 'email_registered', '', get_string('registeredonly_help', 'enrol_invitation')) : null;
+        $this->_customdata['registeredonly'] ? $mform->addElement('static', 'email_registered', '',
+                get_string('registeredonly_help', 'enrol_invitation')) : null;
 
         // Ssubject field.
-        $mform->addElement('text', 'subject', get_string('subject', 'enrol_invitation'),
-                array('class' => 'form-invite-subject'));
+        $mform->addElement('text', 'subject', get_string('subject', 'enrol_invitation'), array('class' => 'form-invite-subject'));
         $mform->setType('subject', PARAM_TEXT);
         $mform->addRule('subject', get_string('required'), 'required');
+
         // Default subject is "Site invitation for <course title>".
-        $default_subject = get_string('default_subject', 'enrol_invitation',
+        $defaultsubject = get_string('default_subject', 'enrol_invitation',
                 sprintf('%s: %s', $course->shortname, $course->fullname));
-        $mform->setDefault('subject', $default_subject);
+        $mform->setDefault('subject', $defaultsubject);
 
         // Message field.
-        //
         // $mform->addElement('textarea', 'message', get_string('message', 'enrol_invitation'),
-        //         array('class' => 'form-invite-message'));
+        // array('class' => 'form-invite-message'));.
 
-        $mform->addElement('editor', 'message', get_string('message', 'enrol_invitation'),
-                array('class' => 'form-invite-message'));
+        $mform->addElement('editor', 'message', get_string('message', 'enrol_invitation'), array('class' => 'form-invite-message'));
         $mform->setType('message', PARAM_RAW);
 
-
         // Put help text to show what default message invitee gets.
-        $mform->addHelpButton('message', 'message', 'enrol_invitation',
-                get_string('message_help_link', 'enrol_invitation'));
+        $mform->addHelpButton('message', 'message', 'enrol_invitation', get_string('message_help_link', 'enrol_invitation'));
 
         // Email options.
         // Prepare string variables.
         $temp = new stdClass();
         $temp->email = $USER->email;
         $temp->supportemail = $CFG->supportemail;
-        $mform->addElement('checkbox', 'show_from_email', '',
-                get_string('show_from_email', 'enrol_invitation', $temp));
-        $mform->addElement('checkbox', 'notify_inviter', '',
-                get_string('notify_inviter', 'enrol_invitation', $temp));
+        $mform->addElement('checkbox', 'show_from_email', '', get_string('show_from_email', 'enrol_invitation', $temp));
+        $mform->addElement('checkbox', 'notify_inviter', '', get_string('notify_inviter', 'enrol_invitation', $temp));
         $mform->setDefault('show_from_email', 1);
         $mform->setDefault('notify_inviter', 0);
 
@@ -185,8 +175,7 @@ class invitation_form extends moodleform {
     }
 
     /**
-     * Overriding get_data, because we need to be able to handle daysexpire,
-     * which is not defined as a regular form element.
+     * Overriding get_data, because we need to be able to handle daysexpire, which is not defined as a regular form element.
      *
      * @return object
      */
@@ -196,8 +185,7 @@ class invitation_form extends moodleform {
         // Check if form validated, and if user submitted daysexpire from POST.
         if (!empty($retval) && isset($_POST['daysexpire'])) {
             if (in_array($_POST['daysexpire'], self::$daysexpire_options)) {
-                // Cannot indicate to user a real error message, so just slightly
-                // ignore user setting.
+                // Cannot indicate to user a real error message, so just slightly ignore user setting.
                 $retval->daysexpire = $_POST['daysexpire'];
             }
         }
@@ -206,33 +194,30 @@ class invitation_form extends moodleform {
     }
 
     /**
-     * Given a role record, format string to be displayable to user. Filter out
-     * role notes and other information.
+     * Given a role record, format string to be displayable to user. Filter out role notes and other information.
      *
      * @param object $role  Record from role table.
      * @return string
      */
-    private function format_role_string($role) {
-        $role_string = html_writer::tag('span', $role->name . ':',
-                        array('class' => 'role-name'));
+    private function formatrolestring($role) {
+        $rolestring = html_writer::tag('span', $role->name . ':', array('class' => 'role-name'));
 
-        // Role description has a <hr> tag to separate out info for users
-        // and admins.
-        $role_description = explode('<hr />', $role->description);
+        // Role description has a <hr> tag to separate out info for users and admins.
+        $roledescription = explode('<hr />', $role->description);
 
         // Need to clean html, because tinymce adds a lot of extra tags that mess up formatting.
-        $role_description = $role_description[0];
+        $roledescription = $roledescription[0];
+
         // Whitelist some formatting tags.
-        $role_description = strip_tags($role_description, '<b><i><strong><ul><li><ol>');
+        $roledescription = strip_tags($roledescription, '<b><i><strong><ul><li><ol>');
 
-        $role_string .= ' ' . $role_description;
+        $rolestring .= ' ' . $roledescription;
 
-        return $role_string;
+        return $rolestring;
     }
 
     /**
-     * Private class method to return a list of appropiate roles for given
-     * course and user.
+     * Private class method to return a list of appropriate roles for given course and user.
      *
      * @param object $course    Course record.
      *
@@ -260,8 +245,7 @@ class invitation_form extends moodleform {
 
     /**
      * Provides custom validation rules.
-     *  - Validating the email field here, rather than in definition, to allow
-     *    multiple email addresses to be specified.
+     *  - Validating the email field here, rather than in definition, to allow multiple email addresses to be specified.
      *  - Validating that access end date is in the future.
      *
      * @param array $data
@@ -272,9 +256,9 @@ class invitation_form extends moodleform {
     public function validation($data, $files) {
         $errors = array();
         $delimiters = "/[;, \r\n]/";
-        $email_list = self::parse_dsv_emails($data['email'], $delimiters);
+        $emaillist = self::parsedsvemails($data['email'], $delimiters);
 
-        if (empty($email_list)) {
+        if (empty($emaillist)) {
             $errors['email'] = get_string('err_email', 'form');
         }
 
@@ -282,25 +266,25 @@ class invitation_form extends moodleform {
     }
 
     /**
-     * Parses a string containing delimiter seperated values for email addresses.
+     * Parses a string containing delimiter separated values for email addresses.
      * Returns an empty array if an invalid email is found.
      *
-     * @param string $emails           string of emails to be parsed
-     * @param string $delimiters       list of delimiters as regex
-     * @return array $parsed_emails    array of emails
+     * @param string $emails       string of emails to be parsed
+     * @param string $delimiters   list of delimiters as regex
+     * @return array $parsedemails array of emails
      */
-    public static function parse_dsv_emails($emails, $delimiters) {
-        $parsed_emails = array();
+    public static function parsedsvemails($emails, $delimiters) {
+        $parsedemails = array();
         $emails = trim($emails);
         if (preg_match($delimiters, $emails)) {
             // Multiple email addresses specified.
-            $dsv_emails = preg_split($delimiters, $emails, null, PREG_SPLIT_NO_EMPTY);
-            foreach ($dsv_emails as $email_value) {
-                $email_value = trim($email_value);
-                if (!clean_param($email_value, PARAM_EMAIL)) {
+            $dsvemails = preg_split($delimiters, $emails, null, PREG_SPLIT_NO_EMPTY);
+            foreach ($dsvemails as $emailvalue) {
+                $emailvalue = trim($emailvalue);
+                if (!clean_param($emailvalue, PARAM_EMAIL)) {
                     return array();
                 }
-                $parsed_emails[] = $email_value;
+                $parsedemails[] = $emailvalue;
             }
         } else if (clean_param($emails, PARAM_EMAIL)) {
             // Single email.
@@ -309,23 +293,23 @@ class invitation_form extends moodleform {
             return array();
         }
 
-        return $parsed_emails;
+        return $parsedemails;
     }
 
     public static function parse_userlist_emails($userlist) {
         global $DB;
-        $parsed_emails = array();
+        $parsedemails = array();
         if ($userlist) {
             foreach ($userlist as $userid) {
-                $parsed_emails[] = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST)->email;
+                $parsedemails[] = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST)->email;
             }
         }
-        return $parsed_emails;
+        return $parsedemails;
     }
 
-    public static function parse_cohortlist_emails($cohortlist,$course) {
+    public static function parse_cohortlist_emails($cohortlist, $course) {
         global $DB;
-        $parsed_emails = array();
+        $parsedemails = array();
         if ($cohortlist) {
             foreach ($cohortlist as $cohortid) {
                 $context = context_course::instance($course->id);
@@ -335,11 +319,11 @@ class invitation_form extends moodleform {
                 $params['cohortid'] = $cohortid;
                 $members = $DB->get_fieldset_sql($sql, $params);
                 foreach ($members as $user) {
-                    $parsed_emails[] = $DB->get_record('user', array('id' => $user), '*', MUST_EXIST)->email;
+                    $parsedemails[] = $DB->get_record('user', array('id' => $user), '*', MUST_EXIST)->email;
                 }
             }
         }
-        return $parsed_emails;
+        return $parsedemails;
     }
 
 }
@@ -367,10 +351,12 @@ class invitation_email_form extends moodleform {
         // Email address field.
         $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
         $mform->addElement('textarea', 'email', get_string('emailaddressnumber', 'enrol_invitation'),
-                array('maxlength' => 1000, 'rows' => '5','cols'=>65));
-        //$mform->addRule('email', null, 'required', null, 'client');
-        $registeredonly= $this->_customdata['registeredonly'] ? "<br />".get_string('registeredonly_help', 'enrol_invitation') : '';
-        $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation').$registeredonly);
+                array('maxlength' => 1000, 'rows' => '5', 'cols' => 65));
+        // $mform->addRule('email', null, 'required', null, 'client'); //.
+        $registeredonly = $this->_customdata['registeredonly'] ? '<br>'
+                . get_string('registeredonly_help', 'enrol_invitation') : '';
+        $mform->addElement('static', 'email_clarification', '',
+                get_string('email_clarification', 'enrol_invitation') . $registeredonly);
 
         $mform->setType('email', PARAM_TEXT);
         $options = array(
@@ -416,7 +402,6 @@ class invitation_email_form extends moodleform {
         array('class' => 'form-invite-message'));
         $mform->setType('message', PARAM_RAW);
 
-
         // Put help text to show what default message invitee gets.
         $mform->addHelpButton('message', 'message', 'enrol_invitation',
         get_string('message_help_link', 'enrol_invitation'));
@@ -436,8 +421,7 @@ class invitation_email_form extends moodleform {
         // Check if form validated, and if user submitted daysexpire from POST.
         if (!empty($retval) && isset($_POST['daysexpire'])) {
             if (in_array($_POST['daysexpire'], self::$daysexpire_options)) {
-                // Cannot indicate to user a real error message, so just slightly
-                // ignore user setting.
+                // Cannot indicate to user a real error message, so just slightly ignore user setting.
                 $retval->daysexpire = $_POST['daysexpire'];
             }
         }
@@ -459,9 +443,9 @@ class invitation_email_form extends moodleform {
     public function validation($data, $files) {
         $errors = array();
         $delimiters = "/[;, \r\n]/";
-        $email_list = self::parse_dsv_emails($data['email'], $delimiters);
+        $emaillist = self::parsedsvemails($data['email'], $delimiters);
 
-        if (empty($email_list) && empty($data['userlist']) && empty($data['cohortlist'])) {
+        if (empty($emaillist) && empty($data['userlist']) && empty($data['cohortlist'])) {
             $errors['email'] = get_string('err_email', 'form');
             $errors['userlist'] = get_string('err_userlist', 'enrol_invitation');
             $errors['cohortlist'] = get_string('err_cohortlist', 'enrol_invitation');
@@ -474,22 +458,22 @@ class invitation_email_form extends moodleform {
      * Parses a string containing delimiter seperated values for email addresses.
      * Returns an empty array if an invalid email is found.
      *
-     * @param string $emails           string of emails to be parsed
-     * @param string $delimiters       list of delimiters as regex
-     * @return array $parsed_emails    array of emails
+     * @param string $emails        string of emails to be parsed
+     * @param string $delimiters    list of delimiters as regex
+     * @return array $parsedemails array of emails
      */
-    public static function parse_dsv_emails($emails, $delimiters) {
-        $parsed_emails = array();
+    public static function parsedsvemails($emails, $delimiters) {
+        $parsedemails = array();
         $emails = trim($emails);
         if (preg_match($delimiters, $emails)) {
             // Multiple email addresses specified.
-            $dsv_emails = preg_split($delimiters, $emails, null, PREG_SPLIT_NO_EMPTY);
-            foreach ($dsv_emails as $email_value) {
-                $email_value = trim($email_value);
-                if (!clean_param($email_value, PARAM_EMAIL)) {
+            $dsvemails = preg_split($delimiters, $emails, null, PREG_SPLIT_NO_EMPTY);
+            foreach ($dsvemails as $emailvalue) {
+                $emailvalue = trim($emailvalue);
+                if (!clean_param($emailvalue, PARAM_EMAIL)) {
                     return array();
                 }
-                $parsed_emails[] = $email_value;
+                $parsedemails[] = $emailvalue;
             }
         } else if (clean_param($emails, PARAM_EMAIL)) {
             // Single email.
@@ -498,7 +482,7 @@ class invitation_email_form extends moodleform {
             return array();
         }
 
-        return $parsed_emails;
+        return $parsedemails;
     }
 
 }

@@ -1,12 +1,12 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -18,20 +18,24 @@
  * The invitation_rejected event.
  *
  * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2021 Lukas Celinak (lukascelinak@gmail.com)
+ * @author     Lukas Celinak
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace enrol_invitation\event;
+
 defined('MOODLE_INTERNAL') || die();
 
 class invitation_rejected extends invitation_base {
     protected function init() {
-        $this->data['crud'] = 'c'; // c(reate), r(ead), u(pdate), d(elete)
+        $this->data['crud'] = 'c'; // Valid options include: c)reate, r)ead, u)pdate and d)elete.
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'enrol_invitation_invitation_manager';
     }
 
-            /**
+    /**
      * Create this event on a given invitation.
      *
      * @param object $invitation
@@ -48,15 +52,13 @@ class invitation_rejected extends invitation_base {
     }
 
     public function get_description() {
-        $description="The user with id {$this->userid} rejected an invitation " .
-	        "for course with id '{$this->other['courseid']}'";
-
-        $description.= property_exists((object)$this->other, "errormsg")?" and wasn't logged in.":"";
+        $description = "The user with id {$this->userid} rejected an invitation for course with id '{$this->other['courseid']}'";
+        $description .= property_exists((object)$this->other, 'errormsg') ? ' and wasn\'t logged in.' : '';
         return $description;
     }
 
     public function get_url() {
-		return new \moodle_url('/enrol/invitation/history.php', array('courseid' => $this->other['courseid']));
+        return new \moodle_url('/enrol/invitation/history.php', array('courseid' => $this->other['courseid']));
     }
 
 }

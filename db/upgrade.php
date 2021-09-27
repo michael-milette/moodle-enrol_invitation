@@ -1,12 +1,12 @@
 <?php
-// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -18,8 +18,10 @@
  * This file keeps track of upgrades to the invitation enrolment plugin
  *
  * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @author     Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -109,7 +111,7 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
         if ($existinginvitations->valid()) {
             require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
 
-            $enrolinstances = array();  // Cache for
+            $enrolinstances = array();  // Cache.
             foreach ($existinginvitations as $existinginvitation) {
                 // Get enrol instance, but look in cache first.
                 $courseid = $existinginvitation->courseid;
@@ -136,7 +138,6 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
                 $DB->update_record('enrol_invitation', $existinginvitation, true);
             }
         }
-
 
         // Change defaults/null settings.
         $fields = array();
@@ -206,11 +207,10 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
 
     // Fix role_assignments to include enrol_invitation.
     if ($oldversion < 2013030102) {
-        /**
-         * Go through each accepted invite and look for an entry in
-         * role_assignments with component set to "" and userid, roleid, and
-         * context match given invite's user, role, course context.
-         */
+
+        // Go through each accepted invite and look for an entry in
+        // role_assignments with component set to "" and userid, roleid, and
+        // context match given invite's user, role, course context.
 
         // Get all invites (use record set, since it can be huge).
         $invites = $DB->get_recordset('enrol_invitation', array('tokenused' => 1));
@@ -224,33 +224,33 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
                 }
 
                 // Find course's enrollment plugin to use as itemid later on.
-                $invitation_enrol = $DB->get_record('enrol',
+                $invitationenrol = $DB->get_record('enrol',
                         array('enrol' => 'invitation',
                               'courseid' => $invite->courseid));
-                if (empty($invitation_enrol)) {
+                if (empty($invitationenrol)) {
                     continue;
                 }
 
                 // Find corresponding role_assignments record (there SHOULD only
                 // be one record, but testing/playing around might result in
                 // dups, just choose one).
-                $role_assignment = $DB->get_record('role_assignments',
+                $roleassignment = $DB->get_record('role_assignments',
                         array('roleid' => $invite->roleid,
                               'contextid' => $coursecontext->id,
                               'userid' => $invite->userid,
                               'component' => ''),
                         '*',
                         IGNORE_MULTIPLE);
-                if (empty($role_assignment)) {
+                if (empty($roleassignment)) {
                     continue;
                 }
 
                 // Set component & itemid.
-                $role_assignment->component = 'enrol_invitation';
-                $role_assignment->itemid    = $invitation_enrol->id;
+                $roleassignment->component = 'enrol_invitation';
+                $roleassignment->itemid    = $invitationenrol->id;
 
                 // Save it.
-                $DB->update_record('role_assignments', $role_assignment, true);
+                $DB->update_record('role_assignments', $roleassignment, true);
             }
             $invites->close();
         }
@@ -258,16 +258,15 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
         // Invitation savepoint reached.
         upgrade_plugin_savepoint(true, 2013030102, 'enrol', 'invitation');
     }
-/**
- * Update status field to db for better tracking of statuses
- * @package    enrol_invitation
- * @author     2021 Lukas Celinak (lukascelinak@gmail.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
+    // Update status field to db for better tracking of statuses
+    // @package    enrol_invitation
+    // @author     2021 Lukas Celinak (lukascelinak@gmail.com)
+    // @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
     if ($oldversion < 2021073000) {
         $table = new xmldb_table('enrol_invitation');
 
-        //  Add status column.
+        // Add status column.
         $fields[] = new xmldb_field('status', XMLDB_TYPE_CHAR, '50', null, null, null, null, 'timeused');
 
         foreach ($fields as $field) {

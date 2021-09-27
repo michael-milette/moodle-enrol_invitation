@@ -1,13 +1,12 @@
 <?php
-
-// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -16,11 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Page to send invitations.
+ * Page to send invitation.
  *
  * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @author     Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -39,13 +40,8 @@ $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $fullname = $course->fullname;
 $context = context_course::instance($courseid);
 
-if (!has_capability('enrol/invitation:enrol', $context)) {
-    throw new moodle_exception('nopermissiontosendinvitation' , 'enrol_invitation', $courseurl);
-}
-
 $PAGE->set_context($context);
-$PAGE->set_url(new moodle_url('/enrol/invitation/invitation.php',
-                array('courseid' => $courseid)));
+$PAGE->set_url(new moodle_url('/enrol/invitation/invitation.php', array('courseid' => $courseid)));
 $PAGE->set_pagelayout('course');
 $PAGE->set_course($course);
 $pagetitle = get_string('inviteusers', 'enrol_invitation');
@@ -57,6 +53,14 @@ echo $OUTPUT->header();
 
 // Print out a heading.
 echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
+
+if (!has_capability('enrol/invitation:enrol', $context)) {
+    echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
+    $return = new moodle_url('/');
+    echo $OUTPUT->continue_button($return);
+    echo $OUTPUT->footer();
+    exit;
+}
 
 print_page_tabs('invite');  // OUTPUT page tabs.
 
@@ -77,54 +81,56 @@ if ($inviteid) {
         $prefilled['show_from_email'] = $invite->show_from_email;
         $prefilled['notify_inviter'] = $invite->notify_inviter;
     } else {
-        print_error('invalidinviteid');
+        throw new moodle_exception('invalidinviteid');
     }
 }
 
-if($instance->customint1==1){
-        $mform = new invitation_email_form(null, array('course' => $course, 'context'=>$context,'prefilled' => $prefilled,'registeredonly'=>$instance->customint5,'instance'=>$instance),
-            'post', '', array('class' => 'mform-invite'));
-}else{
-    $mform = new invitation_form(null, array('course' => $course, 'context'=>$context,'prefilled' => $prefilled,'registeredonly'=>$instance->customint5,'instance'=>$instance),
-            'post', '', array('class' => 'mform-invite'));
+if ($instance->customint1 == 1) {
+    $mform = new invitation_email_form(null,
+            array('course' => $course, 'context' => $context, 'prefilled' => $prefilled, 'registeredonly' => $instance->customint5,
+            'instance' => $instance), 'post', '', array('class' => 'mform-invite'));
+} else {
+    $mform = new invitation_form(null,
+            array('course' => $course, 'context' => $context, 'prefilled' => $prefilled, 'registeredonly' => $instance->customint5,
+            'instance' => $instance), 'post', '', array('class' => 'mform-invite'));
 }
 
 $mform->set_data($invitationmanager);
 
 $data = $mform->get_data();
 
-if($data&&$instance->customint1==1){
-        $data->role_group=array('roleid'=>$instance->customint2);
-        $data->subject=$instance->customchar1;
-        $data->show_from_email=$instance->customint3;
-        $data->notify_inviter=$instance->customint4;
+if ($data && $instance->customint1 == 1) {
+    $data->role_group = array('roleid' => $instance->customint2);
+    $data->subject = $instance->customchar1;
+    $data->show_from_email = $instance->customint3;
+    $data->notify_inviter = $instance->customint4;
 }
 
 if ($data and confirm_sesskey()) {
     $data->registeredonly = $instance->customint5;
     // Check for the invitation of multiple users.
     $delimiters = "/[;, \r\n]/";
-    $email_list = invitation_form::parse_dsv_emails($data->email, $delimiters);
-    $userlistmails=invitation_form::parse_userlist_emails($data->userlist);
-    $cohortmails=invitation_form::parse_cohortlist_emails($data->cohortlist,$course);
-    $email_list=array_merge($email_list, $userlistmails,$cohortmails);
-    $email_list = array_unique($email_list);
+    $emaillist = invitation_form::parse_dsv_emails($data->email, $delimiters);
+    $userlistmails = invitation_form::parse_userlist_emails($data->userlist);
+    if (isset($data->cohortlist)) {
+        $cohortmails = invitation_form::parse_cohortlist_emails($data->cohortlist, $course);
+        $emaillist = array_merge($emaillist, $userlistmails, $cohortmails);
+    } else {
+        $emaillist = array_merge($emaillist, $userlistmails);
+    }
+    $emaillist = array_unique($emaillist);
 
-    foreach ($email_list as $email) {
+    foreach ($emaillist as $email) {
         $data->email = $email;
         $invitationmanager->send_invitations($data);
     }
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-    $courseret = new single_button($courseurl, get_string('returntocourse',
-                    'enrol_invitation'), 'get');
+    $courseret = new single_button($courseurl, get_string('returntocourse', 'enrol_invitation'), 'get');
 
-    $secturl = new moodle_url('/enrol/invitation/invitation.php',
-            array('courseid' => $courseid));
-    $sectret = new single_button($secturl, get_string('returntoinvite',
-                    'enrol_invitation'), 'get');
+    $secturl = new moodle_url('/enrol/invitation/invitation.php', array('courseid' => $courseid));
+    $sectret = new single_button($secturl, get_string('returntoinvite', 'enrol_invitation'), 'get');
 
-    echo $OUTPUT->confirm(get_string('invitationsuccess', 'enrol_invitation'),
-            $sectret, $courseret);
+    echo $OUTPUT->confirm(get_string('invitationsuccess', 'enrol_invitation'), $sectret, $courseret);
 
 } else {
     $mform->display();

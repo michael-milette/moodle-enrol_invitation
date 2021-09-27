@@ -1,12 +1,12 @@
 <?php
-// This file is part of the UCLA Site Invitation Plugin for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
+// Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// Invitation is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -15,11 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Invitation enrolments plugin settings and presets.
+ * Invitation enrolment plugin settings and presets.
  *
  * @package    enrol_invitation
+ * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @author     Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -40,9 +42,10 @@ if ($ADMIN->fulltree) {
 
     // Default to 2 weeks expiration.
     $settings->add(new admin_setting_configtext('enrol_invitation/inviteexpiration',
-        get_string('inviteexpiration', 'enrol_invitation'), get_string('inviteexpiration_desc', 'enrol_invitation'), 1209600, PARAM_INT));
-    
-      /* 
+        get_string('inviteexpiration', 'enrol_invitation'), get_string('inviteexpiration_desc', 'enrol_invitation'), 1209600,
+                PARAM_INT));
+
+      /*
         list($sort, $sortparams) = users_order_by_sql('u');
         if (!empty($sortparams)) {
             throw new coding_exception('users_order_by_sql returned some query parameters. ' .
@@ -62,6 +65,6 @@ if ($ADMIN->fulltree) {
                 $choices[$user->id] = fullname($user);
             }
         }
-        
+
      $settings->add(new admin_setting_configselect_autocomplete('enrol_invitation/fromuser', new lang_string('fromuserconfig', 'enrol_invitation'), new lang_string('fromuserconfig', 'enrol_invitation'), 2, $choices));*/
 }
