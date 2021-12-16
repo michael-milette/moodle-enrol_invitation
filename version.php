@@ -27,8 +27,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2021092700;   // Plugin released on September 27, 2021.
+$plugin->version  = 2021092701;   // Plugin released on September 27, 2021.
 $plugin->requires = 2013111800;   // Moodle 3.9 is required.
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release   = '0.1';
+$plugin->release   = '0.2';
 $plugin->component = "enrol_invitation";

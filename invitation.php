@@ -110,7 +110,7 @@ if ($data and confirm_sesskey()) {
     $data->registeredonly = $instance->customint5;
     // Check for the invitation of multiple users.
     $delimiters = "/[;, \r\n]/";
-    $emaillist = invitation_form::parse_dsv_emails($data->email, $delimiters);
+    $emaillist = invitation_form::parsedsvemails($data->email, $delimiters);
     $userlistmails = invitation_form::parse_userlist_emails($data->userlist);
     if (isset($data->cohortlist)) {
         $cohortmails = invitation_form::parse_cohortlist_emails($data->cohortlist, $course);
