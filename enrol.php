@@ -91,7 +91,7 @@ if (!$invitation->userid && isguestuser()) {
     echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
 
     echo $OUTPUT->box_start('generalbox', 'notice');
-    $noticeobject = prepare_notice_object($invitation);
+    $noticeobject = preparenoticeobject($invitation);
     echo get_string('loggedinnot', 'enrol_invitation', $noticeobject);
     $loginbutton = new single_button(new moodle_url($CFG->wwwroot
             . '/login/index.php'), get_string('login'));
@@ -140,7 +140,7 @@ if ($reject == 1) {
     \enrol_invitation\event\invitation_rejected::create_from_invitation($invitation)->trigger();
     $DB->update_record('enrol_invitation', $invitation);
 
-    $noticeobject = prepare_notice_object($invitation);
+    $noticeobject = preparenoticeobject($invitation);
     echo get_string('invtitation_rejected_notice', 'enrol_invitation', $noticeobject);
 
     echo $OUTPUT->box_end();
@@ -160,7 +160,7 @@ if ($instance->customint6 == 1 && empty($confirm)) {
     $accept = new single_button($accepturl, get_string('invitationacceptancebutton', 'enrol_invitation'), 'get');
     $cancel = new moodle_url('/');
 
-    $noticeobject = prepare_notice_object($invitation);
+    $noticeobject = preparenoticeobject($invitation);
 
     $invitationacceptance = get_string('invitationacceptance', 'enrol_invitation', $noticeobject);
 
@@ -205,7 +205,7 @@ if ($instance->customint6 == 1 && empty($confirm)) {
         $inviter = $DB->get_record('user', array('id' => $invitation->inviterid));
         $inviter->maildisplay = true;
 
-        $emailinfo = prepare_notice_object($invitation);
+        $emailinfo = preparenoticeobject($invitation);
         $emailinfo->userfullname = trim($user->firstname . ' ' . $user->lastname);
         $emailinfo->useremail = $user->email;
         $courseenrolledusersurl = new moodle_url('/user/index.php', ['id' => $invitation->courseid]);
@@ -235,7 +235,7 @@ if ($instance->customint6 == 1 && empty($confirm)) {
         $loginbutton = new single_button(new moodle_url($CFG->wwwroot . '/login/index.php'), get_string('login'));
         $cancel = new single_button(new moodle_url('/'), get_string('close', 'enrol_invitation'), 'get');
 
-        $noticeobject = prepare_notice_object($invitation);
+        $noticeobject = preparenoticeobject($invitation);
 
         $invitationacceptance = get_string('successenroled', 'enrol_invitation', $noticeobject);
 
