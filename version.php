@@ -18,7 +18,7 @@
  * Version information for Invitation.
  *
  * @package    enrol_invitation
- * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @author     Jerome Mouneyrac
@@ -27,8 +27,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2021092701;   // Plugin released on September 27, 2021.
+$plugin->version  = 2022011102;   // Plugin released on September 27, 2021.
 $plugin->requires = 2013111800;   // Moodle 3.9 is required.
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release   = '0.2';
+$plugin->maturity = MATURITY_BETA;
+$plugin->release   = '0.3';
 $plugin->component = "enrol_invitation";

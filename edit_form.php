@@ -18,7 +18,7 @@
  * Form to add new instance of enrol_invitation or edit current instance.
  *
  * @package    enrol_invitation
- * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @author     Jerome Mouneyrac
@@ -91,12 +91,23 @@ class enrol_invitation_edit_form extends moodleform {
         }
         $mform->setDefault('customint2', 3);
         $mform->addGroup($rolegroup, 'role_group', $label);
-        // Ssubject field.
+
+        // Subject field.
         $mform->addElement('text', 'customchar1', get_string('subject', 'enrol_invitation'), ['class' => 'form-invite-subject']);
         $mform->setType('customchar1', PARAM_TEXT);
-        // Default subject is "Site invitation for <course title>".
-        $defaultsubject = get_string('default_subject', 'enrol_invitation',
-                sprintf('%s: %s', $COURSE->shortname, $COURSE->fullname));
+        // Default subject is "Course invitation: <course full name>".
+        switch(get_config('enrol_invitation', 'defaultsubjectformat') ?? '') {
+            case 'custom':
+                $defaultsubject = get_string('customsubjectformat', 'enrol_invitation',
+                        (object)['shortname' => $COURSE->shortname, 'fullname' => $COURSE->fullname]);
+                break;
+            case 'shortname':
+                $defaultsubject = $COURSE->shortname;
+                break;
+            default: // case 'fullname'
+                $defaultsubject = $COURSE->fullname;
+        }
+        $defaultsubject = get_string('default_subject', 'enrol_invitation', $defaultsubject);
         $mform->setDefault('customchar1', $defaultsubject);
 
         // Message field.
@@ -107,7 +118,7 @@ class enrol_invitation_edit_form extends moodleform {
         $mform->setType('message', PARAM_RAW);
 
         // Put help text to show what default message invitee gets.
-        $mform->addHelpButton('customtext1', 'message', 'enrol_invitation', get_string('message_help_link', 'enrol_invitation'));
+        $mform->addHelpButton('customtext1', 'emailmsghtml', 'enrol_invitation', get_string('message_help_link', 'enrol_invitation'));
 
         // Email options.
         // Prepare string variables.

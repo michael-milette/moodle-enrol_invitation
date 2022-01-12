@@ -18,7 +18,7 @@
  * Local library file to include classes and functions used.
  *
  * @package    enrol_invitation
- * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @author     Rex Lorenzo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -92,14 +92,14 @@ class invitation_manager {
 
             // Display an icon with requested (css can be changed in stylesheet).
             if ($withicon) {
-                $inviteicon = html_writer::empty_tag('img', array('alt' => "invitation", 'class' => "enrol_invitation_item_icon",
-                            'title' => "invitation", 'src' => $OUTPUT->pix_url('invite', 'enrol_invitation')));
+                $inviteicon = html_writer::empty_tag('img', ['alt' => "invitation", 'class' => "enrol_invitation_item_icon",
+                        'title' => "invitation", 'src' => $OUTPUT->pix_url('invite', 'enrol_invitation')]);
             }
 
             $link = html_writer::link(
-                            new moodle_url('/enrol/invitation/invitation.php',
-                                    array('courseid' => $this->courseid)), $inviteicon . get_string('inviteusers',
-                                    'enrol_invitation'));
+                    new moodle_url('/enrol/invitation/invitation.php',
+                        ['courseid' => $this->courseid]), $inviteicon . get_string('inviteusers',
+                        'enrol_invitation'));
         }
 
         return $link;
@@ -108,16 +108,16 @@ class invitation_manager {
     /**
      * Send invitation (create a unique token for each of them).
      *
-     * @param array $data       data processed from the invite form, or an invite
-     * @param bool $resend     resend the invite specified by $data
+     * @param array $data  data processed from the invite form, or an invite
+     * @param bool $resend resend the invite specified by $data
      */
     public function send_invitations($data, $resend = false) {
-        global $DB, $CFG, $SITE, $USER;
+        global $DB, $CFG, $PAGE, $USER;
 
         if (has_capability('enrol/invitation:enrol', context_course::instance($data->courseid))) {
 
             // Get course record, to be used later.
-            $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
+            $course = $DB->get_record('course', ['id' => $data->courseid], '*', MUST_EXIST);
             if (!empty($data->email)) {
 
                 // Create a new token only if we are not resending an active invite.
@@ -127,7 +127,7 @@ class invitation_manager {
                     // Create unique token for invitation.
                     do {
                         $token = uniqid();
-                        $existingtoken = $DB->get_record('enrol_invitation', array('token' => $token));
+                        $existingtoken = $DB->get_record('enrol_invitation', ['token' => $token]);
                     } while (!empty($existingtoken));
                 }
 
@@ -139,25 +139,23 @@ class invitation_manager {
                 $invitation->tokenused = false;
                 $invitation->roleid = $resend ? $data->roleid : $data->role_group['roleid'];
                 $invitation->status = null;
-                // Set time.
+
+                // Set the timesent/timeexpiration date for the invitation.
                 $timesent = time();
                 $invitation->timesent = $timesent;
                 $invitation->timeexpiration = $timesent +
                         get_config('enrol_invitation', 'inviteexpiration');
 
-                // Update invite to have the proper timesent/timeexpiration.
+                // Set the email subject line.
+                $data->subject = format_string($data->subject);
                 if ($resend) {
+                    // Update the timeexpiration date for the invitation.
                     $DB->set_field('enrol_invitation', 'timeexpiration', $invitation->timeexpiration,
-                            array('courseid' => $data->courseid, 'id' => $data->id));
-
-                    // Prepend subject heading with a 'Reminder' string.
-                    $invitation->subject = get_string('reminder', 'enrol_invitation');
-                }
-
-                if (empty($invitation->subject)) {
-                    $invitation->subject = $data->subject;
+                            ['courseid' => $data->courseid, 'id' => $data->id]);
+                    // Prepend subject heading with a 'Reminder: ' string.
+                    $invitation->subject = get_string('reminder', 'enrol_invitation') . $data->subject;
                 } else {
-                    $invitation->subject .= $data->subject;
+                    $invitation->subject = $data->subject;
                 }
 
                 $invitation->inviterid = $USER->id;
@@ -167,53 +165,74 @@ class invitation_manager {
                 // Construct message: custom (if any) + template.
 
                 $message = '';
+                $strftime = get_string('strftimedaydatetime', 'core_langconfig');
 
                 $messageparams = new stdClass();
+
+                // Use primary administrators email address if support email address is not defined.
+                if (!empty($CFG->supportemail)) {
+                    $messageparams->supportemail = $CFG->supportemail;
+                } else {
+                    $primaryadmin = get_admin();
+                    $messageparams->supportemail = $primaryadmin->email;
+                }
+                $messageparams->emailmsgunsubscribe = get_string('emailmsgunsubscribe', 'enrol_invitation', $messageparams);
+
                 if ($location = $DB->get_record('course_format_options',
-                        array('courseid' => $course->id, 'format' => 'event', 'name' => 'location'))) {
+                        ['courseid' => $course->id, 'format' => 'event', 'name' => 'location'])) {
                     $messageparams->location = $location->value;
                 } else {
-                    $messageparams->location = "";
+                    $handler = core_course\customfield\course_handler::create();
+                    $coursefields = $handler->export_instance_data_object($PAGE->course->id, true);
+                    $fieldsvisible = $handler->export_instance_data_object($PAGE->course->id);
+                    if(isset($coursefields->location) && $fieldsvisible->location) {
+                        $messageparams->location = $coursefields[$field];
+                    } else {
+                        $messageparams->location = get_string('online', 'message');
+                    }
                 }
-                $messageparams->fullname = $course->fullname;
-                $messageparams->start = userdate($course->startdate, "%d-%m-%Y %I:%M %p");
-                $messageparams->end = userdate($course->enddate, "%d-%m-%Y %I:%M %p");
+                $messageparams->coursename = format_string($course->fullname);
+                $messageparams->start = userdate($course->startdate, $strftime);
+                if (!empty($course->enddate)) {
+                    $messageparams->end = userdate($course->enddate, $strftime);
+                } else {
+                    $messageparams->end = get_string('noenddate', 'enrol_invitation');
+                }
 
-                $messageparams->expiration = userdate($invitation->timeexpiration, "%d-%m-%Y %I:%M %p");
-                $inviteurl = new moodle_url('/enrol/invitation/enrol.php', array('token' => $token));
-                $rejecturl = new moodle_url('/enrol/invitation/enrol.php', array('token' => $token, 'reject' => 1));
+                $messageparams->expiration = userdate($invitation->timeexpiration, $strftime);
+                $inviteurl = new moodle_url('/enrol/invitation/enrol.php', ['token' => $token]);
+                $rejecturl = new moodle_url('/enrol/invitation/enrol.php', ['token' => $token, 'reject' => 1]);
 
                 $messageparams->inviteurl = $inviteurl->out(false);
                 $messageparams->rejecturl = $rejecturl->out(false);
-                $messageparams->supportemail = $CFG->supportemail;
                 $messageparams->supportemailtext = get_string('emailmsgunsubscribe', 'enrol_invitation', $messageparams);
                 $messageparams->acceptinvitation = get_string('invitationacceptancebutton', 'enrol_invitation');
                 $messageparams->rejectinvitation = get_string('invitationrejectbutton', 'enrol_invitation');
 
-                $message .= get_string('emailmsgtxt', 'enrol_invitation', $messageparams);
+                if (!empty($data->message['text'])) {
+                    $messageparams->message = format_string($data->message['text'], false);
+                } else {
+                    $messageparams->message = '';
+                }
+
+                $message .= get_string('emailmsghtml_help', 'enrol_invitation', $messageparams);
 
                 $messageparams->message = $message;
                 $invitation->message = "";
                 $invitation->timeused = null;
-
-                if (!empty($data->message['text'])) {
-                    $message .= get_string('instructormsg', 'enrol_invitation', $data->message['text']);
-                    $invitation->message = get_string('instructormsg', 'enrol_invitation', $data->message['text']);
-                }
-
                 $messagehtml = $this->generate_html_message($invitation, $messageparams);
 
                 // Change FROM to be $CFG->supportemail if user has show_from_email off.
                 $fromuser = $USER;
                 if (empty($invitation->show_from_email)) {
-                    $fromuser = $DB->get_record('user', array('id' => 2));
-                    $fromuser->email = $CFG->supportemail;
+                    $fromuser = get_admin();
+                    $fromuser->email = !empty($CFG->supportemail) ? $CFG->supportemail : $CFG->noreplyaddress;
                     $fromuser->maildisplay = true;
                     $fromuser->sender = $USER;
                 }
 
                 // Check if user exists.
-                if ($contactuser = $DB->get_record('user', array('email' => $invitation->email))) {
+                if ($contactuser = $DB->get_record('user', ['email' => $invitation->email])) {
                     $contactuser->mailformat = 1;
                     $contactuser->maildisplay = true;
                     $invitation->userid = $contactuser->id;
@@ -245,6 +264,7 @@ class invitation_manager {
                     $userexits ? '' : $invitation->userid = -1;
                     // Log activity after sending the email.
                     if ($resend) {
+                        $invitation->id = $DB->get_record('enrol_invitation', ['token' => $token], 'id')->id;
                         $invitation->status = 'sent';
                         \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
                     } else if ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true
@@ -258,7 +278,7 @@ class invitation_manager {
             }
         } else {
             throw new moodle_exception('cannotsendinvitation', 'enrol_invitation',
-                    new moodle_url('/course/view.php', array('id' => $data['courseid'])));
+                    new moodle_url('/course/view.php', ['id' => $data['courseid']]));
         }
     }
 
@@ -329,7 +349,7 @@ class invitation_manager {
             $courseid = $this->courseid;
         }
 
-        $invites = $DB->get_records('enrol_invitation', array('courseid' => $courseid));
+        $invites = $DB->get_records('enrol_invitation', ['courseid' => $courseid], 'timesent DESC,email ASC');
 
         return $invites;
     }
@@ -354,7 +374,7 @@ class invitation_manager {
         // Find enrolment instance.
         $instance = null;
         require_once("$CFG->dirroot/enrol/locallib.php");
-        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
         $manager = new course_enrolment_manager($PAGE, $course);
         foreach ($manager->get_enrolment_instances() as $tempinstance) {
             if ($tempinstance->enrol == 'invitation') {
@@ -391,7 +411,7 @@ class invitation_manager {
             $timeend += 86399;
         }
         if ((!isloggedin() or isguestuser()) && $invitation->userid) {
-            $user = $DB->get_record('user', array('id' => $invitation->userid));
+            $user = $DB->get_record('user', ['id' => $invitation->userid]);
         } else if (isloggedin()) {
             $user = $USER;
         } else {
@@ -407,13 +427,13 @@ class invitation_manager {
      * Figures out who used an invite.
      *
      * @param object $invite Invitation record
-     * @return object        Returns an object with following values:
-     *                       ['username'] - name of who used invite
-     *                       ['useremail'] - email of who used invite
-     *                       ['roles'] - roles the user has for course that
-     *                                   they were invited
-     *                       ['timeused'] - formatted string of time used
-     *                       Returns false on error or if invite wasn't used.
+     * @return object Returns an object with following values:
+     *                ['username'] - name of who used invite
+     *                ['useremail'] - email of who used invite
+     *                ['roles'] - roles the user has for course that
+     *                            they were invited
+     *                ['timeused'] - formatted string of time used
+     *                Returns false on error or if invite wasn't used.
      */
     public function who_used_invite($invite) {
         global $DB;
@@ -424,7 +444,7 @@ class invitation_manager {
         }
 
         // Find user.
-        $user = $DB->get_record('user', array('id' => $invite->userid));
+        $user = $DB->get_record('user', ['id' => $invite->userid]);
         if (empty($user)) {
             return false;
         }
@@ -446,42 +466,56 @@ class invitation_manager {
     }
 
     public function generate_html_message($invitation, $messageparams) {
-        $htmlmail = "<!doctype html>
-<html>
+        $lang = str_replace('_', '-', current_language());
+        $dir = get_string('thisdirection', 'langconfig');
+        $htmlmail = "<!DOCTYPE html>
+<html lang=\"$lang\" dir=\"$dir\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">
 <head>
-<meta name=\"viewport\" content=\"width=device-width\" />
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+<meta name=\"viewport\" content=\"width=device-width,initial-scale=1 user-scalable=yes\" />
+<meta name=\"format-detection\" content=\"telephone=no, date=yes, address=no, email=no, url=no\">
+<meta name=\"x-apple-disable-message-reformatting\">
 <title>{$invitation->subject}</title>
+<!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+<![endif]-->
 <style>
     /* -------------------------------------
         GLOBAL RESETS
     ------------------------------------- */
 
-    /*All the styling goes here*/
+    /* All the styling goes here. */
 
     img {
-    border: none;
-    -ms-interpolation-mode: bicubic;
-    max-width: 100%;
+        border: none;
+        -ms-interpolation-mode: bicubic;
+        max-width: 100%;
     }
 
     body {
-    background-color: #f6f6f6;
-    font-family: sans-serif;
-    -webkit-font-smoothing: antialiased;
-    font-size: 14px;
-    line-height: 1.4;
-    margin: 0;
-    padding: 0;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
+        background-color: #f6f6f6;
+        font-family: sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-size: 14px;
+        line-height: 1.4;
+        margin: 0;
+        padding: 0;
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
     }
 
     table {
-    border-collapse: separate;
-    mso-table-lspace: 0pt;
-    mso-table-rspace: 0pt;
-    width: 100%; }
+        border-collapse: separate;
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+        width: 100%;
+    }
     table td {
         font-family: sans-serif;
         font-size: 12px;
@@ -493,55 +527,54 @@ class invitation_manager {
     ------------------------------------- */
 
     .body {
-    background-color: #f6f6f6;
-    width: 100%;
+        background-color: #f6f6f6;
+        width: 100%;
     }
 
     /* Set a max-width, and make it display as block so it will automatically stretch to that width,
      * but will also shrink down on a phone or something.
      */
     .container {
-    display: block;
-    margin: 0 auto !important;
-    /* makes it centered */
-    max-width: 800px;
-    padding: 10px;
-    width: 1024px;
+        display: block;
+        margin: 0 auto !important;
+        /* makes it centered */
+        padding: 10px;
+        width: 95%;
     }
 
     /* This should also be a block element, so that it will fill 100% of the .container */
     .content {
-    box-sizing: border-box;
-    display: block;
-    margin: 0 auto;
-    max-width: 800px;
-    padding: 10px;
+        box-sizing: border-box;
+        display: block;
+        margin: 0 auto;
+        max-width: 800px;
+        padding: 10px;
     }
 
     /* -------------------------------------
         HEADER, FOOTER, MAIN
     ------------------------------------- */
     .main {
-    background: #ffffff;
-    border-radius: 3px;
-    width: 100%;
+        background: #ffffff;
+        border-radius: 3px;
+        width: 100%;
     }
 
     .wrapper {
-    box-sizing: border-box;
-    padding: 20px;
+        box-sizing: border-box;
+        padding: 20px;
     }
 
     .content-block {
-    padding-bottom: 10px;
-    padding-top: 10px;
+        padding-bottom: 10px;
+        padding-top: 10px;
     }
 
     .footer {
-    clear: both;
-    margin-top: 10px;
-    text-align: center;
-    width: 100%;
+        clear: both;
+        margin-top: 10px;
+        text-align: center;
+        width: 100%;
     }
     .footer td,
     .footer p,
@@ -559,29 +592,29 @@ class invitation_manager {
     h2,
     h3,
     h4 {
-    color: #000000;
-    font-family: sans-serif;
-    font-weight: 400;
-    line-height: 1.4;
-    margin: 0;
-    margin-bottom: 30px;
+        color: #000000;
+        font-family: sans-serif;
+        font-weight: 400;
+        line-height: 1.4;
+        margin: 0;
+        margin-bottom: 30px;
     }
 
     h1 {
-    font-size: 35px;
-    font-weight: 300;
-    text-align: center;
-    text-transform: capitalize;
+        font-size: 35px;
+        font-weight: 300;
+        text-align: center;
+        text-transform: capitalize;
     }
 
     p,
     ul,
     ol {
-    font-family: sans-serif;
-    font-size: 14px;
-    font-weight: normal;
-    margin: 0;
-    margin-bottom: 15px;
+        font-family: sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        margin: 0;
+        margin-bottom: 15px;
     }
     p li,
     ul li,
@@ -591,209 +624,181 @@ class invitation_manager {
     }
 
     a {
-    color: #3498db;
-    text-decoration: underline;
+        color: #007CBD;
+        text-decoration: underline;
     }
 
     /* -------------------------------------
         BUTTONS
     ------------------------------------- */
-    .btn {
-    box-sizing: border-box;
-    width: 100%; }
-    .btn > tbody > tr > td {
-        padding-bottom: 15px; }
-    .btn table {
-        width: auto;
-    }
-    .btn table td {
+    a.btn {
         background-color: #ffffff;
-        border-radius: 5px;
-        text-align: center;
-    }
-    .btn a {
-        background-color: #ffffff;
-        border: 1px solid #3498db;
+        border: 1px solid #007CBD;
         border-radius: 5px;
         box-sizing: border-box;
-        color: #3498db;
+        color: #007CBD;
         cursor: pointer;
         display: inline-block;
         font-size: 14px;
-        font-weight: bold;
         margin: 0;
         padding: 12px 25px;
         text-decoration: none;
-        text-transform: capitalize;
     }
 
-    .btn-primary table td {
-    background-color: #3498db;
+    a.btn-primary {
+        background-color: #007CBD;
+        border-color: #007CBD;
+        color: #ffffff;
     }
 
-    .btn-primary a {
-    background-color: #3498db;
-    border-color: #3498db;
-    color: #ffffff;
-    }
-
-    .btn-danger table td {
-    background-color: #dc3545;
-    }
-
-    .btn-danger a {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    color: #ffffff;
+    a.btn-danger {
+        background-color: #C83246;
+        border-color: #C83246;
+        color: #ffffff;
     }
 
     /* -------------------------------------
         OTHER STYLES THAT MIGHT BE USEFUL
     ------------------------------------- */
     .last {
-    margin-bottom: 0;
+        margin-bottom: 0;
     }
 
     .first {
-    margin-top: 0;
+        margin-top: 0;
     }
 
     .align-center {
-    text-align: center;
+        text-align: center;
     }
 
     .align-right {
-    text-align: right;
+        text-align: right;
     }
 
     .align-left {
-    text-align: left;
+        text-align: left;
     }
 
     .clear {
-    clear: both;
+        clear: both;
     }
 
     .mt0 {
-    margin-top: 0;
+        margin-top: 0;
     }
 
     .mb0 {
-    margin-bottom: 0;
+        margin-bottom: 0;
     }
 
     .preheader {
-    color: transparent;
-    display: none;
-    height: 0;
-    max-height: 0;
-    max-width: 0;
-    opacity: 0;
-    overflow: hidden;
-    mso-hide: all;
-    visibility: hidden;
-    width: 0;
-    }
-
-    .powered-by a {
-    text-decoration: none;
+        color: transparent;
+        display: none;
+        height: 0;
+        max-height: 0;
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        mso-hide: all;
+        visibility: hidden;
+        width: 0;
     }
 
     hr {
-    border: 0;
-    border-bottom: 1px solid #f6f6f6;
-    margin: 20px 0;
+        border: 0;
+        border-bottom: 1px solid #f6f6f6;
+        margin: 20px 0;
     }
 
     /* -------------------------------------
         RESPONSIVE AND MOBILE FRIENDLY STYLES
     ------------------------------------- */
     @media only screen and (max-width: 620px) {
-    table[class=body] h1 {
-        font-size: 28px !important;
-        margin-bottom: 10px !important;
-    }
-    table[class=body] p,
-    table[class=body] ul,
-    table[class=body] ol,
-    table[class=body] td,
-    table[class=body] span,
-    table[class=body] a {
-        font-size: 16px !important;
-    }
-    table[class=body] .wrapper,
-    table[class=body] .article {
-        padding: 10px !important;
-    }
-    table[class=body] .content {
-        padding: 0 !important;
-    }
-    table[class=body] .container {
-        padding: 0 !important;
-        width: 100% !important;
-    }
-    table[class=body] .main {
-        border-left-width: 0 !important;
-        border-radius: 0 !important;
-        border-right-width: 0 !important;
-    }
-    table[class=body] .btn table {
-        width: 100% !important;
-    }
-    table[class=body] .btn a {
-        width: 100% !important;
-    }
-    table[class=body] .img-responsive {
-        height: auto !important;
-        max-width: 100% !important;
-        width: auto !important;
-    }
+        table[class=body] h1 {
+            font-size: 28px !important;
+            margin-bottom: 10px !important;
+        }
+        table[class=body] p,
+        table[class=body] ul,
+        table[class=body] ol,
+        table[class=body] td,
+        table[class=body] span,
+        table[class=body] a {
+            font-size: 16px !important;
+        }
+        table[class=body] .wrapper,
+        table[class=body] .article {
+            padding: 10px !important;
+        }
+        table[class=body] .content {
+            padding: 0 !important;
+        }
+        table[class=body] .container {
+            padding: 0 !important;
+            width: 100% !important;
+        }
+        table[class=body] .main {
+            border-left-width: 0 !important;
+            border-radius: 0 !important;
+            border-right-width: 0 !important;
+        }
+        table[class=body] .btn table {
+            width: 100% !important;
+        }
+        table[class=body] .btn a {
+            width: 100% !important;
+        }
+        table[class=body] .img-responsive {
+            height: auto !important;
+            max-width: 100% !important;
+            width: auto !important;
+        }
     }
 
     /* -------------------------------------
         PRESERVE THESE STYLES IN THE HEAD
     ------------------------------------- */
     @media all {
-    .ExternalClass {
-        width: 100%;
+        .ExternalClass {
+            width: 100%;
+        }
+        .ExternalClass,
+        .ExternalClass p,
+        .ExternalClass span,
+        .ExternalClass font,
+        .ExternalClass td,
+        .ExternalClass div {
+            line-height: 100%;
+        }
+        .apple-link a {
+            color: inherit !important;
+            font-family: inherit !important;
+            font-size: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+            text-decoration: none !important;
+        }
+        #MessageViewBody a {
+            color: inherit;
+            text-decoration: none;
+            font-size: inherit;
+            font-family: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+        }
+        .btn-primary table td:hover {
+            background-color: #34495e !important;
+        }
+        .btn-primary a:hover {
+            background-color: #34495e !important;
+            border-color: #34495e !important;
+        }
     }
-    .ExternalClass,
-    .ExternalClass p,
-    .ExternalClass span,
-    .ExternalClass font,
-    .ExternalClass td,
-    .ExternalClass div {
-        line-height: 100%;
-    }
-    .apple-link a {
-        color: inherit !important;
-        font-family: inherit !important;
-        font-size: inherit !important;
-        font-weight: inherit !important;
-        line-height: inherit !important;
-        text-decoration: none !important;
-    }
-    #MessageViewBody a {
-        color: inherit;
-        text-decoration: none;
-        font-size: inherit;
-        font-family: inherit;
-        font-weight: inherit;
-        line-height: inherit;
-    }
-    .btn-primary table td:hover {
-        background-color: #34495e !important;
-    }
-    .btn-primary a:hover {
-        background-color: #34495e !important;
-        border-color: #34495e !important;
-    }
-    }
-
 </style>
 </head>
-<body class=\"\">
-    <span class=\"preheader\">{$invitation->subject}</span>
+<body>
+<div role=\"article\" aria-roledescription=\"email\" aria-label=\"{$invitation->subject}\" lang=\"$lang\" dir=\"$dir\" style=\"font-size:16px; font-size:1rem; font-size:max(16px, 1rem)\">
     <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"body\">
       <tr>
         <td>&nbsp;</td>
@@ -806,44 +811,8 @@ class invitation_manager {
               <!-- START MAIN CONTENT AREA -->
               <tr>
                 <td class=\"wrapper\">
-                  <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
-                    <tr>
-                      <td>
-                        {$messageparams->message}
-                        <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\">
-                          <tbody>
-                            <tr>
-                              <td align=\"left\">
-                                <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
-                                  <tbody>
-                                    <tr>
-                                      <td class=\"btn\"><a href=\"{$messageparams->inviteurl}\" class=\"btn btn-primary\">{$messageparams->acceptinvitation}</a></td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-danger\">
-                          <tbody>
-                            <tr>
-                              <td align=\"left\">
-                                <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
-                                  <tbody>
-                                    <tr>
-                                      <td class=\"btn\"><a href=\"{$messageparams->rejecturl}\" class=\"btn btn-danger\">{$messageparams->rejectinvitation}</a></td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        {$invitation->message}
-                      </td>
-                    </tr>
-                  </table>
+                    {$messageparams->message}
+                    {$invitation->message}
                 </td>
               </tr>
 
@@ -856,14 +825,7 @@ class invitation_manager {
               <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
                 <tr>
                   <td class=\"content-block\">
-                    <span class=\"apple-link\">If you believe that you have received this message in error or are in need of
-                                               assistance, please contact:</span>
-                    <br><a href=\"mailto:{$messageparams->supportemail}\">{$messageparams->supportemail}</a>.
-                  </td>
-                </tr>
-                <tr>
-                  <td class=\"content-block powered-by\">
-
+                    {$messageparams->emailmsgunsubscribe}
                   </td>
                 </tr>
               </table>
@@ -875,8 +837,9 @@ class invitation_manager {
         <td>&nbsp;</td>
       </tr>
     </table>
-  </body>
-  </html>";
+</div>
+</body>
+</html>";
         return $htmlmail;
     }
 
@@ -971,7 +934,7 @@ function preparenoticeobject($invitation) {
         $noticeobject->rolename = $roles[$invitation->roleid];
     } else {
         // In case something gone wrong we will do this the old way.
-        $role = $DB->get_record('role', array('id' => $invitation->roleid));
+        $role = $DB->get_record('role', ['id' => $invitation->roleid]);
         $noticeobject->rolename = $role->name; // Empty in new Moodle versions.
         // Role description is not used anywhere in plugin and is also empty in new Moodle versions.
         $noticeobject->roledescription = strip_tags($role->description);
@@ -988,12 +951,12 @@ function print_page_tabs($activetab) {
     global $COURSE;
 
     $tabs[] = new tabobject('history',
-            new moodle_url('/enrol/invitation/history.php', array('courseid' => $COURSE->id)),
+            new moodle_url('/enrol/invitation/history.php', ['courseid' => $COURSE->id]),
             get_string('invitehistory', 'enrol_invitation'));
     $tabs[] = new tabobject('invite',
-            new moodle_url('/enrol/invitation/invitation.php', array('courseid' => $COURSE->id)),
+            new moodle_url('/enrol/invitation/invitation.php', ['courseid' => $COURSE->id]),
             get_string('inviteusers', 'enrol_invitation'));
 
     // Display tabs here.
-    print_tabs(array($tabs), $activetab);
+    print_tabs([$tabs], $activetab);
 }

@@ -1,0 +1,16 @@
+{
+    "name": "michael-milette/moodle-enrol_invitation",
+    "type": "moodle-enrol",
+    "description": "This Moodle plugin enables teachers to send invitations by email to specific email addresses.",
+    "license": "GPL-3.0+",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "extra": {
+        "installer-name": "invitation"
+    },
+    "support": {
+        "issues": "https://github.com/michael-milette/moodle-enrol_invitation/issues",
+        "source": "https://github.com/michael-milette/moodle-enrol_invitation/"
+    }
+}

@@ -18,7 +18,7 @@
  * Invitation enrolment plugin settings and presets.
  *
  * @package    enrol_invitation
- * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @author     Jerome Mouneyrac
@@ -45,7 +45,19 @@ if ($ADMIN->fulltree) {
         get_string('inviteexpiration', 'enrol_invitation'), get_string('inviteexpiration_desc', 'enrol_invitation'), 1209600,
                 PARAM_INT));
 
-      /*
+    // Option to select default email subject line.
+    $default = 'fullname'; // Default is course fullname.
+    $name = 'enrol_invitation/defaultsubjectformat';
+    $title = get_string('defaultsubjectformat', 'enrol_invitation');
+    $description = get_string('defaultsubjectformat_desc', 'enrol_invitation');
+    $choices = [
+            'fullname' => get_string('fullnamecourse'),
+            'shortname' => get_string('shortnamecourse'),
+            'custom' => get_string('customnamecourse', 'enrol_invitation')];
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $settings->add($setting);
+
+/*
         list($sort, $sortparams) = users_order_by_sql('u');
         if (!empty($sortparams)) {
             throw new coding_exception('users_order_by_sql returned some query parameters. ' .

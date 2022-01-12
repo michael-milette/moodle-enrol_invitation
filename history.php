@@ -18,7 +18,7 @@
  * Viewing invitation history script.
  *
  * @package    enrol_invitation
- * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @author     Rex Lorenzo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

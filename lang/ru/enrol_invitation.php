@@ -18,7 +18,7 @@
  * Strings for component 'enrol_invitation'
  *
  * @package    enrol_invitation
- * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @author     Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

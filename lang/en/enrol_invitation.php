@@ -18,7 +18,7 @@
  * Strings for component 'enrol_invitation'
  *
  * @package    enrol_invitation
- * @copyright  2021 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @author     Jerome Mouneyrac
@@ -47,11 +47,27 @@ $string['emailmsgtxt'] = '<h2>{$a->fullname} invitation</h2><p>You have been inv
     <li>The link below will expire on <b>{$a->expiration}</b>.</li>
 </ul>';
 
-$string['emailmsgunsubscribe'] = '<span class=\"apple-link\">If you believe that you have received this message in error or are in need of assistance, please contact:</span><br>
-<a href=\"mailto:{$a->supportemail}\">{$a->supportemail}</a>.';
+$string['emailmsghtml'] = 'Preview';
+$string['emailmsghtml_help'] = '<p>Good day,</p>
+<p>You are invited to join the following course:</p>
+<ul>
+  <li>Course name: <b>{$a->coursename}</b></li>
+  <li>Start date: <b>{$a->start}</b></li>
+  <li>End date: <b>{$a->end}</b></li>
+</ul>
+{$a->message}
+<p>Sign-in to confirm your enrolment in the course.</p>
+<p>By using this link, you are acknowledging that you are the person to whom this email was addressed and for whom this invitation is intended.</p>
+<p><a class="btn btn-primary" href="{$a->inviteurl}">{$a->acceptinvitation}</a></p>
+<p>If you do not want to join this course, please use the following link instead:</p>
+<p><a class="btn btn-danger" href="{$a->rejecturl}">{$a->rejectinvitation}</a></p>
+<p>Note that these links will expire on <b>{$a->expiration}</b></p>
+<p>Hope to see you in the course.</p>
+';
 
-$string['instructormsg'] = '<h2>Message from instructor</h2>
-{$a}';
+$string['noenddate'] = 'No end date';
+
+$string['emailmsgunsubscribe'] = '<span class="apple-link">If you believe that you have received this message in error, are in need of assistance or do not wish to receive further invitations for this course, please contact:</span> <a href="mailto:{$a->supportemail}">{$a->supportemail}</a>.';
 
 // Invite form strings.
 $string['assignrole'] = 'Assign role';
@@ -59,7 +75,7 @@ $string['defaultinvitevalues'] = 'Default invitation values';
 $string['usedefaultvalues'] = 'Use invitation with default values';
 $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during invitation enrollments';
-$string['default_subject'] = 'Invitation for {$a}';
+$string['default_subject'] = 'Course invitation: {$a}';
 $string['editenrollment'] = 'Edit enrollment';
 $string['header_email'] = 'Who do you want to invite?';
 $string['emailaddressnumber'] = 'Email address';
@@ -95,25 +111,12 @@ $string['inviteexpiration_desc'] = 'Length of time that an invitation is valid (
 
 $string['show_from_email'] = 'Allow invited user to contact me at {$a->email} (your address will be on the "FROM" field. If not selected, the "FROM" field will be {$a->supportemail})';
 $string['fromuserconfig'] = 'Default invitation from user';
-$string['inviteusers'] = 'Invite user';
+$string['inviteusers'] = 'Invite users';
 $string['maxinviteerror'] = 'It must be a number.';
 $string['maxinviteperday'] = 'Maximum invitation per day';
 $string['maxinviteperday_help'] = 'Maximum invitation that can be send per day for a course.';
 $string['message'] = 'Message';
-
 $string['message_help_link'] = 'see what instructions invitees are sent';
-$string['message_help'] = 'INSTRUCTIONS:
-<hr>
-You have been invited to access the site: [site name]. You will need to log in to confirm your access to the site. Be advised that by clicking on the site access link provided in this email you are acknowledging that:<br>
---you are the person to whom this email was addressed and for whom this invitation is intended;<br>
---the link below will expire on ([expiration date]).<br>
-<br>
-ACCESS LINK:
-<hr>
-[invite url]<br>
-<hr>
-If you believe that you have received this message in error or are in need of assistance, please contact: [support email].';
-
 $string['noinvitationinstanceset'] = 'No invitation enrollment instance has been found. Please add an invitation enroll instance to your course first.';
 $string['nopermissiontosendinvitation'] = 'No permission to send invitation';
 $string['norole'] = 'Please choose a role.';
@@ -129,6 +132,10 @@ $string['unenrol'] = 'Unenroll user';
 $string['unenroluser'] = 'Do you really want to unenroll "{$a->user}" from course "{$a->course}"?';
 $string['unenrolselfconfirm'] = 'Do you really want to unenroll yourself from course "{$a}"?';
 $string['enrolconfimation'] = 'Require student confirmation of enrolment';
+$string['defaultsubjectformat'] = 'Default subject format';
+$string['defaultsubjectformat_desc'] = 'This is the default course name format that will be used in the subject line when sending invitation emails. Note that this will only affect instances of the enrolment method when they are first created. If you select <strong>custom format</strong>, you can <a href="../tool/customlang/">customize the <strong>\'customsubjectformat\'</strong> language string</a> of the <strong>enrol_invitation</strong> plugin using any combination of short and/or long course names. When this plugin is first installed, the custom format is set to \'shortname - fullname\'.';
+$string['customnamecourse'] = 'Custom format';
+$string['customsubjectformat'] = '{$a->shortname} - {$a->fullname}';
 
 // After invite sent strings.
 $string['invitationsuccess'] = 'Invitation successfully sent';
