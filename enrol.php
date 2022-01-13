@@ -28,13 +28,13 @@
 require('../../config.php');
 require($CFG->dirroot . '/enrol/invitation/locallib.php');
 
-// require_login(null, false);
-
 // Check if param token exist. Support checking for both old "enrolinvitationtoken" token name and new "token" parameters.
 $enrolinvitationtoken = optional_param('enrolinvitationtoken', null, PARAM_ALPHANUM);
 if (empty($enrolinvitationtoken)) {
     $enrolinvitationtoken = required_param('token', PARAM_ALPHANUM);
 }
+
+$url = new moodle_url('/enrol/invitation/enrol.php', ['token' => $enrolinvitationtoken]);
 
 // Retrieve the token info.
 $invitation = $DB->get_record('enrol_invitation', ['token' => $enrolinvitationtoken, 'tokenused' => false]);
@@ -59,7 +59,106 @@ if (empty($invitation) or empty($invitation->courseid) or $invitation->timeexpir
     exit;
 }
 
-// Otherwise, if token is valid, enrol the user into the course.
+//
+// Reject invitation.
+//
+
+if (optional_param('reject', 0, PARAM_BOOL) == 1) {
+
+    // We allow invitation rejection by logged-out users if the invited users did not have an account when the invitation was first
+    // created (userid = null). However, if logged-in, ensure that this is the expected user with the expected email address.
+    // Do not allow anonymous rejection of invitations to known users (userid > null).
+    $userid = -1; // Unknown user.
+    if (isloggedin() && !isguestuser()) {
+        // If a user created account since invitation, the userid will not match but email address should.
+        // This will also ensure that 2 user accounts did not swap email addresses.
+        if ((empty($invitation->userid) || $invitation->userid == $USER->id) && $invitation->email == $USER->email) {
+            $userid = $USER->id;
+        }
+    } else if (!empty($invitation->userid)) { // Logged out.
+        // Rejecting this invitation requires user to log in.
+        require_login(null, false);
+    } else { // Anonymous (logged-out) user for unknown user (userid = null).
+        $userid = $invitation->userid; // Will be set to null.
+    }
+
+    if ($userid == -1) {
+        // This is not the expected user. Display access denied message.
+        $pagetitle = get_string('accessdenied', 'admin');
+        $PAGE->set_context(context_system::instance());
+        $PAGE->set_title($pagetitle);
+        $PAGE->navbar->add($pagetitle);
+        $PAGE->set_url($url);
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
+        echo $OUTPUT->box_start('generalbox', 'notice');
+        echo get_string('usernotmatch', 'enrol_invitation');
+        echo $OUTPUT->continue_button(new moodle_url('/'));
+        echo $OUTPUT->box_end();
+        echo $OUTPUT->footer();
+        exit;
+    }
+
+    $pagetitle = get_string('status_invite_rejected', 'enrol_invitation');
+    $PAGE->set_context(context_system::instance());
+    $PAGE->set_title($pagetitle);
+    $PAGE->navbar->add($pagetitle);
+    $PAGE->set_url($url);
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('event_invitation_rejected', 'enrol_invitation'), 2, 'headingblock');
+    echo $OUTPUT->box_start('generalbox', 'notice');
+
+    // Implementation for possibility to reject invitation
+    // @package    enrol_invitation
+    // @copyright  2021 Lukas Celinak (lukascelinak@gmail.com)
+    // @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+
+    // Set token as used and status to rejected.
+    $invitation->tokenused = true;
+    $invitation->timeused = time();
+    $invitation->userid = $userid;
+    $invitation->status = "rejected";
+
+    // Log event.
+    \enrol_invitation\event\invitation_rejected::create_from_invitation($invitation)->trigger();
+    $DB->update_record('enrol_invitation', $invitation);
+
+    // Display confirmation that invitation has been rejected.
+    echo get_string('invtitation_rejected_notice', 'enrol_invitation');
+
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->footer();
+    exit;
+}
+
+//
+// Accept Invitation
+//
+
+// Ensure user is logged in.
+require_login(null, false);
+
+// We allow invitation acceptance by logged-in users only. Acceptance request will be rejected if a userid is set and they don't
+// match or if the email address does not match. If a user created account since invitation, the userid will not match but email
+// address should. This will also ensure that 2 user accounts did not swap email addresses.
+if ((empty($invitation->userid) || $invitation->userid == $USER->id) && $invitation->email == $USER->email) {
+    $userid = $USER->id;
+} else {
+    // This is not the expected user. Display access denied message.
+    $pagetitle = get_string('accessdenied', 'admin');
+    $PAGE->set_context(context_system::instance());
+    $PAGE->set_title($pagetitle);
+    $PAGE->navbar->add($pagetitle);
+    $PAGE->set_url($url);
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
+    echo $OUTPUT->box_start('generalbox', 'notice');
+    echo get_string('usernotmatch', 'enrol_invitation');
+    echo $OUTPUT->continue_button(new moodle_url('/'));
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->footer();
+    exit;
+}
 
 // Make sure that course exists.
 $course = $DB->get_record('course', array('id' => $invitation->courseid), '*', MUST_EXIST);
@@ -67,8 +166,7 @@ $context = context_course::instance($course->id);
 
 // Set up page.
 $PAGE->set_context($context);
-$PAGE->set_url(new moodle_url('/enrol/invitation/enrol.php',
-                array('token' => $enrolinvitationtoken)));
+$PAGE->set_url($url);
 $PAGE->set_pagelayout('course');
 $PAGE->set_course($course);
 $pagetitle = get_string('invitation_acceptance_title', 'enrol_invitation');
@@ -93,8 +191,7 @@ if (!$invitation->userid && isguestuser()) {
     echo $OUTPUT->box_start('generalbox', 'notice');
     $noticeobject = preparenoticeobject($invitation);
     echo get_string('loggedinnot', 'enrol_invitation', $noticeobject);
-    $loginbutton = new single_button(new moodle_url($CFG->wwwroot
-            . '/login/index.php'), get_string('login'));
+    $loginbutton = new single_button(new moodle_url($CFG->wwwroot . '/login/index.php'), get_string('login'));
 
     echo $OUTPUT->render($loginbutton);
     echo $OUTPUT->box_end();
@@ -105,50 +202,10 @@ if (!$invitation->userid && isguestuser()) {
 // Have invitee confirm their acceptance of the site invitation.
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-// Implementation for posibility to reject invitation
-// @package    enrol_invitation
-// @copyright  2021 Lukas Celinak (lukascelinak@gmail.com)
-// @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
-$reject = optional_param('reject', 0, PARAM_BOOL);
-
-if ($reject == 1) {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('event_invitation_rejected', 'enrol_invitation'), 2, 'headingblock');
-
-    echo $OUTPUT->box_start('generalbox', 'notice');
-    $user = (!isloggedin() or isguestuser())
-            && $invitation->userid ? $DB->get_record('user', array('id' => $invitation->userid)) : $USER;
-
-    if ($invitation->email != $user->email) {
-        (!isloggedin() or isguestuser()) && $invitation->userid ? $notlogged = "and wasn't logged in." : $notlogged = "";
-        $invitation->errormsg = 'email does not match' . $notlogged;
-        \enrol_invitation\event\invitation_rejected::create_from_invitation($invitation)->trigger();
-    }
-
-    (!isloggedin() or isguestuser()) && $invitation->userid ?
-            (property_exists($invitation, "errormsg") ? $invitation->errormsg .= "and wasn't logged in."
-            : $invitation->errormsg = 'and wasn\'t logged in.') : null;
-    require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
-
-    // Set token as used and mark which user was assigned the token.
-    $invitation->tokenused = true;
-    $invitation->timeused = time();
-    $invitation->userid = $user->id;
-
-    // Set the status to rejected and log event.
-    $invitation->status = "rejected";
-    \enrol_invitation\event\invitation_rejected::create_from_invitation($invitation)->trigger();
-    $DB->update_record('enrol_invitation', $invitation);
-
-    $noticeobject = preparenoticeobject($invitation);
-    echo get_string('invtitation_rejected_notice', 'enrol_invitation', $noticeobject);
-
-    echo $OUTPUT->box_end();
-    echo $OUTPUT->footer();
-    exit;
-}
-
 if ($instance->customint6 == 1 && empty($confirm)) {
+
+    // User has not yet confirmed their acceptance.
+
     echo $OUTPUT->header();
 
     // Print out a heading.
@@ -171,32 +228,20 @@ if ($instance->customint6 == 1 && empty($confirm)) {
     }
 
     echo $OUTPUT->confirm($invitationacceptance, $accept, $cancel);
-
     echo $OUTPUT->footer();
     exit;
+
 } else {
-    $user = (!isloggedin() or isguestuser())
-            && $invitation->userid ? $DB->get_record('user', ['id' => $invitation->userid]) : $USER;
 
-    if ($invitation->email != $user->email) {
-        (!isloggedin() or isguestuser()) && $invitation->userid ? $notlogged = "and wasn't logged in." : $notlogged = '';
-        $invitation->errormsg = 'email does not match' . $notlogged;
-        \enrol_invitation\event\invitation_attempted::create_from_invitation($invitation)->trigger();
-    }
+    // User confirmed acceptance. Enrol them in the course.
 
-    (!isloggedin() or isguestuser()) && $invitation->userid ?
-            (property_exists($invitation, "errormsg") ? $invitation->errormsg .= "and wasn't logged in."
-            : $invitation->errormsg = "and wasn't logged in.") : null;
-
-    // User confirmed, so add them.
-    require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
     $invitationmanager = new invitation_manager($invitation->courseid);
     $invitationmanager->enroluser($invitation);
 
     // Set token as used and mark which user was assigned the token.
     $invitation->tokenused = true;
     $invitation->timeused = time();
-    $invitation->userid = $user->id;
+    $invitation->userid = $userid;
     \enrol_invitation\event\invitation_accepted::create_from_invitation($invitation)->trigger();
     $DB->update_record('enrol_invitation', $invitation);
 
@@ -224,26 +269,7 @@ if ($instance->customint6 == 1 && empty($confirm)) {
                 get_string('emailmessageuserenrolled', 'enrol_invitation', $emailinfo));
     }
 
-    if ($instance->customint6 == 0 && (!isloggedin() or isguestuser())) {
-        echo $OUTPUT->header();
-
-        // Print out a heading.
-        echo $OUTPUT->heading($pagetitle, 2, 'headingblock');
-
-        $SESSION->wantsurl = (string) new moodle_url('/course/view.php', array('id' => $invitation->courseid));
-
-        $loginbutton = new single_button(new moodle_url($CFG->wwwroot . '/login/index.php'), get_string('login'));
-        $cancel = new single_button(new moodle_url('/'), get_string('close', 'enrol_invitation'), 'get');
-
-        $noticeobject = preparenoticeobject($invitation);
-
-        $invitationacceptance = get_string('successenroled', 'enrol_invitation', $noticeobject);
-
-        echo $OUTPUT->confirm($invitationacceptance, $loginbutton, $cancel);
-        echo $OUTPUT->footer();
-        exit;
-    } else {
-        $courseurl = new moodle_url('/course/view.php', array('id' => $invitation->courseid));
-        redirect($courseurl);
-    }
+    // Take the user into the course.
+    $courseurl = new moodle_url('/course/view.php', array('id' => $invitation->courseid));
+    redirect($courseurl);
 }

@@ -117,7 +117,7 @@ Note that you can use any of the following variables within the body of the emai
 * {$a->expiration} : The date and time at which these links will expire.
 * {$a->message} : Your custom message, as entered at the time you send the invitation.
 * {$a->location} : Picked-up from one of the following places: A field called **location** in your course format - only available in some 3rd party course formats, a custom course field called **location**\'**. If neither of these exist, its value will simply be 'online'. Important: These variables cannot be used when setting the default message for an instance of Invitation or when sending the invitation.
-* {$a->supportemail} : Support email address for the site.
+* {$a->supportemail} : Support email address for the site. If not defined, will use the address of the primary administrator.
 * {$a->emailmsgunsubscribe} : Unsubscribe/Support message.
 
 Reminder: If you have a multi-language site, you will need to customize the message for each language.
@@ -191,8 +191,13 @@ There are no troubleshooting tips at this time.
 
 # FAQ
 
-There are no answers to frequently asked questions yet.
+QUESTION: When I send an invitation, I get a confirmation message indicating that the invitation was sent. Why is the message not is received by Invitee?
 
+ANSWER: This will happen if you previously sent an invitation to a course to a user and they rejected the invitation. This is by design so that the user does not continue to receive invitations (anti-spam). You can review previous rejections in the Invitation History log.
+
+You can still manually enrol the user into the course. You should be able to send them invitations to other courses unless they reject the invitation to those courses as well.
+
+If you see an Active invitation in the Invitation History log and the user has not received it, confirm their current email address and have them check their spam folders/filters.
 # Contributing
 
 If you are interested in helping, please take a look at our [contributing](https://github.com/michael-milette/moodle-enrol_invitation/blob/master/CONTRIBUTING.md) guidelines for details on our code of conduct and the process for submitting pull requests to us.

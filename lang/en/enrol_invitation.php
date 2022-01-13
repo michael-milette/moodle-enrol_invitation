@@ -148,10 +148,10 @@ $string['returntoinvite'] = 'Send another invite';
 // Processing invitation acceptance strings.
 $string['invitation_acceptance_title'] = 'Invitation acceptance';
 $string['expiredtoken'] = 'Invitation token is expired or has already been used.';
-$string['loggedinnot'] = '<p>This invitation to access "{$a->coursefullname}" as a "{$a->rolename}" is intended for {$a->email}. If you are not the intended recipient, please do not accept this invitation.</p>
-<p>Before you can accept this invitation you must be logged in.</p>';
-$string['invtitation_rejected_notice'] = '<p>This invitation to access "{$a->coursefullname}" as a "{$a->rolename}" for yours account with email {$a->email} was rejected.';
-$string['invitationacceptance'] = '<p>This invitation to access "{$a->coursefullname}" as a "{$a->rolename}" is intended for {$a->email}. If you are not the intended recipient, please do not accept this invitation.</p>';
+$string['usernotmatch'] = '<p>The invitation is intended for a different user.</p>';
+$string['loggedinnot'] = '<p>You must log in before you can accept this invitation.</p>';
+$string['invtitation_rejected_notice'] = '<p>This invitation has been rejected.</p>';
+$string['invitationacceptance'] = '<p>You are invited to access <strong>{$a->coursefullname}</strong> as a <strong>{$a->rolename}</strong>. Please confirm your acceptance to join this course.</p>';
 $string['invitationacceptancebutton'] = 'Accept invitation';
 $string['invitationrejectbutton'] = 'Reject invitation';
 

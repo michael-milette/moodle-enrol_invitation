@@ -144,16 +144,13 @@ class invitation_form extends moodleform {
             case 'shortname':
                 $defaultsubject = $COURSE->shortname;
                 break;
-            default: // case 'fullname'
+            default: // Fullname.
                 $defaultsubject = $COURSE->fullname;
         }
         $defaultsubject = get_string('default_subject', 'enrol_invitation', $defaultsubject);
         $mform->setDefault('subject', $defaultsubject);
 
         // Message field.
-        // $mform->addElement('textarea', 'message', get_string('message', 'enrol_invitation'),
-        // array('class' => 'form-invite-message'));.
-
         $mform->addElement('editor', 'message', get_string('message', 'enrol_invitation'), array('class' => 'form-invite-message'));
         $mform->setType('message', PARAM_RAW);
 
@@ -164,7 +161,7 @@ class invitation_form extends moodleform {
         // Prepare string variables.
         $temp = new stdClass();
         $temp->email = $USER->email;
-        $temp->supportemail = $CFG->supportemail;
+        $temp->supportemail = !empty($CFG->supportemail) ? $CFG->supportemail : $CFG->noreplyaddress;
         $mform->addElement('checkbox', 'show_from_email', '', get_string('show_from_email', 'enrol_invitation', $temp));
         $mform->addElement('checkbox', 'notify_inviter', '', get_string('notify_inviter', 'enrol_invitation', $temp));
         $mform->setDefault('show_from_email', 1);
@@ -361,7 +358,6 @@ class invitation_email_form extends moodleform {
         $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
         $mform->addElement('textarea', 'email', get_string('emailaddressnumber', 'enrol_invitation'),
                 array('maxlength' => 1000, 'class' => 'form-invite-email', 'style' => 'resize: both;', 'cols' => 65, 'rows' => 5));
-        // $mform->addRule('email', null, 'required', null, 'client'); //.
         $registeredonly = $this->_customdata['registeredonly'] ? '<br>'
                 . get_string('registeredonly_help', 'enrol_invitation') : '';
         $mform->addElement('static', 'email_clarification', '',

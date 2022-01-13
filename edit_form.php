@@ -104,27 +104,25 @@ class enrol_invitation_edit_form extends moodleform {
             case 'shortname':
                 $defaultsubject = $COURSE->shortname;
                 break;
-            default: // case 'fullname'
+            default: // Fullname.
                 $defaultsubject = $COURSE->fullname;
         }
         $defaultsubject = get_string('default_subject', 'enrol_invitation', $defaultsubject);
         $mform->setDefault('customchar1', $defaultsubject);
 
         // Message field.
-        // $mform->addElement('textarea', 'message', get_string('message', 'enrol_invitation'),
-        // array('class' => 'form-invite-message')); //.
-
         $mform->addElement('editor', 'customtext1', get_string('message', 'enrol_invitation'), ['class' => 'form-invite-message']);
         $mform->setType('message', PARAM_RAW);
 
         // Put help text to show what default message invitee gets.
-        $mform->addHelpButton('customtext1', 'emailmsghtml', 'enrol_invitation', get_string('message_help_link', 'enrol_invitation'));
+        $mform->addHelpButton('customtext1', 'emailmsghtml', 'enrol_invitation',
+                get_string('message_help_link', 'enrol_invitation'));
 
         // Email options.
         // Prepare string variables.
         $temp = new stdClass();
         $temp->email = $USER->email;
-        $temp->supportemail = $CFG->supportemail;
+        $temp->supportemail = !empty($CFG->supportemail) ? $CFG->supportemail : $CFG->noreplyaddress;
         $mform->addElement('checkbox', 'customint3', '', get_string('show_from_email', 'enrol_invitation', $temp));
         $mform->setDefault('customint3', 0);
         $mform->addElement('checkbox', 'customint4', '', get_string('notify_inviter', 'enrol_invitation', $temp));

@@ -83,6 +83,8 @@ if (empty($invites)) {
             // Set the invite to be expired.
             $DB->set_field('enrol_invitation', 'timeexpiration', time() - 1,
                     ['courseid' => $currinvite->courseid, 'id' => $currinvite->id]);
+            $DB->set_field('enrol_invitation', 'status','revoked',
+                    ['courseid' => $currinvite->courseid, 'id' => $currinvite->id]);
 
             \enrol_invitation\event\invitation_deleted::create_from_invitation($currinvite)->trigger();
 

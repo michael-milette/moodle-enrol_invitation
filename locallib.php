@@ -185,7 +185,7 @@ class invitation_manager {
                     $handler = core_course\customfield\course_handler::create();
                     $coursefields = $handler->export_instance_data_object($PAGE->course->id, true);
                     $fieldsvisible = $handler->export_instance_data_object($PAGE->course->id);
-                    if(isset($coursefields->location) && $fieldsvisible->location) {
+                    if (isset($coursefields->location) && $fieldsvisible->location) {
                         $messageparams->location = $coursefields[$field];
                     } else {
                         $messageparams->location = get_string('online', 'message');
@@ -205,7 +205,6 @@ class invitation_manager {
 
                 $messageparams->inviteurl = $inviteurl->out(false);
                 $messageparams->rejecturl = $rejecturl->out(false);
-                $messageparams->supportemailtext = get_string('emailmsgunsubscribe', 'enrol_invitation', $messageparams);
                 $messageparams->acceptinvitation = get_string('invitationacceptancebutton', 'enrol_invitation');
                 $messageparams->rejectinvitation = get_string('invitationrejectbutton', 'enrol_invitation');
 
@@ -798,7 +797,8 @@ class invitation_manager {
 </style>
 </head>
 <body>
-<div role=\"article\" aria-roledescription=\"email\" aria-label=\"{$invitation->subject}\" lang=\"$lang\" dir=\"$dir\" style=\"font-size:16px; font-size:1rem; font-size:max(16px, 1rem)\">
+<div role=\"article\" aria-roledescription=\"email\" aria-label=\"{$invitation->subject}\" lang=\"$lang\" dir=\"$dir\"
+        style=\"font-size:16px; font-size:1rem; font-size:max(16px, 1rem)\">
     <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"body\">
       <tr>
         <td>&nbsp;</td>
@@ -924,7 +924,7 @@ function preparenoticeobject($invitation) {
     $noticeobject = new stdClass();
     $noticeobject->email = $invitation->email;
     $noticeobject->coursefullname = $course->fullname;
-    $noticeobject->supportemail = $CFG->supportemail;
+    $noticeobject->supportemail = !empty($CFG->supportemail) ? $CFG->supportemail : $CFG->noreplyaddress;
 
     // Get role name for use in acceptance message. Role name is no longer defined in `role` table. It is scattered around database.
     $context = context_course::instance($course->id);

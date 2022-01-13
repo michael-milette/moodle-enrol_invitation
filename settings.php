@@ -56,27 +56,4 @@ if ($ADMIN->fulltree) {
             'custom' => get_string('customnamecourse', 'enrol_invitation')];
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
-
-/*
-        list($sort, $sortparams) = users_order_by_sql('u');
-        if (!empty($sortparams)) {
-            throw new coding_exception('users_order_by_sql returned some query parameters. ' .
-                    'This is unexpected, and a problem because there is no way to pass these ' .
-                    'parameters to get_users_by_capability. See MDL-34657.');
-        }
-        $userfields = 'u.id, u.username, ' . get_all_user_name_fields(true, 'u');
-        $users = get_users_by_capability(context_system::instance(), 'moodle/site:approvecourse', $userfields, $sort);
-        $choices = array();
-            $admins = get_admins();
-            foreach ($admins as $user) {
-                $choices[$user->id] = fullname($user);
-            }
-
-        if (is_array($users)) {
-            foreach ($users as $user) {
-                $choices[$user->id] = fullname($user);
-            }
-        }
-
-     $settings->add(new admin_setting_configselect_autocomplete('enrol_invitation/fromuser', new lang_string('fromuserconfig', 'enrol_invitation'), new lang_string('fromuserconfig', 'enrol_invitation'), 2, $choices));*/
 }
