@@ -72,15 +72,15 @@ The initial public BETA version was released on 2011-10-29. Second BETA on 2022-
 
 # Installation
 
-Install the plugin, like any other plugin, to the following folder:
+Like any other plugin, install the plugin to the following folder:
 
     /enrol/invitation
 
-See https://docs.moodle.org/en/Installing_plugins for details on installing Moodle plugins.
+In order for the enrolment method to be available in a course and for the Invitation button to appear on the Participants page in your course, the plugin must be:
 
-In order for the enrolment method to be available, the plugin must be installed and enabled.
-
-To enable, go to Site Administration > Plugins > Enrolments > Manage enrol plugins and clicking on the "eye" icon for Invitation.
+1. Installed - See https://docs.moodle.org/en/Installing_plugins for details on installing Moodle plugins.
+2. Enabled - Go to **Site Administration > Plugins > Enrolments > Manage Enrol Plugins** and clicking on the "eye" icon for Invitation so that it is open (no line across it).
+3. Added **Invitation** to the list of enrolment methods available in your course - See [In-course Setup](#in-course-setup) for details. Note that you will need to repeat this last step in each course where you want Invitation to be available.
 
 [(Back to top)](#table-of-contents)
 
@@ -88,20 +88,20 @@ To enable, go to Site Administration > Plugins > Enrolments > Manage enrol plugi
 
 IMPORTANT: This BETA release has not been tested on many Moodle sites yet. Although we expect everything to work, if you find a problem, please help by reporting it in the [Bug Tracker](https://github.com/michael-milette/moodle-enrol_invitation/issues).
 
-## Setup
+## In-course Setup
 
-Add the **Invitation** enrolment method to the course.
+The **Invitation** enrolment method must be added to the course.
 
-1. Go to the course.
-2. Go to **Course administration > Users > Enrolment methods**.
-2. Next to **Add method**, select **Invitation**.
-3. Make sure **Allow invitations** is set to **Yes** and then click **Add method**.
+1. Go to your course.
+2. Navigate to **Navigation Drawer > Participants > Gear icon > Enrolment Methods**. If you are using a Moodle theme that uses the navigation block instead of drawer - as seen in the Classic theme, go to **Course administration > Users > Enrolment methods** instead.
+3. In the **Add method** field, select **Invitation**.
+4. Configure the settings and use the **Save Changes** button.
 
-See more information on [adding an enrolment method to your course](https://docs.moodle.org/en/Enrolment_methods).
+For more information, see [adding an enrolment method to your course](https://docs.moodle.org/en/Enrolment_methods).
 
 ## Customization
 
-You can customize the email being sent in a couple of ways:
+You can customize the email being sent in a few ways:
 
 ### Email template customization
 
@@ -138,15 +138,17 @@ If you select the **Custom** option, you can customize the **customsubjectformat
 
 Once the Invitation enrollment method has been added, invitations can be sent by doing the following:
 
-1. Go to the course and then click on the **Participants** button in the navigation drawer.
-2. Go to **Course administration > Users > Enrolled users**.
-3. Click on **Invite users** button. It should be located next to the **Enrol users** button. This button may have a different name if you customized it in the course's **Custom instance name** field for this enrolment method.
-4. Choose a role you want to invite someone as, then enter in their email address. You may optionally change the subject or add a custom message. Then click on **Invite users**.
-5. The invitation will be sent. Note that the invitation will expire, by default, in 2 weeks. You can check the status of the invite by clicking on the **Invite history** tab.
-6. Depending on the status of the invitation, you might have the following actions:
+1. Go to the course.
+2. Use the **Participants** button in the navigation drawer. If you are using a theme that still uses the navigation block, go to **Course administration > Users > Enrolled users**.
+3. Use the **Invite users** button. It should be located next to the **Enrol users** button.
+4. Complete the invitation fields and then use the **Invite users** button to send the invitation.
+5. Note that the invitation will expire, by default, in 2 weeks. You can check the status of the invite by clicking on the **Invite history** tab.
+6. Depending on the status of the invitation, you may have the following actions available:
 	* "Revoke invite": Will set the expiration of an active invitation to the current time. This will disable the use of the invitation link sent to the user.
-	* "Extend invite": Will resent the invitation and update the expiration of an active invitation to 2 weeks from now.
+	* "Extend invite": Will resent the invitation and extend the expiration of an active invitation.
 	* "Resend invite": For an expired invitation, will pre-fill the invitation form with the same settings used when the original invite was sent.
+
+Note that you cannot send an invitations to email addresses of people who have previously rejected the invitation within the specific course. There will be no indication of this but no email will be sent and it will not appear in the history. The Reject link works as an Unsubscribe link to conform with anti-spam requirements. In this situation, you can still enrol students in a course using one of the other available enrolment methods but the user will need to first have an account on the site.
 
 # Updating
 

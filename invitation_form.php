@@ -88,7 +88,7 @@ class invitation_form extends moodleform {
         $mform->addElement('static', 'email_clarification', '', get_string('email_clarification', 'enrol_invitation'));
 
         $mform->setType('email', PARAM_TEXT);
-        if ($CFG->branch >= 39) {
+        if ($CFG->branch >= 311) {
             $userfields = \core_user\fields::for_identity($context)->get_required_fields();
         } else {
             $userfields = get_extra_user_fields($context);
