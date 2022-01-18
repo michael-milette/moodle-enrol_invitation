@@ -1,3 +1,7 @@
+##### Only include English
+/lang/*
+!/lang/en
+
 ##### Windows
 # Windows thumbnail cache files
 Thumbs.db

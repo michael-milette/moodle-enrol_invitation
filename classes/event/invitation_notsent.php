@@ -47,9 +47,9 @@ class invitation_notsent extends invitation_base {
     }
 
     public function get_description() {
-        return "The user with id {$this->userid} tried to send an invitation " .
-                "to '{$this->other['email']}' for course with id '{$this->other['courseid']}' and failed, " .
-                "because user with email '{$this->other['email']}' isn't registered.";
+        $description = get_string('notsentdescription', 'enrol_invitation',
+                ['userid' => $this->userid, 'courseid' => $this->other['courseid'], 'email' => $this->other['email']]);
+        return $description;
     }
 
     public function get_url() {

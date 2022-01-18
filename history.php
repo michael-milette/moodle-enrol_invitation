@@ -198,7 +198,8 @@ if (empty($invites)) {
             // Create link to extend an invite.
             $url->param('actionid', invitation_manager::INVITE_EXTEND);
             $row[5] .= html_writer::link($url, get_string('action_extend_invite', 'enrol_invitation'));
-        } else if ($status == get_string('status_invite_expired', 'enrol_invitation')) {
+        } else if ($status == get_string('status_invite_expired', 'enrol_invitation') ||
+                $status == get_string('status_invite_revoked', 'enrol_invitation')) {
             // Create link to resend invite.
             $url->param('actionid', invitation_manager::INVITE_RESEND);
             $row[5] .= html_writer::link($url, get_string('action_resend_invite', 'enrol_invitation'));

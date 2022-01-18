@@ -52,7 +52,10 @@ class invitation_viewed extends invitation_base {
     }
 
     public function get_description() {
-        return "The user with id {$this->userid} viewed invitation for course with id '{$this->other['courseid']}'";
+        $userid = empty($this->userid) ? get_string('anonymoususer', 'enrol_invitation') : $this->userid;
+        $description = get_string('vieweddescription', 'enrol_invitation',
+                ['userid' => $userid, 'courseid' => $this->other['courseid'], 'email' => $this->other['email']]);
+        return $description;
     }
 
     public function get_url() {

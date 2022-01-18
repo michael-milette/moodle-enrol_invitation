@@ -30,13 +30,13 @@ $string['pluginname'] = 'Invitation';
 $string['pluginname_desc'] = 'The Invitation module allows sending invitations by email. These invitations can be used only once. Users clicking on the email link are automatically enrolled.';
 
 // Logging strings.
-$string['event_invitation_accepted'] = 'Invitation Accepted';
-$string['event_invitation_attempted'] = 'Invitation Attempted';
-$string['event_invitation_deleted'] = 'Invitation Deleted';
-$string['event_invitation_sent'] = 'Invitation Sent';
-$string['event_invitation_updated'] = 'Invitation Updated';
-$string['event_invitation_viewed'] = 'Invitation Viewed';
-$string['event_invitation_rejected'] = 'Invitation Rejected';
+$string['event_invitation_accepted'] = 'Accept';
+$string['event_invitation_attempted'] = 'Attempt';
+$string['event_invitation_deleted'] = 'Deleted';
+$string['event_invitation_sent'] = 'Send';
+$string['event_invitation_updated'] = 'Updated';
+$string['event_invitation_viewed'] = 'Viewed';
+$string['event_invitation_rejected'] = 'Rejection';
 
 // Email message strings.
 $string['reminder'] = 'Reminder: ';
@@ -138,6 +138,7 @@ $string['customnamecourse'] = 'Custom format';
 $string['customsubjectformat'] = '{$a->shortname} - {$a->fullname}';
 
 // After invite sent strings.
+$string['invitationrejected'] = 'Invitation rejected';
 $string['invitationsuccess'] = 'Invitation successfully sent';
 $string['revoke_invite_sucess'] = 'Invitation successfully revoked';
 $string['extend_invite_sucess'] = 'Invitation successfully extended';
@@ -201,3 +202,14 @@ $string['about_hour'] = 'about 1 hour';
 $string['about_x_hours'] = 'about {$a} hours';
 $string['a_day'] = '1 day';
 $string['x_days'] = '{$a} days';
+
+// Strings for Moodle logs.
+$string['anonymoususer'] = '(unknown)';
+$string['failuredescription'] = 'Failure: User id {$a->userid}, course id \'{$a->courseid}\'. Reason: {$a->errormsg}.';
+$string['accepteddescription'] = 'User id {$a->userid} accepted an invitation for course with id \'{$a->courseid}\'.';
+$string['rejecteddescription'] = 'User id {$a->userid} rejected an invitation for course with id \'{$a->courseid}\'.';
+$string['deleteddescription'] = 'User id {$a->userid} deleted an invitation for course with id \'{$a->courseid}\' to \'{$a->email}\'.';
+$string['notsentdescription'] = 'User id {a->userid} failed to send an invitation for course with id \'{a->courseid}\' because there is no account with email address \'{a->email}\'.';
+$string['sentdescription'] = 'User id {a->userid} sent an invitation for course with id \'{a->courseid}\' to \'{a->email}\'.';
+$string['updateddescription'] = 'User id {$this->userid} extended the invitation for course id \'{$a->courseid} to \'{$a->email}\'.';
+$string['vieweddescription'] = 'User id {$this->userid} viewed the invitation for course with id \'{$a->courseid}\'.';

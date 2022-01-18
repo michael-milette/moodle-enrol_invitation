@@ -52,8 +52,16 @@ class invitation_accepted extends invitation_base {
     }
 
     public function get_description() {
-        $description = "The user with id {$this->userid} accepted an invitation for course with id '{$this->other['courseid']}'";
-        $description .= property_exists((object)$this->other, 'errormsg') ? ' and wasn\'t logged in.' : '';
+        $userid = empty($this->userid) ? get_string('anonymoususer', 'enrol_invitation') : $this->userid;
+        if (property_exists((object)$this->other, 'errormsg')) {
+            // Failure.
+            $description = get_string('failuredescription', 'enrol_invitation',
+                    ['userid' => $userid, 'courseid' => $this->other['courseid'], 'errormsg' => $this->other['errormsg']]);
+        } else {
+            // Success.
+            $description = get_string('accepteddescription', 'enrol_invitation',
+                    ['userid' => $userid, 'courseid' => $this->other['courseid']]);
+        }
         return $description;
     }
 

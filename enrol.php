@@ -28,6 +28,9 @@
 require('../../config.php');
 require($CFG->dirroot . '/enrol/invitation/locallib.php');
 
+// Check if param reject exists.
+$reject = optional_param('reject', 0, PARAM_BOOL);
+
 // Check if param token exist. Support checking for both old "enrolinvitationtoken" token name and new "token" parameters.
 $enrolinvitationtoken = optional_param('enrolinvitationtoken', null, PARAM_ALPHANUM);
 if (empty($enrolinvitationtoken)) {
@@ -40,12 +43,15 @@ $url = new moodle_url('/enrol/invitation/enrol.php', ['token' => $enrolinvitatio
 $invitation = $DB->get_record('enrol_invitation', ['token' => $enrolinvitationtoken, 'tokenused' => false]);
 
 // If token has been already used or has expired, display error message.
-if (empty($invitation) or empty($invitation->courseid) or $invitation->timeexpiration < time()) {
+if ((empty($invitation) or empty($invitation->courseid) or $invitation->timeexpiration < time())) {
     $courseid = empty($invitation->courseid) ? $SITE->id : $invitation->courseid;
     $invitationn = $DB->get_record('enrol_invitation', ['token' => $enrolinvitationtoken]);
     $invitationn->errormsg = 'expired';
-    \enrol_invitation\event\invitation_attempted::create_from_invitation($invitationn)->trigger();
-
+    if ($reject && $invitation->timeexpiration < time()) {
+        \enrol_invitation\event\invitation_rejected::create_from_invitation($invitationn)->trigger();
+    } else {
+        \enrol_invitation\event\invitation_accepted::create_from_invitation($invitationn)->trigger();
+    }
     $pagetitle = get_string('status_invite_expired', 'enrol_invitation');
     $PAGE->set_context(context_system::instance());
     $PAGE->set_title($pagetitle);
@@ -63,27 +69,34 @@ if (empty($invitation) or empty($invitation->courseid) or $invitation->timeexpir
 // Reject invitation.
 //
 
-if (optional_param('reject', 0, PARAM_BOOL) == 1) {
+if ($reject) {
 
-    // We allow invitation rejection by logged-out users if the invited users did not have an account when the invitation was first
-    // created (userid = null). However, if logged-in, ensure that this is the expected user with the expected email address.
-    // Do not allow anonymous rejection of invitations to known users (userid > null).
-    $userid = -1; // Unknown user.
-    if (isloggedin() && !isguestuser()) {
-        // If a user created account since invitation, the userid will not match but email address should.
-        // This will also ensure that 2 user accounts did not swap email addresses.
-        if ((empty($invitation->userid) || $invitation->userid == $USER->id) && $invitation->email == $USER->email) {
+    $invitation->errormsg = '';
+    if (isloggedin() && !isguestuser()) { // Logged-in.
+        // Ensure that this is the expected user.
+        if ((empty($invitation->userid) && $invitation->email == $USER->email)
+                || (!empty($invitation->userid) && $invitation->userid == $USER->id)) {
+            // Allow rejection if either the user did not have an account at the time of invitation (userid=null) but email
+            // addresses match, OR if the user's ID matches the one in the invitation. Prevent users from swapping email addresses.
             $userid = $USER->id;
+        } else if (empty($userid) && $invitation->email != $USER->email) {
+            // User had no account at the time of invitation which is fine but mail addresses do not match.
+            $invitation->errormsg = 'email does not match';
+        } else { // If the userid does not match the current USER id, invitation was sent to a user with a different userid.
+            $invitation->errormsg = 'user account id mismatch';
         }
-    } else if (!empty($invitation->userid)) { // Logged out.
-        // Rejecting this invitation requires user to log in.
+    } else if (!empty($invitation->userid)) { // Logged-out or guest and expecting a specific user account.
+        // Rejecting this invitation requires that user be logged in.
         require_login(null, false);
-    } else { // Anonymous (logged-out) user for unknown user (userid = null).
+    } else { // Anonymous (logged-out/guest) user for unknown expected user (userid = null).
+        // We allow the invitation rejection by non-authenticated visitors and guests if the invited users
+        // did not have an account when the invitation was first created (userid = null).
         $userid = $invitation->userid; // Will be set to null.
     }
 
-    if ($userid == -1) {
-        // This is not the expected user. Display access denied message.
+    if (!empty($invitation->errormsg)) {
+        // This is not the expected user. Log it and display access denied message.
+        \enrol_invitation\event\invitation_rejected::create_from_invitation($invitation)->trigger();
         $pagetitle = get_string('accessdenied', 'admin');
         $PAGE->set_context(context_system::instance());
         $PAGE->set_title($pagetitle);
@@ -105,7 +118,7 @@ if (optional_param('reject', 0, PARAM_BOOL) == 1) {
     $PAGE->navbar->add($pagetitle);
     $PAGE->set_url($url);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('event_invitation_rejected', 'enrol_invitation'), 2, 'headingblock');
+    echo $OUTPUT->heading(get_string('invitationrejected', 'enrol_invitation'), 2, 'headingblock');
     echo $OUTPUT->box_start('generalbox', 'notice');
 
     // Implementation for possibility to reject invitation
@@ -141,10 +154,13 @@ require_login(null, false);
 // We allow invitation acceptance by logged-in users only. Acceptance request will be rejected if a userid is set and they don't
 // match or if the email address does not match. If a user created account since invitation, the userid will not match but email
 // address should. This will also ensure that 2 user accounts did not swap email addresses.
-if ((empty($invitation->userid) || $invitation->userid == $USER->id) && $invitation->email == $USER->email) {
+if ((empty($invitation->userid) && $invitation->email == $USER->email) || $invitation->userid == $USER->id) {
     $userid = $USER->id;
 } else {
-    // This is not the expected user. Display access denied message.
+    // This is not the expected user. Log and display access denied message.
+    // Invitation was sent to a user with a different userid.
+    $invitation->errormsg = 'user account mismatch';
+    \enrol_invitation\event\invitation_accepted::create_from_invitation($invitation)->trigger();
     $pagetitle = get_string('accessdenied', 'admin');
     $PAGE->set_context(context_system::instance());
     $PAGE->set_title($pagetitle);

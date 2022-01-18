@@ -52,8 +52,9 @@ class invitation_updated extends invitation_base {
     }
 
     public function get_description() {
-        return "The user with id {$this->userid} extended an invitation " .
-                "for '{$this->other['email']}' for course with id '{$this->other['courseid']}'";
+        $description = get_string('updateddescription', 'enrol_invitation',
+                ['userid' => $this->userid, 'courseid' => $this->other['courseid'], 'email' => $this->other['email']]);
+        return $description;
     }
 
     public function get_url() {
