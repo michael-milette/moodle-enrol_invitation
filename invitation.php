@@ -130,7 +130,11 @@ if ($data and confirm_sesskey()) {
     $secturl = new moodle_url('/enrol/invitation/invitation.php', array('courseid' => $courseid));
     $sectret = new single_button($secturl, get_string('returntoinvite', 'enrol_invitation'), 'get');
 
-    echo $OUTPUT->confirm(get_string('invitationsuccess', 'enrol_invitation'), $sectret, $courseret);
+    if (!empty($prefilled)) { // Resend.
+        echo $OUTPUT->confirm(get_string('resend_invite_sucess', 'enrol_invitation'), $sectret, $courseret);
+    } else { // Send.
+        echo $OUTPUT->confirm(get_string('invitationsuccess', 'enrol_invitation'), $sectret, $courseret);
+    }
 
 } else {
     $mform->display();

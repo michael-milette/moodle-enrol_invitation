@@ -41,12 +41,6 @@ $string['event_invitation_rejected'] = 'Rejection';
 // Email message strings.
 $string['reminder'] = 'Reminder: ';
 
-$string['emailmsgtxt'] = '<h2>{$a->fullname} invitation</h2><p>You have been invited to access the site:<b>{$a->fullname}</b>. Course is available from <b>{$a->start}</b> to <b>{$a->end}</b> , on location <b>{$a->location}</b>. You will need to log in to confirm your access to the site. Be advised that by clicking on the site access link provided in this email you are acknowledging that:</p>
-<ul>
-    <li>You are the person to whom this email was addressed and for whom this invitation is intended;</li>
-    <li>The link below will expire on <b>{$a->expiration}</b>.</li>
-</ul>';
-
 $string['emailmsghtml'] = 'Preview';
 $string['emailmsghtml_help'] = '<p>Good day,</p>
 <p>You are invited to join the following course:</p>
@@ -73,17 +67,11 @@ $string['emailmsgunsubscribe'] = '<span class="apple-link">If you believe that y
 $string['assignrole'] = 'Assign role';
 $string['defaultinvitevalues'] = 'Default invitation values';
 $string['usedefaultvalues'] = 'Use invitation with default values';
-$string['defaultrole'] = 'Default role assignment';
-$string['defaultrole_desc'] = 'Select role which should be assigned to users during invitation enrollments';
 $string['default_subject'] = 'Course invitation: {$a}';
-$string['editenrollment'] = 'Edit enrollment';
 $string['header_email'] = 'Who do you want to invite?';
 $string['emailaddressnumber'] = 'Email address';
-$string['close'] = 'Close';
 $string['err_userlist'] = 'Or you must select users here.';
 $string['err_cohortlist'] = 'Or you must select cohorts here.';
-$string['notifymsg'] = 'Hello, I would like to inform you that user $a->username, with email $a->email has successful gained access to your course, $a->course';
-$string['successenroled'] = 'You have been successfully enrolled to the course {$a->coursefullname}';
 
 $string['emailtitleuserenrolled'] = '{$a->userfullname} has accepted invitation to {$a->coursefullname}.';
 $string['emailmessageuserenrolled'] = 'Hello,
@@ -97,24 +85,12 @@ $string['emailmessageuserenrolled'] = 'Hello,
 -------------
 {$a->supportemail}';
 
-$string['enrolenddate'] = 'Access end date';
-$string['enrolenddate_help'] = 'If enabled, will be the date the invitee will no longer be able to access the site.';
-$string['enrolenddaterror'] = 'Access end date cannot be earlier than today';
-$string['enrolperiod'] = 'enrollment duration';
-$string['enrolperiod_desc'] = 'Default length of time that the enrollment is valid (in seconds). If set to zero, the enrollment duration will be unlimited by default.';
-$string['enrolperiod_help'] = 'Length of time that the enrollment is valid, starting with the moment the user is enrolled. If disabled, the enrollment duration will be unlimited.';
-$string['enrolstartdate'] = 'Start date';
-$string['enrolstartdate_help'] = 'If enabled, users can be enrolled from this date onward only.';
 $string['editenrolment'] = 'Edit enrolment';
 $string['inviteexpiration'] = 'Invitation expiration';
 $string['inviteexpiration_desc'] = 'Length of time that an invitation is valid (in seconds). Default is 2 weeks.';
 
 $string['show_from_email'] = 'Allow invited user to contact me at {$a->email} (your address will be on the "FROM" field. If not selected, the "FROM" field will be {$a->supportemail})';
-$string['fromuserconfig'] = 'Default invitation from user';
 $string['inviteusers'] = 'Invite users';
-$string['maxinviteerror'] = 'It must be a number.';
-$string['maxinviteperday'] = 'Maximum invitation per day';
-$string['maxinviteperday_help'] = 'Maximum invitation that can be send per day for a course.';
 $string['message'] = 'Message';
 $string['message_help_link'] = 'see what instructions invitees are sent';
 $string['noinvitationinstanceset'] = 'No invitation enrollment instance has been found. Please add an invitation enroll instance to your course first.';
@@ -130,7 +106,6 @@ $string['status'] = 'Allow invitations';
 $string['status_desc'] = 'Allow users to invite people to enroll into a course by default.';
 $string['unenrol'] = 'Unenroll user';
 $string['unenroluser'] = 'Do you really want to unenroll "{$a->user}" from course "{$a->course}"?';
-$string['unenrolselfconfirm'] = 'Do you really want to unenroll yourself from course "{$a}"?';
 $string['enrolconfimation'] = 'Require student confirmation of enrolment';
 $string['defaultsubjectformat'] = 'Default subject format';
 $string['defaultsubjectformat_desc'] = 'This is the default course name format that will be used in the subject line when sending invitation emails. Note that this will only affect instances of the enrolment method when they are first created. If you select <strong>custom format</strong>, you can <a href="../tool/customlang/">customize the <strong>\'customsubjectformat\'</strong> language string</a> of the <strong>enrol_invitation</strong> plugin using any combination of short and/or long course names. When this plugin is first installed, the custom format is set to \'shortname - fullname\'.';
@@ -210,6 +185,6 @@ $string['accepteddescription'] = 'User id {$a->userid} accepted an invitation fo
 $string['rejecteddescription'] = 'User id {$a->userid} rejected an invitation for course with id \'{$a->courseid}\'.';
 $string['deleteddescription'] = 'User id {$a->userid} deleted an invitation for course with id \'{$a->courseid}\' to \'{$a->email}\'.';
 $string['notsentdescription'] = 'User id {a->userid} failed to send an invitation for course with id \'{a->courseid}\' because there is no account with email address \'{a->email}\'.';
-$string['sentdescription'] = 'User id {a->userid} sent an invitation for course with id \'{a->courseid}\' to \'{a->email}\'.';
-$string['updateddescription'] = 'User id {$this->userid} extended the invitation for course id \'{$a->courseid} to \'{$a->email}\'.';
-$string['vieweddescription'] = 'User id {$this->userid} viewed the invitation for course with id \'{$a->courseid}\'.';
+$string['sentdescription'] = 'User id {$a->userid} sent an invitation for course with id \'{$a->courseid}\' to \'{$a->email}\'.';
+$string['updateddescription'] = 'User id {$a->userid} extended the invitation for course id \'{$a->courseid} to \'{$a->email}\'.';
+$string['vieweddescription'] = 'User id {$a->userid} viewed the invitation for course with id \'{$a->courseid}\'.';

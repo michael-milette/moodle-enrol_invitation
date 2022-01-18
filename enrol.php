@@ -145,7 +145,7 @@ if ($reject) {
 }
 
 //
-// Accept Invitation
+// Accept Invitation.
 //
 
 // Ensure user is logged in.

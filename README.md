@@ -29,9 +29,9 @@ Invitation enrollment plugin for Moodle
 
 # Basic Overview
 
-The Invitation enrollment plug-in for Moodle allows instructor to invite students to their course and site, and grant necessary access and role to them. The invitation is sent via email that contains a link with an unique, one-time use invitation token.
+The Invitation enrollment plug-in for Moodle allows instructors to invite students to their course and site, and grant necessary access and role to them. The invitation is sent via email and contains a link with an unique, one-time use invitation token.
 
-When the user clicks on the link and login to the site, (s)he is automatically enrolled into the course and the invitation link is marked as used.
+When the user clicks on the link and logs into the site, (s)he is automatically enrolled into the course and the invitation link is marked as used.
 
 The benefits of using this plug-in over an enrollment key are:
 
@@ -50,7 +50,7 @@ This plugin requires Moodle 2.6+ from https://moodle.org/ .
 
 # Download Invitation for Moodle
 
-The most recent STABLE release of Invitation for Moodle is available from:
+The most recent BETA release of Invitation for Moodle is available from:
 https://moodle.org/plugins/enrol_invitation
 
 The most recent DEVELOPMENT release can be found at:
@@ -59,12 +59,14 @@ https://github.com/michael-milette/moodle-enrol_invitation
 This is a fork of the original plugin by Jérôme Mouneyrac. Michael Milette (TNG Consulting Inc.) is the maintainer of this plugin since September 2021.
 
 This version of the Invitation plugin also includes contributions by:
-- University of California, Los Angeles (ucla)
+- University of California, Los Angeles (UCLA)
 - Yuriy Petrovskiy (PetrovskYYY)
 - Lukas Celinak (lukascelinak)
 - Michael Milette, TNG Consulting Inc. (michael-milette)
 
 See the git log for a full list of contributors.
+
+The initial public BETA version was released on 2011-10-29. Second BETA on 2022-01-18. The maturity will be set to STABLE once further testing has been completed by the community.
 
 [(Back to top)](#table-of-contents)
 
@@ -148,9 +150,7 @@ Once the Invitation enrollment method has been added, invitations can be sent by
 
 # Updating
 
-There are no special considerations required for updating the plugin.
-
-[TODO update this information!] The first public ALPHA version was released on 2017-07-07, BETA on 2017-11-11 and STABLE as of 2018-11-26.
+Several translations have been contributed however there are many part of this plugin that have been recently re-written in the 2021-2022 BETA release. Translations in the language pack for languages other than English will need to be reviewed. There are no other special considerations required for updating the plugin.
 
 For more information on releases since then, see
 [CHANGELOG.md](https://github.com/michael-milette/moodle-enrol_invitation/blob/master/CHANGELOG.md).
@@ -171,11 +171,11 @@ Note that, once uninstalled, any tags and content normally handled by this plugi
 
 # Limitations
 
-There are no known limitation at this time.
+There are no known limitations at this time.
 
 # Language Support
 
-This plugin includes support for the English language. Several translations have been contributed.
+This plugin includes support for the English language. Several translations have been contributed however there are many part of this plugin that have been recently re-written in the 2021-2022 BETA release. Translations in the language pack for languages other than English will need to be reviewed.
 
 If you need a different language that is not yet supported, please feel free to contribute using the Moodle AMOS Translation Toolkit for Moodle at
 

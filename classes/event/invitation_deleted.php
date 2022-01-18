@@ -52,7 +52,7 @@ class invitation_deleted extends invitation_base {
     }
 
     public function get_description() {
-        $description = get_string('accepteddescription', 'enrol_invitation',
+        $description = get_string('deleteddescription', 'enrol_invitation',
                 ['userid' => $this->userid, 'courseid' => $this->other['courseid'], 'email' => $this->other['email']]);
         return $description;
     }

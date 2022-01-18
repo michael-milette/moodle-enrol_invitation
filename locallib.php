@@ -186,7 +186,7 @@ class invitation_manager {
                     $coursefields = $handler->export_instance_data_object($PAGE->course->id, true);
                     $fieldsvisible = $handler->export_instance_data_object($PAGE->course->id);
                     if (isset($coursefields->location) && $fieldsvisible->location) {
-                        $messageparams->location = $coursefields[$field];
+                        $messageparams->location = $coursefields->location;
                     } else {
                         $messageparams->location = get_string('online', 'message');
                     }
