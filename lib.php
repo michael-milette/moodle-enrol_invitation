@@ -49,7 +49,7 @@ class enrol_invitation_plugin extends enrol_plugin {
      * @return array of pix_icon.
      */
     public function get_info_icons(array $instances) {
-        return array(new pix_icon('invite', get_string('pluginname',
+        return array(new pix_icon('icon', get_string('pluginname',
                 'enrol_invitation'), 'enrol_invitation'));
     }
 

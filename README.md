@@ -213,6 +213,8 @@ Big thank you to the following contributors. (Please let me know if I forgot to 
 * [Jerome Mouneyrac](http://www.moodleitandme.com) for his work on the original [invitation enrollment plug-in](https://github.com/mouneyrac/moodle-enrol_invitation) in which this one is based upon.
 * The staff, faculty, and students at the University of California, Los Angeles (UCLA) that were involved in creating the additional use cases, development, and refinement to this tool.
 
+Thank you also to all the people who have requested features, tested and reported bugs.
+
 # Motivation for this plugin
 
 The development of this plugin was motivated through our own experience in Moodle development, features requested by out clients and topics discussed in the Moodle forums. The project is sponsored and supported by TNG Consulting Inc.

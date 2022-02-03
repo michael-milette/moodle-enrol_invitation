@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2.0.1] - 2022-01-18 (BETA)
+## [2.0.1] - 2022-01-02 (BETA)
 ### Added
 - Initial public re-release on Moodle.org and GitHub by TNG Consulting Inc.
 - Fix-8: The default email subject is now customizable.
