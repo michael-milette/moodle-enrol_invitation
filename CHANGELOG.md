@@ -1,7 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2.0.1] - 2022-01-02 (BETA)
+## [2.0.2] - 2022-02-12 (DEV-BETA)
+### Updated
+- Fix-24: Dates in History are now localized using strftimedatetimeshort date format.
+- Fix-25: Added missing blank space between Accepted and By.
+
+## [2.0.1] - 2022-02-02 (BETA)
 ### Added
 - Initial public re-release on Moodle.org and GitHub by TNG Consulting Inc.
 - Fix-8: The default email subject is now customizable.
@@ -16,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - CHANGELOG.md.
 - composer.json
 ### Updated
+- Fixed enrolment information icon.
 - Fix-21: Removed usage of deprecated get_extra_user_fields() for Moodle 3.11+.
 - Fix-19: The Moodle log entries from this plugin are now displayed using strings from the language pack.
 - Fix-18: No longer displays Undefined Variable COURSE when using invitations with default values set to No.

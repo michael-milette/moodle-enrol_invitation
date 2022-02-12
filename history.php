@@ -128,6 +128,8 @@ if (empty($invites)) {
 
     $table->setup();
 
+    $strftime = get_string('strftimedatetimeshort', 'core_langconfig');
+
     $rolecache = array();
     foreach ($invites as $invite) {
         /* Build display row:
@@ -162,7 +164,7 @@ if (empty($invites)) {
         // If status was used, figure out who used the invite.
         $result = $invitationmanager->who_used_invite($invite);
         if (!empty($result)) {
-            $row[2] .= get_string('used_by', 'enrol_invitation', $result);
+            $row[2] .= ' ' . get_string('used_by', 'enrol_invitation', $result);
         }
 
         // If user's enrollment expired or will expire, let viewer know.
@@ -172,10 +174,10 @@ if (empty($invites)) {
         }
 
         // When was the invite sent?
-        $row[3] = date('Y-m-j g:ia', $invite->timesent);
+        $row[3] = userdate($invite->timesent, $strftime);
 
         // When does the invite expire?
-        $row[4] = date('Y-m-j g:ia', $invite->timeexpiration);
+        $row[4] = userdate($invite->timeexpiration, $strftime);
 
         // If status is active, then state how many days/minutes left.
         if ($status == get_string('status_invite_active', 'enrol_invitation')) {
