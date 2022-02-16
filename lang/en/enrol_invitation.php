@@ -108,7 +108,7 @@ $string['unenrol'] = 'Unenroll user';
 $string['unenroluser'] = 'Do you really want to unenroll "{$a->user}" from course "{$a->course}"?';
 $string['enrolconfimation'] = 'Require student confirmation of enrolment';
 $string['defaultsubjectformat'] = 'Default subject format';
-$string['defaultsubjectformat_desc'] = 'This is the default course name format that will be used in the subject line when sending invitation emails. Note that this will only affect instances of the enrolment method when they are first created. If you select <strong>custom format</strong>, you can <a href="../tool/customlang/">customize the <strong>\'customsubjectformat\'</strong> language string</a> of the <strong>enrol_invitation</strong> plugin using any combination of short and/or long course names. When this plugin is first installed, the custom format is set to \'shortname - fullname\'.';
+$string['defaultsubjectformat_desc'] = 'This is the default course name format that will be used in the subject line when sending invitation emails. Note that this will only affect instances of the enrolment method when they are first created. If you select <strong>custom format</strong>, you can <a href="../admin/tool/customlang/">customize the <strong>\'customsubjectformat\'</strong> language string</a> of the <strong>enrol_invitation</strong> plugin using any combination of short and/or long course names. When this plugin is first installed, the custom format is set to \'shortname - fullname\'.';
 $string['customnamecourse'] = 'Custom format';
 $string['customsubjectformat'] = '{$a->shortname} - {$a->fullname}';
 

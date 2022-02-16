@@ -1,10 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2.0.2] - 2022-02-12 (DEV-BETA)
+## [2.0.2] - 2022-02-16 (DEV-BETA)
 ### Updated
 - Fix-24: Dates in History are now localized using strftimedatetimeshort date format.
 - Fix-25: Added missing blank space between Accepted and By.
+- Fix-26: Fixed link to language customization page.
 
 ## [2.0.1] - 2022-02-02 (BETA)
 ### Added
