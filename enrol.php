@@ -267,8 +267,8 @@ if ($instance->customint6 == 1 && empty($confirm)) {
         $inviter->maildisplay = true;
 
         $emailinfo = preparenoticeobject($invitation);
-        $emailinfo->userfullname = trim($user->firstname . ' ' . $user->lastname);
-        $emailinfo->useremail = $user->email;
+        $emailinfo->userfullname = fullname($USER);
+        $emailinfo->useremail = $USER->email;
         $courseenrolledusersurl = new moodle_url('/user/index.php', ['id' => $invitation->courseid]);
         $emailinfo->courseenrolledusersurl = $courseenrolledusersurl->out(false);
         $invitehistoryurl = new moodle_url('/enrol/invitation/history.php', ['courseid' => $invitation->courseid]);

@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [2.0.2] - 2022-02-19 (DEV-BETA)
 ### Updated
 - Fix-29: Course and Site Names are now processed through Moodle filters
+- Fix-27: Fullname and email address are no longer blank in confirmation email.
 - Fix-24: Dates in History are now localized using strftimedatetimeshort date format.
 - Fix-25: Added missing blank space between Accepted and By.
 - Fix-26: Fixed link to language customization page.
