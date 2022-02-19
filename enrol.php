@@ -275,8 +275,8 @@ if ($instance->customint6 == 1 && empty($confirm)) {
         $emailinfo->invitehistoryurl = $invitehistoryurl->out(false);
 
         $course = $DB->get_record('course', array('id' => $invitation->courseid));
-        $emailinfo->coursefullname = sprintf('%s: %s', $course->shortname, $course->fullname);
-        $emailinfo->sitename = $SITE->fullname;
+        $emailinfo->coursefullname = format_string(getcoursesubject($course));
+        $emailinfo->sitename = format_string($SITE->fullname);
         $siteurl = new moodle_url('/');
         $emailinfo->siteurl = $siteurl->out(false);
 

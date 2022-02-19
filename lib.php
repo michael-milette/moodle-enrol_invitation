@@ -312,3 +312,24 @@ class enrol_invitation_plugin extends enrol_plugin {
     }
 
 }
+
+/**
+ * Create course name for email subject line.
+ *
+ * @param object  $course Course objet.
+ * @return string Formatted name of course subject.
+ */
+function getcoursesubject($course) {
+    switch(get_config('enrol_invitation', 'defaultsubjectformat') ?? '') {
+        case 'custom':
+            $subject = get_string('customsubjectformat', 'enrol_invitation',
+                    (object)['shortname' => $course->shortname, 'fullname' => $course->fullname]);
+            break;
+        case 'shortname':
+            $subject = $course->shortname;
+            break;
+        default: // Fullname.
+            $subject = $course->fullname;
+    }
+    return $subject;
+}

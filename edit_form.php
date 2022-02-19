@@ -95,19 +95,7 @@ class enrol_invitation_edit_form extends moodleform {
         // Subject field.
         $mform->addElement('text', 'customchar1', get_string('subject', 'enrol_invitation'), ['class' => 'form-invite-subject']);
         $mform->setType('customchar1', PARAM_TEXT);
-        // Default subject is "Course invitation: <course full name>".
-        switch(get_config('enrol_invitation', 'defaultsubjectformat') ?? '') {
-            case 'custom':
-                $defaultsubject = get_string('customsubjectformat', 'enrol_invitation',
-                        (object)['shortname' => $COURSE->shortname, 'fullname' => $COURSE->fullname]);
-                break;
-            case 'shortname':
-                $defaultsubject = $COURSE->shortname;
-                break;
-            default: // Fullname.
-                $defaultsubject = $COURSE->fullname;
-        }
-        $defaultsubject = get_string('default_subject', 'enrol_invitation', $defaultsubject);
+        $defaultsubject = get_string('default_subject', 'enrol_invitation', getcoursesubject($COURSE));
         $mform->setDefault('customchar1', $defaultsubject);
 
         // Message field.

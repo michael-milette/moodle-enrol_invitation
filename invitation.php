@@ -37,7 +37,6 @@ $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
 $inviteid = optional_param('inviteid', 0, PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-$fullname = $course->fullname;
 $context = context_course::instance($courseid);
 
 $PAGE->set_context($context);

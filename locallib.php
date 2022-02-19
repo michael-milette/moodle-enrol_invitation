@@ -923,7 +923,7 @@ function preparenoticeobject($invitation) {
 
     $noticeobject = new stdClass();
     $noticeobject->email = $invitation->email;
-    $noticeobject->coursefullname = $course->fullname;
+    $noticeobject->coursefullname = format_string($course->fullname);
     $noticeobject->supportemail = !empty($CFG->supportemail) ? $CFG->supportemail : $CFG->noreplyaddress;
 
     // Get role name for use in acceptance message. Role name is no longer defined in `role` table. It is scattered around database.
