@@ -1,5 +1,5 @@
 <?php
-// This file is part of Invitation for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - https://moodle.org/
 //
 // Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,16 +12,16 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Form to display invitation.
  *
  * @package    enrol_invitation
- * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @author     Rex Lorenzo
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
  * Class for sending invitation to enrol users in a course.
  *
  * @copyright  2013 UC Regents
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class invitation_form extends moodleform {
 
@@ -181,13 +181,14 @@ class invitation_form extends moodleform {
         $retval = parent::get_data();
 
         // Check if form validated, and if user submitted daysexpire from POST.
-        if (!empty($retval) && isset($_POST['daysexpire'])) {
-            if (in_array($_POST['daysexpire'], self::$daysexpire_options)) {
-                // Cannot indicate to user a real error message, so just slightly ignore user setting.
-                $retval->daysexpire = $_POST['daysexpire'];
+        if (false) { // Not implemented yet.
+            if (!empty($retval) && isset($_POST['daysexpire'])) {
+                if (in_array($_POST['daysexpire'], self::$daysexpireoptions)) {
+                    // Cannot indicate to user a real error message, so just slightly ignore user setting.
+                    $retval->daysexpire = $_POST['daysexpire'];
+                }
             }
         }
-
         return $retval;
     }
 
@@ -427,10 +428,12 @@ class invitation_email_form extends moodleform {
         $retval = parent::get_data();
 
         // Check if form validated, and if user submitted daysexpire from POST.
-        if (!empty($retval) && isset($_POST['daysexpire'])) {
-            if (in_array($_POST['daysexpire'], self::$daysexpire_options)) {
-                // Cannot indicate to user a real error message, so just slightly ignore user setting.
-                $retval->daysexpire = $_POST['daysexpire'];
+        if (false) { // Not implemented yet.
+            if (!empty($retval) && isset($_POST['daysexpire'])) {
+                if (in_array($_POST['daysexpire'], self::$daysexpireoptions)) {
+                    // Cannot indicate to user a real error message, so just slightly ignore user setting.
+                    $retval->daysexpire = $_POST['daysexpire'];
+                }
             }
         }
 

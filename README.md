@@ -3,7 +3,7 @@
 Invitation enrollment plugin for Moodle
 =======================================
 ![PHP](https://img.shields.io/badge/PHP-v5.6%20%2F%20v7.0%20%2F%20v7.1%2F%20v7.2%2F%20v7.3%2F%20v7.4-blue.svg)
-![Moodle](https://img.shields.io/badge/Moodle-v2.6%20to%20v3.11.x-orange.svg)
+![Moodle](https://img.shields.io/badge/Moodle-v2.6%20to%20v4.0.x-orange.svg)
 [![GitHub Issues](https://img.shields.io/github/issues/michael-milette/moodle-enrol_invitation.svg)](https://github.com/michael-milette/moodle-enrol_invitation/issues)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-green.svg)](#contributing)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](#license)
@@ -50,7 +50,7 @@ This plugin requires Moodle 2.6+ from https://moodle.org/ .
 
 # Download Invitation for Moodle
 
-The most recent BETA release of Invitation for Moodle is available from:
+The most recent release of Invitation for Moodle is available from:
 https://moodle.org/plugins/enrol_invitation
 
 The most recent DEVELOPMENT release can be found at:
@@ -66,7 +66,7 @@ This version of the Invitation plugin also includes contributions by:
 
 See the git log for a full list of contributors.
 
-The initial public BETA version was released on 2011-10-29. Second BETA on 2022-01-18. The maturity will be set to STABLE once further testing has been completed by the community.
+The initial public BETA version was released on 2011-10-29. The maturity is STABLE as of 2022-04-26.
 
 [(Back to top)](#table-of-contents)
 
@@ -86,7 +86,7 @@ In order for the enrolment method to be available in a course and for the Invita
 
 # Usage
 
-IMPORTANT: This BETA release has not been tested on many Moodle sites yet. Although we expect everything to work, if you find a problem, please help by reporting it in the [Bug Tracker](https://github.com/michael-milette/moodle-enrol_invitation/issues).
+This release been tested. Although we expect everything to work, if you find a problem, please help by reporting it in the [Bug Tracker](https://github.com/michael-milette/moodle-enrol_invitation/issues).
 
 ## In-course Setup
 
@@ -177,7 +177,7 @@ There are no known limitations at this time.
 
 # Language Support
 
-This plugin includes support for the English language. Several translations have been contributed however there are many part of this plugin that have been recently re-written in the 2021-2022 BETA release. Translations in the language pack for languages other than English will need to be reviewed.
+This plugin includes support for the English language. Several translations have been contributed however there are many part of this plugin that were re-written in 2021-2022. Translations in the language pack for languages other than English will need to be reviewed.
 
 If you need a different language that is not yet supported, please feel free to contribute using the Moodle AMOS Translation Toolkit for Moodle at
 

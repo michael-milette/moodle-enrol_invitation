@@ -1,5 +1,5 @@
 <?php
-// This file is part of Invitation for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - https://moodle.org/
 //
 // Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,25 +12,23 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Local library file to include classes and functions used.
  *
  * @package    enrol_invitation
- * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @author     Rex Lorenzo
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Invitation manager that handles the handling of invitation information.
  *
  * @copyright  2013 UC Regents
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class invitation_manager {
 
@@ -853,28 +851,36 @@ class invitation_manager {
     }
 }
 
+
+
+// Based on Akelos Framework - http://www.akelos.org.
+// Available from: https://sourceforge.net/projects/akelos/.
+// Copyright (c) 2002-2006, Akelos Media, S.L.  & Bermi Ferrer Martinez.
+// Released under the GNU Lesser General Public License, see LICENSE.txt.
 /**
- * Reports the approximate distance in time between two times given in seconds
- * or in a valid ISO string like.
- *
- * For example, if the distance is 47 minutes, it'll return
- * "about 1 hour". See the source for the complete wording list.
- *
- *  Integers are interpreted as seconds. So,
- * <tt>$date_helper->distance_of_time_in_words(50)</tt> returns "less than a minute".
- *
- * Set <tt>includeseconds</tt> to true if you want more detailed approximations if distance < 1 minute
- *
- * Code borrowed/inspired from:
- * http://www.8tiny.com/source/akelos/lib/AkActionView/helpers/date_helper.php.source.txt
- *
- * Which was in term inspired by Ruby on Rails' similarly called function.
- *
- * @param int $fromtime
- * @param int $totime
- * @param boolean $includeseconds
- * @return string
+ * @package ActionView
+ * @subpackage Helpers
+ * @author Bermi Ferrer <bermi a.t akelos c.om>
+ * @copyright Copyright (c) 2002-2006, Akelos Media, S.L. http://www.akelos.org
+ * @license GNU Lesser General Public License <https://www.gnu.org/copyleft/lesser.html>
  */
+ /**
+  * Reports the approximate distance in time between two times given in seconds
+  * or in a valid ISO string like.
+  *
+  * For example, if the distance is 47 minutes, it'll return
+  * "about 1 hour". See the source for the complete wording list.
+  *
+  *  Integers are interpreted as seconds. So,
+  * <tt>$date_helper->distance_of_time_in_words(50)</tt> returns "less than a minute".
+  *
+  * Set <tt>includeseconds</tt> to true if you want more detailed approximations if distance < 1 minute
+  *
+  * @param int $fromtime
+  * @param int $totime
+  * @param boolean $includeseconds
+  * @return string
+  */
 function distance_of_time_in_words($fromtime, $totime = 0, $includeseconds = false) {
     $fromtime = is_numeric($fromtime) ? $fromtime : strtotime($fromtime);
     $totime = is_numeric($totime) ? $totime : strtotime($totime);

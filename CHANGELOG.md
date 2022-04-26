@@ -1,14 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2.0.3] - 2022-04-25 (DEV-BETA)
+## [2.1.0] - 2022-04-26
 ### Updated
+- Plugin is now compatible and tested with Moodle 3.9, 3.10, 3.11 and 4.0.
 - Can now just invite existing users without having to enter an email address.
 - Fix-29: Course and Site Names are now processed through Moodle filters
 - Fix-27: Fullname and email address are no longer blank in confirmation email.
 - Fix-24: Dates in History are now localized using strftimedatetimeshort date format.
 - Fix-25: Added missing blank space between Accepted and By.
 - Fix-26: Fixed link to language customization page.
+- Links to HTTPS in source code comments and documentation.
+- Refactored some code and removed some partially implemented code which had no effect.
 
 ## [2.0.1] - 2022-02-02 (BETA)
 ### Added

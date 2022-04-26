@@ -1,5 +1,5 @@
 <?php
-// This file is part of Invitation for Moodle - http://moodle.org/
+// This file is part of Invitation for Moodle - https://moodle.org/
 //
 // Invitation is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,23 +12,23 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Version information for Invitation.
  *
  * @package    enrol_invitation
- * @copyright  2021-2022 TNG Consulting Inc. {@link http://www.tngconsulting.ca}
+ * @copyright  2021-2022 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @author     Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2022042602;
-$plugin->requires = 2013111800;   // Moodle 3.9 is required.
-$plugin->maturity = MATURITY_BETA;
-$plugin->release   = '2.0.3';
+$plugin->version  = 2022042603;
+$plugin->requires = 2013111800;   // Moodle 3.9.
+$plugin->maturity = MATURITY_STABLE;
+$plugin->release   = '2.1.0';
 $plugin->component = "enrol_invitation";
