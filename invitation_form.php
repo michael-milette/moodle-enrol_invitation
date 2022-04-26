@@ -109,7 +109,7 @@ class invitation_form extends moodleform {
                         'email' => $user->email,
                         'suspended' => 0
                     ];
-                    return $OUTPUT->render_from_template('enrol_manual/form-potential-user-selector', $useroptiondata);
+                    return $OUTPUT->render_from_template('enrol_manual/form-user-selector-suggestion', $useroptiondata);
                 }
             }
         );
@@ -256,7 +256,7 @@ class invitation_form extends moodleform {
         $delimiters = "/[;, \r\n]/";
         $emaillist = self::parsedsvemails($data['email'], $delimiters);
 
-        if (empty($emaillist)) {
+        if (!empty($data['email']) && empty($emaillist)) {
             $errors['email'] = get_string('err_email', 'form');
         }
 

@@ -1,8 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2.0.2] - 2022-02-19 (DEV-BETA)
+## [2.0.3] - 2022-04-25 (DEV-BETA)
 ### Updated
+- Can now just invite existing users without having to enter an email address.
 - Fix-29: Course and Site Names are now processed through Moodle filters
 - Fix-27: Fullname and email address are no longer blank in confirmation email.
 - Fix-24: Dates in History are now localized using strftimedatetimeshort date format.
