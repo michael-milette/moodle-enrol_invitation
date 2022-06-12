@@ -358,13 +358,19 @@ class invitation_email_form extends moodleform {
                 get_string('email_clarification', 'enrol_invitation') . $registeredonly);
 
         $mform->setType('email', PARAM_TEXT);
+        if ($CFG->branch >= 311) {
+            $userfields = \core_user\fields::for_identity($context)->get_required_fields();
+        } else {
+            $userfields = get_extra_user_fields($context);
+        }
+        $userfields = \core_user\fields::get_identity_fields($context, false);
         $options = array(
             'ajax' => 'enrol_manual/form-potential-user-selector',
             'multiple' => true,
             'courseid' => $course->id,
             'enrolid' => $instance->id,
             'perpage' => $CFG->maxusersperpage,
-            'userfields' => implode(',', get_extra_user_fields($context)),
+            'userfields' => implode(',', $userfields),
             'valuehtmlcallback' => function($value) {
                 global $OUTPUT;
                 if ($user = \core_user::get_user($value)) {

@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] - 2022-06-12
+### Updated
+- Fix-30: Removed usage of deprecated get_extra_user_fields() for Moodle 3.11+.
+
 ## [2.1.0] - 2022-04-26
 ### Updated
 - Plugin is now compatible and tested with Moodle 3.9, 3.10, 3.11 and 4.0.
