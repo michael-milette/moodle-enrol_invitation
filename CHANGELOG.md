@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Missing PHPDocs
 ### Updated
-- Fix-30: Removed usage of deprecated get_extra_user_fields() for Moodle 3.11+.
+- Fix-30: Fix-30: Fixed handling of Message field when "Use invitation with default values" is set to "Yes".
+- Fix-30: Removed deprecated get_extra_user_fields() for Moodle 3.11, 4.0+.
 - .gitignore
 
 ## [2.1.0] - 2022-04-26

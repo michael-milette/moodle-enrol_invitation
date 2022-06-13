@@ -85,10 +85,12 @@ if ($inviteid) {
 }
 
 if ($instance->customint1 == 1) {
+    // If "Use invitation with default values" is set to "Yes", use short form.
     $mform = new invitation_email_form(null,
             array('course' => $course, 'context' => $context, 'prefilled' => $prefilled, 'registeredonly' => $instance->customint5,
             'instance' => $instance), 'post', '', array('class' => 'mform-invite'));
 } else {
+    // If "Use invitation with default values" is set to "No", use long form.
     $mform = new invitation_form(null,
             array('course' => $course, 'context' => $context, 'prefilled' => $prefilled, 'registeredonly' => $instance->customint5,
             'instance' => $instance), 'post', '', array('class' => 'mform-invite'));
@@ -99,8 +101,10 @@ $mform->set_data($invitationmanager);
 $data = $mform->get_data();
 
 if ($data && $instance->customint1 == 1) {
+    // If "Use invitation with default values" is set to "Yes".
     $data->role_group = array('roleid' => $instance->customint2);
     $data->subject = $instance->customchar1;
+    $data->message['text'] = $instance->customtext1;
     $data->show_from_email = $instance->customint3;
     $data->notify_inviter = $instance->customint4;
 }

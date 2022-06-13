@@ -162,7 +162,6 @@ class invitation_manager {
 
                 // Construct message: custom (if any) + template.
 
-                $message = '';
                 $strftime = get_string('strftimedaydatetime', 'core_langconfig');
 
                 $messageparams = new stdClass();
@@ -212,7 +211,7 @@ class invitation_manager {
                     $messageparams->message = '';
                 }
 
-                $message .= get_string('emailmsghtml_help', 'enrol_invitation', $messageparams);
+                $message = get_string('emailmsghtml_help', 'enrol_invitation', $messageparams);
 
                 $messageparams->message = $message;
                 $invitation->message = "";

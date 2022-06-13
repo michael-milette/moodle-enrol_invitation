@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
 class invitation_form extends moodleform {
 
     /**
-     * The form definition.
+     * The form definition if "Use invitation with default values" is set to "No".
      */
     public function definition() {
         global $CFG, $USER, $COURSE;
@@ -346,7 +346,7 @@ class invitation_form extends moodleform {
 class invitation_email_form extends moodleform {
 
     /**
-     * The form definition.
+     * The form definition if "Use invitation with default values" is set to "Yes".
      */
     public function definition() {
         global $CFG, $USER;
@@ -419,13 +419,6 @@ class invitation_email_form extends moodleform {
                 $mform->addElement('cohort', 'cohortlist', get_string('selectcohorts', 'enrol_manual'), $options);
             }
         }
-        $mform->addElement('editor', 'message', get_string('message', 'enrol_invitation'),
-        array('class' => 'form-invite-message'));
-        $mform->setType('message', PARAM_RAW);
-
-        // Put help text to show what default message invitee gets.
-        $mform->addHelpButton('message', 'emailmsghtml', 'enrol_invitation',
-        get_string('message_help_link', 'enrol_invitation'));
         // Check for correct email formating later in validation() function.
 
         // Set defaults if the user is resending an invite that expired.
