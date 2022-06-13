@@ -260,9 +260,8 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
     }
 
     // Update status field to db for better tracking of statuses
-    // @package    enrol_invitation
-    // @author     2021 Lukas Celinak (lukascelinak@gmail.com)
-    // @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+    // author     2021 Lukas Celinak (lukascelinak@gmail.com)
+    // license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
     if ($oldversion < 2021073000) {
         $table = new xmldb_table('enrol_invitation');
 

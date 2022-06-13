@@ -122,9 +122,8 @@ if ($reject) {
     echo $OUTPUT->box_start('generalbox', 'notice');
 
     // Implementation for possibility to reject invitation
-    // @package    enrol_invitation
-    // @copyright  2021 Lukas Celinak (lukascelinak@gmail.com)
-    // @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
+    // copyright  2021 Lukas Celinak (lukascelinak@gmail.com)
+    // license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
 
     // Set token as used and status to rejected.
     $invitation->tokenused = true;

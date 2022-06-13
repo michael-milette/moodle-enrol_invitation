@@ -462,6 +462,13 @@ class invitation_manager {
         return $retval;
     }
 
+    /**
+     * Generate the HTML message for the email to be sent.
+     *
+     * @param object $invitation Object of properties for the message.
+     * @param object $messageparams Message and link to unsubscribe.
+     * @return string HTML message.
+     */
     public function generate_html_message($invitation, $messageparams) {
         $lang = str_replace('_', '-', current_language());
         $dir = get_string('thisdirection', 'langconfig');
@@ -841,6 +848,13 @@ class invitation_manager {
         return $htmlmail;
     }
 
+    /**
+     * Check to see if invitation was already rejected.
+     *
+     * @param integer $userid User ID.
+     * @param integer $courseid Course ID.
+     * @return boolean True if it was already rejected, otherwise false.
+     */
     public function check_invitation_rejected($userid, $courseid) {
         global $DB;
         if ($DB->record_exists('enrol_invitation', ['courseid' => $courseid, 'userid' => $userid, 'status' => 'rejected'])) {
@@ -858,29 +872,28 @@ class invitation_manager {
 // Copyright (c) 2002-2006, Akelos Media, S.L.  & Bermi Ferrer Martinez.
 // Released under the GNU Lesser General Public License, see LICENSE.txt.
 /**
- * @package ActionView
- * @subpackage Helpers
- * @author Bermi Ferrer <bermi a.t akelos c.om>
- * @copyright Copyright (c) 2002-2006, Akelos Media, S.L. http://www.akelos.org
- * @license GNU Lesser General Public License <https://www.gnu.org/copyleft/lesser.html>
+ * package ActionView
+ * subpackage Helpers
+ * author Bermi Ferrer <bermi a.t akelos c.om>
+ * copyright Copyright (c) 2002-2006, Akelos Media, S.L. http://www.akelos.org
+ * license GNU Lesser General Public License <https://www.gnu.org/copyleft/lesser.html>
+ *
+ * Reports the approximate distance in time between two times given in seconds
+ * or in a valid ISO string like.
+ *
+ * For example, if the distance is 47 minutes, it'll return
+ * "about 1 hour". See the source for the complete wording list.
+ *
+ *  Integers are interpreted as seconds. So,
+ * <tt>$date_helper->distance_of_time_in_words(50)</tt> returns "less than a minute".
+ *
+ * Set <tt>includeseconds</tt> to true if you want more detailed approximations if distance < 1 minute
+ *
+ * @param int $fromtime
+ * @param int $totime
+ * @param boolean $includeseconds
+ * @return string
  */
- /**
-  * Reports the approximate distance in time between two times given in seconds
-  * or in a valid ISO string like.
-  *
-  * For example, if the distance is 47 minutes, it'll return
-  * "about 1 hour". See the source for the complete wording list.
-  *
-  *  Integers are interpreted as seconds. So,
-  * <tt>$date_helper->distance_of_time_in_words(50)</tt> returns "less than a minute".
-  *
-  * Set <tt>includeseconds</tt> to true if you want more detailed approximations if distance < 1 minute
-  *
-  * @param int $fromtime
-  * @param int $totime
-  * @param boolean $includeseconds
-  * @return string
-  */
 function distance_of_time_in_words($fromtime, $totime = 0, $includeseconds = false) {
     $fromtime = is_numeric($fromtime) ? $fromtime : strtotime($fromtime);
     $totime = is_numeric($totime) ? $totime : strtotime($totime);

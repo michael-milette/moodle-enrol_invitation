@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/lib/formslib.php');
 require_once($CFG->dirroot . '/lib/enrollib.php');
 
 /**
- * Class for sending invitation to enrol users in a course.
+ * Class for sending invitation to enrol users in a course when the "Use invitation with default values" field is set to "Yes".
  *
  * @copyright  2013 UC Regents
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -295,6 +295,12 @@ class invitation_form extends moodleform {
         return $parsedemails;
     }
 
+    /**
+     * Get list of email addresses for users belonging to registered user accounts.
+     *
+     * @param array  $userlist List of user ids.
+     * @return array Email addresses.
+     */
     public static function parse_userlist_emails($userlist) {
         global $DB;
         $parsedemails = array();
@@ -306,6 +312,13 @@ class invitation_form extends moodleform {
         return $parsedemails;
     }
 
+    /**
+     * Get list of email addresses belonging to users specified cohorts of a given course.
+     *
+     * @param array  $cohortlist List of cohort ids.
+     * @param object $course Course object.
+     * @return array Email addresses.
+     */
     public static function parse_cohortlist_emails($cohortlist, $course) {
         global $DB;
         $parsedemails = array();
@@ -327,6 +340,9 @@ class invitation_form extends moodleform {
 
 }
 
+/**
+ * Class for sending invitation to enrol users in a course when the "Use invitation with default values" field is set to "No".
+ */
 class invitation_email_form extends moodleform {
 
     /**

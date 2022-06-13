@@ -1,7 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2.1.1] - 2022-06-12
+## [2.1.1] - 2022-06-13
+### Added
+- Missing PHPDocs
 ### Updated
 - Fix-30: Removed usage of deprecated get_extra_user_fields() for Moodle 3.11+.
 - .gitignore
