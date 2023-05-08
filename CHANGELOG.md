@@ -1,16 +1,22 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.1.2] - 2023-05-07
+### Added
+- GitHub bug and feature request issue templates.
+- Code of Conduct guidelines.
+### Updated
+- Now compatible and tested with Moodle 3.9, 3.10, 3.11, 4.0, 4.1 and 4.2.
+- Now compatible with PHP 7.4 to 8.1.
+- Updated copyright notice for 2023.
+
 ## [2.1.1] - 2022-06-13
 ### Added
-- Missing PHPDocs.
+- Missing PHPDocs
 ### Updated
 - Fix-30: Fixed handling of Message field when "Use invitation with default values" is set to "Yes".
 - Fix-30: Removed deprecated get_extra_user_fields() for Moodle 3.11, 4.0+.
 - .gitignore
-- Now compatible and tested with Moodle 3.9, 3.10, 3.11, 4.0, 4.1 and 4.2.
-- Now compatible with PHP 7.4 to 8.1.
-- Updated copyright notice for 2023.
 
 ## [2.1.0] - 2022-04-26
 ### Updated
