@@ -18,7 +18,7 @@
  * Page to send invitation.
  *
  * @package    enrol_invitation
- * @copyright  2021-2022 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @copyright  2021-2023 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
  * @author     Jerome Mouneyrac

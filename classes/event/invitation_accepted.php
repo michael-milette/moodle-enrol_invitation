@@ -18,7 +18,7 @@
  * The invitation_accepted event.
  *
  * @package    enrol_invitation
- * @copyright  2021-2022 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @copyright  2021-2023 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
  * @copyright  2021 Christian Brugger (brugger.chr@gmail.com)
  * @author     Christian Brugger
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
