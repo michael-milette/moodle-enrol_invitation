@@ -212,7 +212,6 @@ class invitation_manager {
 
                 // Replace tags with text.
                 if (!empty($data->message['text'])) {
-                    $messageparams->message = format_string($data->message['text'], false);
                     $messageparams->message = $data->message['text'];
                     $messageparams->email = $invitation->email;
                     if ($userexits) {
@@ -226,6 +225,8 @@ class invitation_manager {
                         $messageparams->surname = '';
                         $messageparams->username = '';
                     }
+                    $messageparams->message = format_text($messageparams->message, FORMAT_HTML,
+                            ['context' => context_system::instance()]);
                     $messageparams->message = str_replace('{$a-&gt;', '{$a->', $messageparams->message);
                 }
 

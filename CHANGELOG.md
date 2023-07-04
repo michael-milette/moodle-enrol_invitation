@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Support for plain text tag called {$a->surname} in the body of the invitation message.
 - Support for plain text tag called {$a->email} in the body of the invitation message.
 - Support for plain text tag called {$a->username} in the body of the invitation message.
+- Support for HTML in a custom message.
 - Support for the use of all plain text tags in your custom message. These were previously only available in the email template.
 - Support for filters (such as FilterCodes) in the custom message.
 
