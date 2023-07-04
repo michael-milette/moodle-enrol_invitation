@@ -165,6 +165,7 @@ class invitation_manager {
                 $strftime = get_string('strftimedaydatetime', 'core_langconfig');
 
                 $messageparams = new stdClass();
+                $messageparams->message = '';
 
                 // Use primary administrators email address if support email address is not defined.
                 if (!empty($CFG->supportemail)) {
@@ -205,10 +206,27 @@ class invitation_manager {
                 $messageparams->acceptinvitation = get_string('invitationacceptancebutton', 'enrol_invitation');
                 $messageparams->rejectinvitation = get_string('invitationrejectbutton', 'enrol_invitation');
 
+                // Check if user exists.
+                $contactuser = $DB->get_record('user', ['email' => $invitation->email]);
+                $userexits = !empty($contactuser);
+
+                // Replace tags with text.
                 if (!empty($data->message['text'])) {
                     $messageparams->message = format_string($data->message['text'], false);
-                } else {
-                    $messageparams->message = '';
+                    $messageparams->message = $data->message['text'];
+                    $messageparams->email = $invitation->email;
+                    if ($userexits) {
+                        $messageparams->firstname = $contactuser->firstname;
+                        $messageparams->lastname = $contactuser->lastname;
+                        $messageparams->surname = $contactuser->lastname;
+                        $messageparams->username = $contactuser->username;
+                    } else {
+                        $messageparams->firstname = '';
+                        $messageparams->lastname = '';
+                        $messageparams->surname = '';
+                        $messageparams->username = '';
+                    }
+                    $messageparams->message = str_replace('{$a-&gt;', '{$a->', $messageparams->message);
                 }
 
                 $message = get_string('emailmsghtml_help', 'enrol_invitation', $messageparams);
@@ -228,13 +246,12 @@ class invitation_manager {
                 }
 
                 // Check if user exists.
-                if ($contactuser = $DB->get_record('user', ['email' => $invitation->email])) {
+                if ($userexits) {
                     $contactuser->mailformat = 1;
                     $contactuser->maildisplay = true;
                     $invitation->userid = $contactuser->id;
-                    $userexits = true;
                 } else {
-                    // Send invitation to the user.
+                    // User does not have an account yet.
                     $contactuser = new stdClass();
                     $contactuser->id = -1; // Required by new version of email_to_user since moodle 2.6.
                     $contactuser->email = $invitation->email;
@@ -246,9 +263,9 @@ class invitation_manager {
                     $contactuser->lastnamephonetic = '';
                     $contactuser->middlename = '';
                     $contactuser->alternatename = '';
-                    $userexits = false;
                 }
 
+                // Send invitation to the user.
                 if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser)
                         && !$this->check_invitation_rejected($invitation->userid, $invitation->courseid)
                         || $userexits == false) {

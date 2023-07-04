@@ -10,21 +10,29 @@ Invitation enrollment plugin for Moodle
 
 # Table of Contents
 
+- [Invitation enrollment plugin for Moodle](#invitation-enrollment-plugin-for-moodle)
+- [Table of Contents](#table-of-contents)
 - [Basic Overview](#basic-overview)
 - [Requirements](#requirements)
 - [Download Invitation for Moodle](#download-invitation-for-moodle)
 - [Installation](#installation)
 - [Usage](#usage)
-    - [Settings](#settings)
+  - [In-course Setup](#in-course-setup)
+  - [Customization](#customization)
+    - [Email template customization](#email-template-customization)
+    - [Additional custom message from the teacher](#additional-custom-message-from-the-teacher)
+    - [Customize default email subject](#customize-default-email-subject)
+  - [Invitation process](#invitation-process)
 - [Updating](#updating)
 - [Uninstallation](#uninstallation)
 - [Limitations](#limitations)
 - [Language Support](#language-support)
 - [Troubleshooting](#troubleshooting)
-- [Frequently Asked Questions (FAQ)](#faq)
+- [FAQ](#faq)
 - [Contributing](#contributing)
+  - [Contributors](#contributors)
 - [Motivation for this plugin](#motivation-for-this-plugin)
-- [Further information](#further-information)
+- [Further Information](#further-information)
 - [License](#license)
 
 # Basic Overview
@@ -107,7 +115,7 @@ You can customize the email being sent in a few ways:
 
 You can modify the message sent by email by navigating to Site Administration > Language Customization. Follow the prompts. The language string to be modified is in the **enrol_invitation** component, specifically the **emailmsghtml_help** string.
 
-Note that you can use any of the following variables within the body of the email message.:
+Note that you can use any of the following plain text tags within the body of the email message including the custom message:
 
 * {$a->coursename} : The course fullname.
 * {$a->start} : The course start date.
@@ -121,6 +129,13 @@ Note that you can use any of the following variables within the body of the emai
 * {$a->location} : Picked-up from one of the following places: A field called **location** in your course format - only available in some 3rd party course formats, a custom course field called **location**\'**. If neither of these exist, its value will simply be 'online'. Important: These variables cannot be used when setting the default message for an instance of Invitation or when sending the invitation.
 * {$a->supportemail} : Support email address for the site. If not defined, will use the address of the primary administrator.
 * {$a->emailmsgunsubscribe} : Unsubscribe/Support message.
+* {$a->email} : Invitees email address - always available.
+* {$a->username} : Invitees username - only available if the user already has an account on the site, otherwise blank.
+* {$a->firstname} : Invitees first name - only available if the user already has an account on the site, otherwise blank.
+* {$a->lastname} : Invitees last name - only available if the user already has an account on the site, otherwise blank.
+* {$a->surname} : This is an alias for {$a->lastname}.
+
+If you are using a filter plugin such as [FilterCodes](https://moodle.org/plugins/filter_filtercodes), you can also use its plain text tags. However, keep in mind that profile related tags such as {firstname}, {lastname}, {username}, {email}, etc. refer to the profile of the user sending the invitation, not the person who is being invited. To work around this, use the above mentionned tags instead.
 
 Reminder: If you have a multi-language site, you will need to customize the message for each language.
 

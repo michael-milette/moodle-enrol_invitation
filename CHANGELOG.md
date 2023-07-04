@@ -1,6 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2023-07-04
+### Added
+- Support for plain text tag called {$a->firstname} in the body of the invitation message.
+- Support for plain text tag called {$a->lastname} in the body of the invitation message.
+- Support for plain text tag called {$a->surname} in the body of the invitation message.
+- Support for plain text tag called {$a->email} in the body of the invitation message.
+- Support for plain text tag called {$a->username} in the body of the invitation message.
+- Support for the use of all plain text tags in your custom message. These were previously only available in the email template.
+- Support for filters (such as FilterCodes) in the custom message.
+
 ## [2.1.2] - 2023-05-07
 ### Added
 - GitHub bug and feature request issue templates.
