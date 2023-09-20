@@ -74,12 +74,12 @@ if ($reject) {
     $invitation->errormsg = '';
     if (isloggedin() && !isguestuser()) { // Logged-in.
         // Ensure that this is the expected user.
-        if ((empty($invitation->userid) && $invitation->email == $USER->email)
+        if ((empty($invitation->userid) && strtolower($invitation->email) == strtolower($USER->email))
                 || (!empty($invitation->userid) && $invitation->userid == $USER->id)) {
             // Allow rejection if either the user did not have an account at the time of invitation (userid=null) but email
             // addresses match, OR if the user's ID matches the one in the invitation. Prevent users from swapping email addresses.
             $userid = $USER->id;
-        } else if (empty($userid) && $invitation->email != $USER->email) {
+        } else if (empty($userid) && strtolower($invitation->email) != strtolower($USER->email)) {
             // User had no account at the time of invitation which is fine but mail addresses do not match.
             $invitation->errormsg = 'email does not match';
         } else { // If the userid does not match the current USER id, invitation was sent to a user with a different userid.
@@ -153,7 +153,7 @@ require_login(null, false);
 // We allow invitation acceptance by logged-in users only. Acceptance request will be rejected if a userid is set and they don't
 // match or if the email address does not match. If a user created account since invitation, the userid will not match but email
 // address should. This will also ensure that 2 user accounts did not swap email addresses.
-if ((empty($invitation->userid) && $invitation->email == $USER->email) || $invitation->userid == $USER->id) {
+if ((empty($invitation->userid) && strtolower($invitation->email) == strtolower($USER->email)) || $invitation->userid == $USER->id) {
     $userid = $USER->id;
 } else {
     // This is not the expected user. Log and display access denied message.
