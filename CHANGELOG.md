@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Ability to unenrol a student from the course.
 - Fixed formatting in list of 'Assign roles' field for clarity.
 - Code refactoring for compliance with Moodle coding guidelines.
+- Case insensitive comparison between invitation email and user email
 
 ## [2.2.0] - 2023-07-04
 ### Added
