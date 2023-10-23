@@ -20,7 +20,9 @@
  * @package    enrol_invitation
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @copyright  2023 TNG Consulting Inc {@link http://www.tngconsulting.ca}
  * @author     Jerome Mouneyrac
+ * @author     Michael Milette
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
+    /* Add or edit enrol-invitation instance in course. */
     'enrol/invitation:config' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -36,6 +39,7 @@ $capabilities = array(
         )
     ),
 
+    /* Enrol anybody into the course. */
     'enrol/invitation:enrol' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -46,6 +50,7 @@ $capabilities = array(
         )
     ),
 
+    /* Manage user invitation-enrolments. */
     'enrol/invitation:manage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -55,6 +60,7 @@ $capabilities = array(
         )
     ),
 
+    /* Unenrol anybody from course. */
     'enrol/invitation:unenrol' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -64,6 +70,7 @@ $capabilities = array(
         )
     ),
 
+    /* Voluntarily unenrol self from course. */
     'enrol/invitation:unenrolself' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

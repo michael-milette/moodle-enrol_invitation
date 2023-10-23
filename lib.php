@@ -260,9 +260,13 @@ class enrol_invitation_plugin extends enrol_plugin {
                     array('class' => 'editenrollink', 'rel' => $ue->id));
         }
         if ($this->allow_unenrol($instance) && has_capability("enrol/invitation:unenrol", $context)) {
-            $url = new moodle_url('/enrol/invitation/unenroluser.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'),
-                    $url, array('class' => 'unenrollink', 'rel' => $ue->id));
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
+            $actions[] = new user_enrolment_action(
+                new pix_icon('t/delete', ''),
+                get_string('unenrol', 'enrol'),
+                $url,
+                ['class' => 'unenrollink', 'rel' => $ue->id]
+            );
         }
         return $actions;
     }

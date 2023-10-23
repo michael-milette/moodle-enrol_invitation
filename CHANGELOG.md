@@ -2,8 +2,12 @@
 All notable changes to this project will be documented in this file.
 
 ## [2.2.1] - 2023-10-24
+### Added
+- Ability to self-unenrol from the course.
 ### Updated
+- Ability to unenrol a student from the course.
 - Fixed formatting in list of 'Assign roles' field for clarity.
+- Code refactoring for compliance with Moodle coding guidelines.
 
 ## [2.2.0] - 2023-07-04
 ### Added
