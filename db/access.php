@@ -28,55 +28,55 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
 
     /* Add or edit enrol-invitation instance in course. */
-    'enrol/invitation:config' => array(
+    'enrol/invitation:config' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
     /* Enrol anybody into the course. */
-    'enrol/invitation:enrol' => array(
+    'enrol/invitation:enrol' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'riskbitmask' => RISK_SPAM,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
     /* Manage user invitation-enrolments. */
-    'enrol/invitation:manage' => array(
+    'enrol/invitation:manage' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
     /* Unenrol anybody from course. */
-    'enrol/invitation:unenrol' => array(
+    'enrol/invitation:unenrol' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
     /* Voluntarily unenrol self from course. */
-    'enrol/invitation:unenrolself' => array(
+    'enrol/invitation:unenrolself' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'user' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
-);
+];

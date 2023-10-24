@@ -57,7 +57,6 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2011100302) {
-
         // Changing type of field userid on table enrol_invitation to int.
         $table = new xmldb_table('enrol_invitation');
         $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'email');
@@ -76,7 +75,6 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
     }
 
     if ($oldversion < 2011100303) {
-
         // Define field creatorid to be added to enrol_invitation.
         $table = new xmldb_table('enrol_invitation');
         $field = new xmldb_field('creatorid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'timeused');
@@ -97,8 +95,16 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
 
         // Add fields.
         $fields[] = new xmldb_field('roleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
-        $fields[] = new xmldb_field('timeexpiration', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-                'timesent');
+        $fields[] = new xmldb_field(
+            'timeexpiration',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'timesent'
+        );
         foreach ($fields as $field) {
             if (!$dbman->field_exists($table, $field)) {
                 $dbman->add_field($table, $field);
@@ -111,7 +117,7 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
         if ($existinginvitations->valid()) {
             require_once($CFG->dirroot . '/enrol/invitation/locallib.php');
 
-            $enrolinstances = array();  // Cache.
+            $enrolinstances = [];  // Cache.
             foreach ($existinginvitations as $existinginvitation) {
                 // Get enrol instance, but look in cache first.
                 $courseid = $existinginvitation->courseid;
@@ -140,7 +146,7 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
         }
 
         // Change defaults/null settings.
-        $fields = array();
+        $fields = [];
         $fields[] = new xmldb_field('timeused', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'timeexpiration');
         $fields[] = new xmldb_field('creatorid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timeused');
         foreach ($fields as $field) {
@@ -149,16 +155,16 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
         }
 
         // Add foreign keys.
-        $keys[] = new xmldb_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
-        $keys[] = new xmldb_key('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
-        $keys[] = new xmldb_key('roleid', XMLDB_KEY_FOREIGN, array('roleid'), 'role', array('id'));
-        $keys[] = new xmldb_key('creatorid', XMLDB_KEY_FOREIGN, array('creatorid'), 'user', array('id'));
+        $keys[] = new xmldb_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+        $keys[] = new xmldb_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+        $keys[] = new xmldb_key('roleid', XMLDB_KEY_FOREIGN, ['roleid'], 'role', ['id']);
+        $keys[] = new xmldb_key('creatorid', XMLDB_KEY_FOREIGN, ['creatorid'], 'user', ['id']);
         foreach ($keys as $key) {
             $dbman->add_key($table, $key);
         }
 
         // Add index.
-        $index = new xmldb_index('token', XMLDB_INDEX_UNIQUE, array('token'));
+        $index = new xmldb_index('token', XMLDB_INDEX_UNIQUE, ['token']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -175,7 +181,7 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
         // 1) Rename creatorid to inviterid.
 
         // First delete old key.
-        $key = new xmldb_key('creatorid', XMLDB_KEY_FOREIGN, array('creatorid'), 'user', array('id'));
+        $key = new xmldb_key('creatorid', XMLDB_KEY_FOREIGN, ['creatorid'], 'user', ['id']);
         $dbman->drop_key($table, $key);
 
         // Rename creatorid to inviterid.
@@ -183,16 +189,32 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
         $dbman->rename_field($table, $field, 'inviterid');
 
         // Re-add key.
-        $key = new xmldb_key('inviterid', XMLDB_KEY_FOREIGN, array('inviterid'), 'user', array('id'));
+        $key = new xmldb_key('inviterid', XMLDB_KEY_FOREIGN, ['inviterid'], 'user', ['id']);
         $dbman->add_key($table, $key);
 
         // 2) Add subject, message, notify_inviter, show_from_email columns.
         $fields[] = new xmldb_field('subject', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'inviterid');
         $fields[] = new xmldb_field('message', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'subject');
-        $fields[] = new xmldb_field('notify_inviter', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-                'message');
-        $fields[] = new xmldb_field('show_from_email', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-                'notify_inviter');
+        $fields[] = new xmldb_field(
+            'notify_inviter',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'message'
+        );
+        $fields[] = new xmldb_field(
+            'show_from_email',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'notify_inviter'
+        );
 
         foreach ($fields as $field) {
             // Conditionally launch add field subject.
@@ -207,26 +229,23 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
 
     // Fix role_assignments to include enrol_invitation.
     if ($oldversion < 2013030102) {
-
         // Go through each accepted invite and look for an entry in
         // role_assignments with component set to "" and userid, roleid, and
         // context match given invite's user, role, course context.
 
         // Get all invites (use record set, since it can be huge).
-        $invites = $DB->get_recordset('enrol_invitation', array('tokenused' => 1));
+        $invites = $DB->get_recordset('enrol_invitation', ['tokenused' => 1]);
 
         if ($invites->valid()) {
             foreach ($invites as $invite) {
                 // Get course context.
-                $coursecontext = context_course::instance($invite->courseid);
-                if (empty($coursecontext)) {
+                $context = context_course::instance($invite->courseid);
+                if (empty($context)) {
                     continue;
                 }
 
                 // Find course's enrollment plugin to use as itemid later on.
-                $invitationenrol = $DB->get_record('enrol',
-                        array('enrol' => 'invitation',
-                              'courseid' => $invite->courseid));
+                $invitationenrol = $DB->get_record('enrol', ['enrol' => 'invitation', 'courseid' => $invite->courseid]);
                 if (empty($invitationenrol)) {
                     continue;
                 }
@@ -234,13 +253,12 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
                 // Find corresponding role_assignments record (there SHOULD only
                 // be one record, but testing/playing around might result in
                 // dups, just choose one).
-                $roleassignment = $DB->get_record('role_assignments',
-                        array('roleid' => $invite->roleid,
-                              'contextid' => $coursecontext->id,
-                              'userid' => $invite->userid,
-                              'component' => ''),
-                        '*',
-                        IGNORE_MULTIPLE);
+                $roleassignment = $DB->get_record(
+                    'role_assignments',
+                    ['roleid' => $invite->roleid, 'contextid' => $context->id, 'userid' => $invite->userid, 'component' => ''],
+                    '*',
+                    IGNORE_MULTIPLE
+                );
                 if (empty($roleassignment)) {
                     continue;
                 }

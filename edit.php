@@ -31,16 +31,16 @@ require_once('edit_form.php');
 $courseid = required_param('courseid', PARAM_INT);
 $instanceid = optional_param('id', 0, PARAM_INT); // Instanceid.
 
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 $context = context_course::instance($course->id);
 
 require_login($course);
 require_capability('enrol/invitation:config', $context);
 
-$PAGE->set_url('/enrol/invitation/edit.php', array('courseid' => $course->id, 'id' => $instanceid));
+$PAGE->set_url('/enrol/invitation/edit.php', ['courseid' => $course->id, 'id' => $instanceid]);
 $PAGE->set_pagelayout('admin');
 
-$return = new moodle_url('/enrol/instances.php', array('id' => $course->id));
+$return = new moodle_url('/enrol/instances.php', ['id' => $course->id]);
 if (!enrol_is_enabled('invitation')) {
     redirect($return);
 }
@@ -48,21 +48,24 @@ if (!enrol_is_enabled('invitation')) {
 $plugin = enrol_get_plugin('invitation');
 
 if ($instanceid) {
-    $instance = $DB->get_record('enrol',
-            array('courseid' => $course->id, 'enrol' => 'invitation', 'id' => $instanceid), '*', MUST_EXIST);
-    $instance->customtext1 = array('text' => $instance->customtext1);
+    $instance = $DB->get_record(
+        'enrol',
+        ['courseid' => $course->id, 'enrol' => 'invitation', 'id' => $instanceid],
+        '*',
+        MUST_EXIST
+    );
+    $instance->customtext1 = ['text' => $instance->customtext1];
     $instance->role_group['customint2'] = $instance->customint2;
 } else {
     require_capability('moodle/course:enrolconfig', $context);
     // No instance yet, we have to add new instance.
-    navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id' => $course->id)));
+    navigation_node::override_active_url(new moodle_url('/enrol/instances.php', ['id' => $course->id]));
     $instance = new stdClass();
     $instance->id = null;
     $instance->courseid = $course->id;
 }
 
-$mform = new enrol_invitation_edit_form(null, array($instance, $plugin, $context),
-        'post', '', array('class' => 'mform-invite'));
+$mform = new enrol_invitation_edit_form(null, [$instance, $plugin, $context], 'post', '', ['class' => 'mform-invite']);
 $mform->set_data($instance);
 
 if ($mform->is_cancelled()) {
@@ -82,8 +85,8 @@ if ($mform->is_cancelled()) {
         $instance->timemodified = time();
         $DB->update_record('enrol', $instance);
     } else {
-        $fields = array('status' => $data->status,
-            'name' => $data->name, 'customint5' => $data->customint5, 'customint6' => $data->customint6);
+        $fields = ['status' => $data->status,
+            'name' => $data->name, 'customint5' => $data->customint5, 'customint6' => $data->customint6, ];
         if ($data->customint1 == 1) {
             $fields['customint1'] = $data->customint1;
             $fields['customint2'] = property_exists($data, "role_group") ? $data->role_group['customint2'] : 5;

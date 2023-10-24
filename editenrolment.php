@@ -34,16 +34,16 @@ $ueid   = required_param('ue', PARAM_INT); // User enrolment id.
 $filter = optional_param('ifilter', 0, PARAM_INT);
 
 // Get the user enrolment object.
-$ue = $DB->get_record('user_enrolments', array('id' => $ueid), '*', MUST_EXIST);
+$ue = $DB->get_record('user_enrolments', ['id' => $ueid], '*', MUST_EXIST);
 
 // Get the user for whom the enrolment is.
-$user = $DB->get_record('user', array('id' => $ue->userid), '*', MUST_EXIST);
+$user = $DB->get_record('user', ['id' => $ue->userid], '*', MUST_EXIST);
 
 // Get the course the enrolment is to.
 $ctxsql = ', ' . context_helper::get_preload_record_columns_sql('ctx');
 $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
 $sql = "SELECT c.* $ctxsql FROM {course} c LEFT JOIN {enrol} e ON e.courseid = c.id $ctxjoin WHERE e.id = :enrolid";
-$params = array('enrolid' => $ue->enrolid, 'contextlevel' => CONTEXT_COURSE);
+$params = ['enrolid' => $ue->enrolid, 'contextlevel' => CONTEXT_COURSE];
 $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
 context_helper::preload_from_record($course);
 
@@ -65,7 +65,7 @@ $manager = new course_enrolment_manager($PAGE, $course, $filter);
 $table = new course_enrolment_users_table($manager, $PAGE);
 
 // The URL of the enrolled users page for the course.
-$usersurl = new moodle_url('/user/index.php', array('id' => $course->id));
+$usersurl = new moodle_url('/user/index.php', ['id' => $course->id]);
 
 // The URl to return the user too after this screen.
 $returnurl = new moodle_url($usersurl, $manager->get_url_params() + $table->get_url_params());
@@ -77,7 +77,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 navigation_node::override_active_url($usersurl);
 
-list($instance, $plugin) = $manager->get_user_enrolment_components($ue);
+[$instance, $plugin] = $manager->get_user_enrolment_components($ue);
 if (!$plugin->allow_manage($instance) || $instance->enrol != 'invitation' || !($plugin instanceof enrol_invitation_plugin)) {
     throw new moodle_exception('erroreditenrolment', 'enrol');
 }

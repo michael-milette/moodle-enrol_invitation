@@ -43,7 +43,7 @@ $url = new moodle_url('/enrol/invitation/enrol.php', ['token' => $enrolinvitatio
 $invitation = $DB->get_record('enrol_invitation', ['token' => $enrolinvitationtoken, 'tokenused' => false]);
 
 // If token has been already used or has expired, display error message.
-if ((empty($invitation) or empty($invitation->courseid) or $invitation->timeexpiration < time())) {
+if ((empty($invitation) || empty($invitation->courseid) || $invitation->timeexpiration < time())) {
     $courseid = empty($invitation->courseid) ? $SITE->id : $invitation->courseid;
     $invitationn = $DB->get_record('enrol_invitation', ['token' => $enrolinvitationtoken]);
     $invitationn->errormsg = 'expired';
@@ -70,12 +70,13 @@ if ((empty($invitation) or empty($invitation->courseid) or $invitation->timeexpi
 //
 
 if ($reject) {
-
     $invitation->errormsg = '';
     if (isloggedin() && !isguestuser()) { // Logged-in.
         // Ensure that this is the expected user.
-        if ((empty($invitation->userid) && $invitation->email == $USER->email)
-                || (!empty($invitation->userid) && $invitation->userid == $USER->id)) {
+        if (
+            (empty($invitation->userid) && $invitation->email == $USER->email)
+            || (!empty($invitation->userid) && $invitation->userid == $USER->id)
+        ) {
             // Allow rejection if either the user did not have an account at the time of invitation (userid=null) but email
             // addresses match, OR if the user's ID matches the one in the invitation. Prevent users from swapping email addresses.
             $userid = $USER->id;
@@ -176,7 +177,7 @@ if ((empty($invitation->userid) && $invitation->email == $USER->email) || $invit
 }
 
 // Make sure that course exists.
-$course = $DB->get_record('course', array('id' => $invitation->courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $invitation->courseid], '*', MUST_EXIST);
 $context = context_course::instance($course->id);
 
 // Set up page.
@@ -218,7 +219,6 @@ if (!$invitation->userid && isguestuser()) {
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($instance->customint6 == 1 && empty($confirm)) {
-
     // User has not yet confirmed their acceptance.
 
     echo $OUTPUT->header();
@@ -238,16 +238,16 @@ if ($instance->customint6 == 1 && empty($confirm)) {
 
     // If invitation has "daysexpire" set, then give notice.
     if (!empty($invitation->daysexpire)) {
-        $invitationacceptance .= html_writer::tag('p', get_string('daysexpire_notice', 'enrol_invitation',
-                $invitation->daysexpire));
+        $invitationacceptance .= html_writer::tag(
+            'p',
+            get_string('daysexpire_notice', 'enrol_invitation', $invitation->daysexpire)
+        );
     }
 
     echo $OUTPUT->confirm($invitationacceptance, $accept, $cancel);
     echo $OUTPUT->footer();
     exit;
-
 } else {
-
     // User confirmed acceptance. Enrol them in the course.
 
     $invitationmanager = new invitation_manager($invitation->courseid);
@@ -262,7 +262,7 @@ if ($instance->customint6 == 1 && empty($confirm)) {
 
     if (!empty($invitation->notify_inviter)) {
         // Send an email to the user who sent the invitation.
-        $inviter = $DB->get_record('user', array('id' => $invitation->inviterid));
+        $inviter = $DB->get_record('user', ['id' => $invitation->inviterid]);
         $inviter->maildisplay = true;
 
         $emailinfo = preparenoticeobject($invitation);
@@ -273,18 +273,21 @@ if ($instance->customint6 == 1 && empty($confirm)) {
         $invitehistoryurl = new moodle_url('/enrol/invitation/history.php', ['courseid' => $invitation->courseid]);
         $emailinfo->invitehistoryurl = $invitehistoryurl->out(false);
 
-        $course = $DB->get_record('course', array('id' => $invitation->courseid));
+        $course = $DB->get_record('course', ['id' => $invitation->courseid]);
         $emailinfo->coursefullname = format_string(getcoursesubject($course));
         $emailinfo->sitename = format_string($SITE->fullname);
         $siteurl = new moodle_url('/');
         $emailinfo->siteurl = $siteurl->out(false);
 
-        email_to_user($inviter, get_admin(),
-                get_string('emailtitleuserenrolled', 'enrol_invitation', $emailinfo),
-                get_string('emailmessageuserenrolled', 'enrol_invitation', $emailinfo));
+        email_to_user(
+            $inviter,
+            get_admin(),
+            get_string('emailtitleuserenrolled', 'enrol_invitation', $emailinfo),
+            get_string('emailmessageuserenrolled', 'enrol_invitation', $emailinfo)
+        );
     }
 
     // Take the user into the course.
-    $courseurl = new moodle_url('/course/view.php', array('id' => $invitation->courseid));
+    $courseurl = new moodle_url('/course/view.php', ['id' => $invitation->courseid]);
     redirect($courseurl);
 }

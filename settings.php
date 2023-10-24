@@ -28,22 +28,38 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-
     $settings->add(new admin_setting_heading('enrol_invitation_settings', '', get_string('pluginname_desc', 'enrol_invitation')));
 
     // Enrol instance defaults.
-    $settings->add(new admin_setting_heading('enrol_invitation_defaults',
-        get_string('enrolinstancedefaults', 'admin'), get_string('enrolinstancedefaults_desc', 'admin')));
+    $settings->add(
+        new admin_setting_heading(
+            'enrol_invitation_defaults',
+            get_string('enrolinstancedefaults', 'admin'),
+            get_string('enrolinstancedefaults_desc', 'admin')
+        )
+    );
 
-    $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
-                     ENROL_INSTANCE_DISABLED => get_string('no'));
-    $settings->add(new admin_setting_configselect('enrol_invitation/status',
-        get_string('status', 'enrol_invitation'), get_string('status_desc', 'enrol_invitation'), ENROL_INSTANCE_ENABLED, $options));
+    $options = [ENROL_INSTANCE_ENABLED  => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
+    $settings->add(
+        new admin_setting_configselect(
+            'enrol_invitation/status',
+            get_string('status', 'enrol_invitation'),
+            get_string('status_desc', 'enrol_invitation'),
+            ENROL_INSTANCE_ENABLED,
+            $options
+        )
+    );
 
     // Default to 2 weeks expiration.
-    $settings->add(new admin_setting_configtext('enrol_invitation/inviteexpiration',
-        get_string('inviteexpiration', 'enrol_invitation'), get_string('inviteexpiration_desc', 'enrol_invitation'), 1209600,
-                PARAM_INT));
+    $settings->add(
+        new admin_setting_configtext(
+            'enrol_invitation/inviteexpiration',
+            get_string('inviteexpiration', 'enrol_invitation'),
+            get_string('inviteexpiration_desc', 'enrol_invitation'),
+            1209600,
+            PARAM_INT
+        )
+    );
 
     // Option to select default email subject line.
     $default = 'fullname'; // Default is course fullname.
@@ -53,7 +69,7 @@ if ($ADMIN->fulltree) {
     $choices = [
             'fullname' => get_string('fullnamecourse'),
             'shortname' => get_string('shortnamecourse'),
-            'custom' => get_string('customnamecourse', 'enrol_invitation')];
+            'custom' => get_string('customnamecourse', 'enrol_invitation'), ];
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 }

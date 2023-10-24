@@ -35,7 +35,6 @@ namespace enrol_invitation\event;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class invitation_base extends \core\event\base {
-
     protected $invitation;
 
     /**
@@ -52,13 +51,13 @@ abstract class invitation_base extends \core\event\base {
     }
 
     protected static function base_data($invitation) {
-        $data = array(
+        $data = [
             'context' => \context_course::instance($invitation->courseid),
             'objectid' => $invitation->courseid,
-            'other' => (array) $invitation
-        );
+            'other' => (array) $invitation,
+        ];
 
-        (!isloggedin() or isguestuser()) && $invitation->userid ? $data['userid'] = $invitation->userid : null;
+        (!isloggedin() || isguestuser()) && $invitation->userid ? $data['userid'] = $invitation->userid : null;
         return $data;
     }
 
@@ -84,7 +83,7 @@ abstract class invitation_base extends \core\event\base {
             debugging('invitation property should be initialised in each event', DEBUG_DEVELOPER);
             global $CFG;
             require_once($CFG->dirroot . '/mod/invitation/locallib.php');
-            $this->invitation = array();
+            $this->invitation = [];
         }
         return $this->invitation;
     }
@@ -95,7 +94,6 @@ abstract class invitation_base extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/enrol/invitation/invitation.php', array('courseid' => $this->other['courseid']));
+        return new \moodle_url('/enrol/invitation/invitation.php', ['courseid' => $this->other['courseid']]);
     }
-
 }

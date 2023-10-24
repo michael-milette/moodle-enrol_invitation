@@ -32,15 +32,15 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
 require_login();
 
 $courseid = required_param('courseid', PARAM_INT);
-$courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+$courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
 
 $inviteid = optional_param('inviteid', 0, PARAM_INT);
 
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 $context = context_course::instance($courseid);
 
 $PAGE->set_context($context);
-$PAGE->set_url(new moodle_url('/enrol/invitation/invitation.php', array('courseid' => $courseid)));
+$PAGE->set_url(new moodle_url('/enrol/invitation/invitation.php', ['courseid' => $courseid]));
 $PAGE->set_pagelayout('course');
 $PAGE->set_course($course);
 $pagetitle = get_string('inviteusers', 'enrol_invitation');
@@ -70,9 +70,9 @@ $instance = $invitationmanager->get_invitation_instance($courseid, true);
 
 // If the user was sent to this page by selecting 'resend invite', then
 // prefill the form with the data used to resend the invite.
-$prefilled = array();
+$prefilled = [];
 if ($inviteid) {
-    if ( $invite = $DB->get_record('enrol_invitation', array('courseid' => $courseid, 'id' => $inviteid)) ) {
+    if ($invite = $DB->get_record('enrol_invitation', ['courseid' => $courseid, 'id' => $inviteid])) {
         $prefilled['roleid'] = $invite->roleid;
         $prefilled['email'] = $invite->email;
         $prefilled['subject'] = $invite->subject;
@@ -86,14 +86,34 @@ if ($inviteid) {
 
 if ($instance->customint1 == 1) {
     // If "Use invitation with default values" is set to "Yes", use short form.
-    $mform = new invitation_email_form(null,
-            array('course' => $course, 'context' => $context, 'prefilled' => $prefilled, 'registeredonly' => $instance->customint5,
-            'instance' => $instance), 'post', '', array('class' => 'mform-invite'));
+    $mform = new invitation_email_form(
+        null,
+        [
+            'course' => $course,
+            'context' => $context,
+            'prefilled' => $prefilled,
+            'registeredonly' => $instance->customint5,
+            'instance' => $instance,
+        ],
+        'post',
+        '',
+        ['class' => 'mform-invite']
+    );
 } else {
     // If "Use invitation with default values" is set to "No", use long form.
-    $mform = new invitation_form(null,
-            array('course' => $course, 'context' => $context, 'prefilled' => $prefilled, 'registeredonly' => $instance->customint5,
-            'instance' => $instance), 'post', '', array('class' => 'mform-invite'));
+    $mform = new invitation_form(
+        null,
+        [
+            'course' => $course,
+            'context' => $context,
+            'prefilled' => $prefilled,
+            'registeredonly' => $instance->customint5,
+            'instance' => $instance,
+        ],
+        'post',
+        '',
+        ['class' => 'mform-invite']
+    );
 }
 
 $mform->set_data($invitationmanager);
@@ -102,14 +122,14 @@ $data = $mform->get_data();
 
 if ($data && $instance->customint1 == 1) {
     // If "Use invitation with default values" is set to "Yes".
-    $data->role_group = array('roleid' => $instance->customint2);
+    $data->role_group = ['roleid' => $instance->customint2];
     $data->subject = $instance->customchar1;
     $data->message['text'] = $instance->customtext1;
     $data->show_from_email = $instance->customint3;
     $data->notify_inviter = $instance->customint4;
 }
 
-if ($data and confirm_sesskey()) {
+if ($data && confirm_sesskey()) {
     $data->registeredonly = $instance->customint5;
     // Check for the invitation of multiple users.
     $delimiters = "/[;, \r\n]/";
@@ -127,10 +147,10 @@ if ($data and confirm_sesskey()) {
         $data->email = $email;
         $invitationmanager->send_invitations($data);
     }
-    $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+    $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
     $courseret = new single_button($courseurl, get_string('returntocourse', 'enrol_invitation'), 'get');
 
-    $secturl = new moodle_url('/enrol/invitation/invitation.php', array('courseid' => $courseid));
+    $secturl = new moodle_url('/enrol/invitation/invitation.php', ['courseid' => $courseid]);
     $sectret = new single_button($secturl, get_string('returntoinvite', 'enrol_invitation'), 'get');
 
     if (!empty($prefilled)) { // Resend.
@@ -138,7 +158,6 @@ if ($data and confirm_sesskey()) {
     } else { // Send.
         echo $OUTPUT->confirm(get_string('invitationsuccess', 'enrol_invitation'), $sectret, $courseret);
     }
-
 } else {
     $mform->display();
 }

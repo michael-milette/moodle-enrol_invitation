@@ -51,13 +51,15 @@ class invitation_attempted extends invitation_base {
     public function get_description() {
         $userid = empty($this->userid) ? get_string('anonymoususer', 'enrol_invitation') : $this->userid;
         $errormsg = property_exists((object)$this->other, 'errormsg') ? $this->other['errormsg'] : '';
-        $description = get_string('failuredescription', 'enrol_invitation',
-                ['userid' => $userid, 'courseid' => $this->other['courseid'], 'errormsg' => $errormsg]);
+        $description = get_string(
+            'failuredescription',
+            'enrol_invitation',
+            ['userid' => $userid, 'courseid' => $this->other['courseid'], 'errormsg' => $errormsg]
+        );
         return $description;
     }
 
     public function get_url() {
-        return new \moodle_url('/enrol/invitation/history.php', array('courseid' => $this->other['courseid']));
+        return new \moodle_url('/enrol/invitation/history.php', ['courseid' => $this->other['courseid']]);
     }
-
 }

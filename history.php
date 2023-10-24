@@ -35,17 +35,17 @@ require_login();
 $courseid = required_param('courseid', PARAM_INT);
 $inviteid = optional_param('inviteid', 0, PARAM_INT);
 $actionid = optional_param('actionid', 0, PARAM_INT);
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
 $context = context_course::instance($courseid);
 if (!has_capability('enrol/invitation:enrol', $context)) {
-    $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-    throw new moodle_exception('nopermissiontosendinvitation' , 'enrol_invitation', $courseurl);
+    $courseurl = new moodle_url('/course/view.php', ['id' => $courseid]);
+    throw new moodle_exception('nopermissiontosendinvitation', 'enrol_invitation', $courseurl);
 }
 
 // Set up page.
 $PAGE->set_context($context);
-$PAGE->set_url(new moodle_url('/enrol/invitation/history.php', array('courseid' => $courseid)));
+$PAGE->set_url(new moodle_url('/enrol/invitation/history.php', ['courseid' => $courseid]));
 $PAGE->set_pagelayout('course');
 $PAGE->set_course($course);
 $pagetitle = get_string('invitehistory', 'enrol_invitation');
@@ -81,27 +81,29 @@ if (empty($invites)) {
         }
         if ($actionid == invitation_manager::INVITE_REVOKE) {
             // Set the invite to be expired.
-            $DB->set_field('enrol_invitation', 'timeexpiration', time() - 1,
-                    ['courseid' => $currinvite->courseid, 'id' => $currinvite->id]);
-            $DB->set_field('enrol_invitation', 'status', 'revoked',
-                    ['courseid' => $currinvite->courseid, 'id' => $currinvite->id]);
+            $DB->set_field(
+                'enrol_invitation',
+                'timeexpiration',
+                time() - 1,
+                ['courseid' => $currinvite->courseid, 'id' => $currinvite->id]
+            );
+            $DB->set_field('enrol_invitation', 'status', 'revoked', ['courseid' => $currinvite->courseid, 'id' => $currinvite->id]);
 
             \enrol_invitation\event\invitation_deleted::create_from_invitation($currinvite)->trigger();
 
             echo $OUTPUT->notification(get_string('revoke_invite_sucess', 'enrol_invitation'), 'notifysuccess');
-
         } else if ($actionid == invitation_manager::INVITE_EXTEND) {
             // Resend the invite and email.
             $invitationmanager->send_invitations($currinvite, true);
 
             echo $OUTPUT->notification(get_string('extend_invite_sucess', 'enrol_invitation'), 'notifysuccess');
-
         } else if ($actionid == invitation_manager::INVITE_RESEND) {
             // Send the user to the invite form with prefilled data.
-            $redirect = new moodle_url('/enrol/invitation/invitation.php',
-                    array('courseid' => $currinvite->courseid, 'inviteid' => $currinvite->id));
+            $redirect = new moodle_url(
+                '/enrol/invitation/invitation.php',
+                ['courseid' => $currinvite->courseid, 'inviteid' => $currinvite->id]
+            );
             redirect($redirect);
-
         } else {
             throw new moodle_exception('invalidactionid');
         }
@@ -111,14 +113,14 @@ if (empty($invites)) {
     }
 
     // Columns to display.
-    $columns = array(
+    $columns = [
             'invitee'           => get_string('historyinvitee', 'enrol_invitation'),
             'role'              => get_string('historyrole', 'enrol_invitation'),
             'status'            => get_string('historystatus', 'enrol_invitation'),
             'datesent'          => get_string('historydatesent', 'enrol_invitation'),
             'dateexpiration'    => get_string('historydateexpiration', 'enrol_invitation'),
-            'actions'           => get_string('historyactions', 'enrol_invitation')
-    );
+            'actions'           => get_string('historyactions', 'enrol_invitation'),
+    ];
 
     $table = new flexible_table('invitehistory');
     $table->define_columns(array_keys($columns));
@@ -130,7 +132,7 @@ if (empty($invites)) {
 
     $strftime = get_string('strftimedatetimeshort', 'core_langconfig');
 
-    $rolecache = array();
+    $rolecache = [];
     foreach ($invites as $invite) {
         /* Build display row:
          * [0] - invitee
@@ -146,7 +148,7 @@ if (empty($invites)) {
 
         // Figure out invited role.
         if (empty($rolecache[$invite->roleid])) {
-            $role = $DB->get_record('role', array('id' => $invite->roleid));
+            $role = $DB->get_record('role', ['id' => $invite->roleid]);
             if (empty($role)) {
                 // Cannot find role, give error.
                 $rolecache[$invite->roleid] =
@@ -181,16 +183,17 @@ if (empty($invites)) {
 
         // If status is active, then state how many days/minutes left.
         if ($status == get_string('status_invite_active', 'enrol_invitation')) {
-            $expirestext = sprintf('%s %s',
-                    get_string('historyexpires_in', 'enrol_invitation'),
-                    distance_of_time_in_words(time(), $invite->timeexpiration, true));
-            $row[4] .= ' ' . html_writer::tag('span', '(' . $expirestext . ')', array('expires-text'));
+            $expirestext = sprintf(
+                '%s %s',
+                get_string('historyexpires_in', 'enrol_invitation'),
+                distance_of_time_in_words(time(), $invite->timeexpiration, true)
+            );
+            $row[4] .= ' ' . html_writer::tag('span', '(' . $expirestext . ')', ['expires-text']);
         }
 
         // Are there any actions user can do?
         $row[5] = '';
-        $url = new moodle_url('/enrol/invitation/history.php',
-                array('courseid' => $courseid, 'inviteid' => $invite->id));
+        $url = new moodle_url('/enrol/invitation/history.php', ['courseid' => $courseid, 'inviteid' => $invite->id]);
         // Same if statement as above, seperated for clarity.
         if ($status == get_string('status_invite_active', 'enrol_invitation')) {
             // Create link to revoke an invite.
@@ -200,8 +203,10 @@ if (empty($invites)) {
             // Create link to extend an invite.
             $url->param('actionid', invitation_manager::INVITE_EXTEND);
             $row[5] .= html_writer::link($url, get_string('action_extend_invite', 'enrol_invitation'));
-        } else if ($status == get_string('status_invite_expired', 'enrol_invitation') ||
-                $status == get_string('status_invite_revoked', 'enrol_invitation')) {
+        } else if (
+            $status == get_string('status_invite_expired', 'enrol_invitation')
+            || $status == get_string('status_invite_revoked', 'enrol_invitation')
+        ) {
             // Create link to resend invite.
             $url->param('actionid', invitation_manager::INVITE_RESEND);
             $row[5] .= html_writer::link($url, get_string('action_resend_invite', 'enrol_invitation'));

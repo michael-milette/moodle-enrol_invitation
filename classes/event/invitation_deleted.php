@@ -50,13 +50,15 @@ class invitation_deleted extends invitation_base {
     }
 
     public function get_description() {
-        $description = get_string('deleteddescription', 'enrol_invitation',
-                ['userid' => $this->userid, 'courseid' => $this->other['courseid'], 'email' => $this->other['email']]);
+        $description = get_string(
+            'deleteddescription',
+            'enrol_invitation',
+            ['userid' => $this->userid, 'courseid' => $this->other['courseid'], 'email' => $this->other['email']]
+        );
         return $description;
     }
 
     public function get_url() {
-        return new \moodle_url('/enrol/invitation/invitation.php', array('courseid' => $this->other['courseid']));
+        return new \moodle_url('/enrol/invitation/invitation.php', ['courseid' => $this->other['courseid']]);
     }
-
 }

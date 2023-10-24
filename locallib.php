@@ -31,7 +31,6 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class invitation_manager {
-
     /**
      * Course id.
      * @var int
@@ -87,17 +86,19 @@ class invitation_manager {
         $link = '';
 
         if (has_capability('enrol/invitation:enrol', context_course::instance($this->courseid))) {
-
             // Display an icon with requested (css can be changed in stylesheet).
             if ($withicon) {
                 $inviteicon = html_writer::empty_tag('img', ['alt' => "invitation", 'class' => "enrol_invitation_item_icon",
-                        'title' => "invitation", 'src' => $OUTPUT->pix_url('invite', 'enrol_invitation')]);
+                        'title' => "invitation", 'src' => $OUTPUT->pix_url('invite', 'enrol_invitation'), ]);
             }
 
             $link = html_writer::link(
-                    new moodle_url('/enrol/invitation/invitation.php',
-                        ['courseid' => $this->courseid]), $inviteicon . get_string('inviteusers',
-                        'enrol_invitation'));
+                new moodle_url(
+                    '/enrol/invitation/invitation.php',
+                    ['courseid' => $this->courseid]
+                ),
+                $inviteicon . get_string('inviteusers', 'enrol_invitation')
+            );
         }
 
         return $link;
@@ -113,11 +114,9 @@ class invitation_manager {
         global $DB, $CFG, $PAGE, $USER;
 
         if (has_capability('enrol/invitation:enrol', context_course::instance($data->courseid))) {
-
             // Get course record, to be used later.
             $course = $DB->get_record('course', ['id' => $data->courseid], '*', MUST_EXIST);
             if (!empty($data->email)) {
-
                 // Create a new token only if we are not resending an active invite.
                 if ($resend) {
                     $token = $data->token;
@@ -148,8 +147,12 @@ class invitation_manager {
                 $data->subject = format_string($data->subject);
                 if ($resend) {
                     // Update the timeexpiration date for the invitation.
-                    $DB->set_field('enrol_invitation', 'timeexpiration', $invitation->timeexpiration,
-                            ['courseid' => $data->courseid, 'id' => $data->id]);
+                    $DB->set_field(
+                        'enrol_invitation',
+                        'timeexpiration',
+                        $invitation->timeexpiration,
+                        ['courseid' => $data->courseid, 'id' => $data->id]
+                    );
                     // Prepend subject heading with a 'Reminder: ' string.
                     $invitation->subject = get_string('reminder', 'enrol_invitation') . $data->subject;
                 } else {
@@ -176,8 +179,12 @@ class invitation_manager {
                 }
                 $messageparams->emailmsgunsubscribe = get_string('emailmsgunsubscribe', 'enrol_invitation', $messageparams);
 
-                if ($location = $DB->get_record('course_format_options',
-                        ['courseid' => $course->id, 'format' => 'event', 'name' => 'location'])) {
+                if (
+                    $location = $DB->get_record(
+                        'course_format_options',
+                        ['courseid' => $course->id, 'format' => 'event', 'name' => 'location']
+                    )
+                ) {
                     $messageparams->location = $location->value;
                 } else {
                     $handler = core_course\customfield\course_handler::create();
@@ -225,8 +232,11 @@ class invitation_manager {
                         $messageparams->surname = '';
                         $messageparams->username = '';
                     }
-                    $messageparams->message = format_text($messageparams->message, FORMAT_HTML,
-                            ['context' => context_system::instance()]);
+                    $messageparams->message = format_text(
+                        $messageparams->message,
+                        FORMAT_HTML,
+                        ['context' => context_system::instance()]
+                    );
                     $messageparams->message = str_replace('{$a-&gt;', '{$a->', $messageparams->message);
                 }
 
@@ -267,10 +277,16 @@ class invitation_manager {
                 }
 
                 // Send invitation to the user.
-                if ($userexits && !is_enrolled(context_course::instance($invitation->courseid), $contactuser)
-                        && !$this->check_invitation_rejected($invitation->userid, $invitation->courseid)
-                        || $userexits == false) {
-                    if (!$resend && ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true)) {
+                if (
+                    $userexits
+                    && !is_enrolled(context_course::instance($invitation->courseid), $contactuser)
+                    && !$this->check_invitation_rejected($invitation->userid, $invitation->courseid)
+                    || $userexits == false
+                ) {
+                    if (
+                        !$resend
+                        && ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true)
+                    ) {
                         $invitation->id = $DB->insert_record('enrol_invitation', $invitation);
                         $invitation->status = 'sent';
                         email_to_user($contactuser, $fromuser, $invitation->subject, $message, $messagehtml);
@@ -281,8 +297,12 @@ class invitation_manager {
                         $invitation->id = $DB->get_record('enrol_invitation', ['token' => $token], 'id')->id;
                         $invitation->status = 'sent';
                         \enrol_invitation\event\invitation_updated::create_from_invitation($invitation)->trigger();
-                    } else if ($data->registeredonly != 1 || $data->registeredonly == 1 && $userexits == true
-                            && !$this->check_invitation_rejected($invitation->userid, $invitation->courseid)) {
+                    } else if (
+                        $data->registeredonly != 1
+                        || $data->registeredonly == 1
+                        && $userexits == true
+                        && !$this->check_invitation_rejected($invitation->userid, $invitation->courseid)
+                    ) {
                         \enrol_invitation\event\invitation_sent::create_from_invitation($invitation)->trigger();
                     } else {
                         $invitation->id = 0;
@@ -291,8 +311,11 @@ class invitation_manager {
                 }
             }
         } else {
-            throw new moodle_exception('cannotsendinvitation', 'enrol_invitation',
-                    new moodle_url('/course/view.php', ['id' => $data['courseid']]));
+            throw new moodle_exception(
+                'cannotsendinvitation',
+                'enrol_invitation',
+                new moodle_url('/course/view.php', ['id' => $data['courseid']])
+            );
         }
     }
 
@@ -344,7 +367,7 @@ class invitation_manager {
                 return get_string('status_invite_active', 'enrol_invitation');
             }
         } else {
-            return get_string('status_invite_'.$invite->status, 'enrol_invitation');
+            return get_string('status_invite_' . $invite->status, 'enrol_invitation');
         }
 
         // TODO: Add status_invite_revoked and status_invite_resent status.
@@ -381,7 +404,7 @@ class invitation_manager {
     public function get_invitation_instance($courseid, $mustexist = false) {
         global $PAGE, $CFG, $DB;
 
-        if (($courseid == $this->courseid) and!empty($this->enrolinstance)) {
+        if (($courseid == $this->courseid) && !empty($this->enrolinstance)) {
             return $this->enrolinstance;
         }
 
@@ -398,7 +421,7 @@ class invitation_manager {
             }
         }
 
-        if ($mustexist and empty($instance)) {
+        if ($mustexist && empty($instance)) {
             throw new moodle_exception('noinvitationinstanceset', 'enrol_invitation');
         }
 
@@ -424,7 +447,7 @@ class invitation_manager {
             // So -1 that is right before midnight.
             $timeend += 86399;
         }
-        if ((!isloggedin() or isguestuser()) && $invitation->userid) {
+        if ((!isloggedin() || isguestuser()) && $invitation->userid) {
             $user = $DB->get_record('user', ['id' => $invitation->userid]);
         } else if (isloggedin()) {
             $user = $USER;
@@ -452,8 +475,7 @@ class invitation_manager {
     public function who_used_invite($invite) {
         global $DB;
         $retval = new stdClass();
-        if (empty($invite->userid) || empty($invite->tokenused) ||
-                empty($invite->courseid) || empty($invite->timeused)) {
+        if (empty($invite->userid) || empty($invite->tokenused) || empty($invite->courseid) || empty($invite->timeused)) {
             return false;
         }
 
@@ -986,12 +1008,22 @@ function preparenoticeobject($invitation) {
 function print_page_tabs($activetab) {
     global $COURSE;
 
-    $tabs[] = new tabobject('history',
-            new moodle_url('/enrol/invitation/history.php', ['courseid' => $COURSE->id]),
-            get_string('invitehistory', 'enrol_invitation'));
-    $tabs[] = new tabobject('invite',
-            new moodle_url('/enrol/invitation/invitation.php', ['courseid' => $COURSE->id]),
-            get_string('inviteusers', 'enrol_invitation'));
+    $tabs[] = new tabobject(
+        'history',
+        new moodle_url(
+            '/enrol/invitation/history.php',
+            ['courseid' => $COURSE->id]
+        ),
+        get_string('invitehistory', 'enrol_invitation')
+    );
+    $tabs[] = new tabobject(
+        'invite',
+        new moodle_url(
+            '/enrol/invitation/invitation.php',
+            ['courseid' => $COURSE->id]
+        ),
+        get_string('inviteusers', 'enrol_invitation')
+    );
 
     // Display tabs here.
     print_tabs([$tabs], $activetab);

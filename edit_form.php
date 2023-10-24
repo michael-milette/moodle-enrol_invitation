@@ -38,7 +38,6 @@ require_once('locallib.php');
 
  */
 class enrol_invitation_edit_form extends moodleform {
-
     /**
      * Defines what settings a user can modify.
      */
@@ -46,15 +45,14 @@ class enrol_invitation_edit_form extends moodleform {
         global $USER, $CFG, $COURSE;
         $mform = $this->_form;
 
-        list($instance, $plugin, $context) = $this->_customdata;
+        [$instance, $plugin, $context] = $this->_customdata;
 
         $mform->addElement('header', 'header', get_string('pluginname', 'enrol_invitation'));
 
         $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
         $mform->setType('name', PARAM_TEXT);
 
-        $options = array(ENROL_INSTANCE_ENABLED => get_string('yes'),
-            ENROL_INSTANCE_DISABLED => get_string('no'));
+        $options = [ENROL_INSTANCE_ENABLED => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
         $mform->addElement('select', 'status', get_string('status', 'enrol_invitation'), $options);
         $mform->setDefault('status', $plugin->get_config('status'));
         $mform->addElement('hidden', 'id');
@@ -62,8 +60,7 @@ class enrol_invitation_edit_form extends moodleform {
         $mform->addElement('hidden', 'courseid');
         $mform->setType('courseid', PARAM_INT);
 
-        $optionsd = array(0 => get_string('no'),
-            1 => get_string('yes'));
+        $optionsd = [0 => get_string('no'), 1 => get_string('yes')];
 
         $mform->addElement('select', 'customint5', get_string('registeredonly', 'enrol_invitation'), $optionsd);
         $mform->setDefault('customint5', 0);
@@ -75,17 +72,15 @@ class enrol_invitation_edit_form extends moodleform {
         $mform->addElement('select', 'customint1', get_string('usedefaultvalues', 'enrol_invitation'), $optionsd);
         $mform->setDefault('customint1', 0);
 
-        $siteroles = $this->get_appropiate_roles($COURSE);
+        $siteroles = $this->getappropiateroles($COURSE);
         $label = get_string('assignrole', 'enrol_invitation');
-        $rolegroup = array();
+        $rolegroup = [];
         foreach ($siteroles as $roletype => $roles) {
-            $roletypestring = html_writer::tag('div',
-                    get_string('archetype' . $roletype, 'role'),
-                    array('class' => 'label badge-info'));
+            $roletypestring = html_writer::tag('div', get_string('archetype' . $roletype, 'role'), ['class' => 'label badge-info']);
             $rolegroup[] = &$mform->createElement('static', 'role_type_header', '', $roletypestring);
 
             foreach ($roles as $role) {
-                $rolestring = $this->format_role_string($role);
+                $rolestring = $this->formatrolestring($role);
                 $rolegroup[] = &$mform->createElement('radio', 'customint2', '', $rolestring, $role->id);
             }
         }
@@ -103,8 +98,12 @@ class enrol_invitation_edit_form extends moodleform {
         $mform->setType('message', PARAM_RAW);
 
         // Put help text to show what default message invitee gets.
-        $mform->addHelpButton('customtext1', 'emailmsghtml', 'enrol_invitation',
-                get_string('message_help_link', 'enrol_invitation'));
+        $mform->addHelpButton(
+            'customtext1',
+            'emailmsghtml',
+            'enrol_invitation',
+            get_string('message_help_link', 'enrol_invitation')
+        );
 
         // Email options.
         // Prepare string variables.
@@ -160,9 +159,9 @@ class enrol_invitation_edit_form extends moodleform {
      * @param object $course Course record.
      * @return array         Returns array of roles indexed by role archetype.
      */
-    public function get_appropiate_roles($course) {
+    private function getappropiateroles($course) {
         global $DB;
-        $retval = array();
+        $retval = [];
         $context = context_course::instance($course->id);
         $roles = get_assignable_roles($context);
 
@@ -172,7 +171,7 @@ class enrol_invitation_edit_form extends moodleform {
 
         // Get full role records for archetype and description.
         foreach ($roles as $roleid => $rolename) {
-            $record = $DB->get_record('role', array('id' => $roleid));
+            $record = $DB->get_record('role', ['id' => $roleid]);
             $record->name = $rolename;  // User might have customised name.
             $retval[$record->archetype][] = $record;
         }
@@ -205,5 +204,4 @@ class enrol_invitation_edit_form extends moodleform {
 
         return $errors;
     }
-
 }
