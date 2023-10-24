@@ -1,33 +1,5 @@
-/** General display rules **/
+/** General display rules. **/
 
-.mform-invite .label {
-    float: left;
-    clear: left;
-    margin-bottom: 4px !important;
-}
-
-.mform-invite .label ~ span {
-    clear: left;
-    float: left;
-    display: inline-block;
-    margin-bottom: 4px;
-}
 .enrol_invitation_item_icon {
     padding-right: 5px;
-}
-.mform-invite .error > .error {
-    float: left;
-    margin-left: 0 !important;
-    margin-right: 100% !important;
-    text-transform: capitalize;
-}
-
-.mform-invite .error > .error:after {
-    width: 100%;
-}
-
-.form-invite-message,
-.form-invite-subject,
-.form-invite-email {
-    width: 99% !important;
 }

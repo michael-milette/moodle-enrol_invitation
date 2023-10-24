@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.2.1] - 2023-10-24
+### Updated
+- Fixed formatting in list of 'Assign roles' field for clarity.
+
 ## [2.2.0] - 2023-07-04
 ### Added
 - Support for plain text tag called {$a->firstname} in the body of the invitation message.

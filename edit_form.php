@@ -90,7 +90,7 @@ class enrol_invitation_edit_form extends moodleform {
             }
         }
         $mform->setDefault('customint2', 3);
-        $mform->addGroup($rolegroup, 'role_group', $label);
+        $mform->addGroup($rolegroup, 'role_group', $label, '<br>');
 
         // Subject field.
         $mform->addElement('text', 'customchar1', get_string('subject', 'enrol_invitation'), ['class' => 'form-invite-subject']);
@@ -130,18 +130,26 @@ class enrol_invitation_edit_form extends moodleform {
      * @param object $role  Record from role table.
      * @return string
      */
-    private function format_role_string($role) {
-        $rolestring = html_writer::tag('span', $role->name . ':', array('class' => 'role-name'));
+    private function formatrolestring($role) {
+        $rolestring = html_writer::tag('span', $role->name, ['class' => 'role-name']);
 
         // Role description has a <hr> tag to separate out info for users and admins.
-        $roledescription = explode('<hr />', $role->description);
+        if (strpos($role->description, '<hr />') !== false) {
+            $roledescription = explode('<hr />', $role->description);
+        } else if (strpos($role->description, '<hr>') !== false) {
+            $roledescription = explode('<hr>', $role->description);
+        } else {
+            $roledescription[0] = $role->description;
+        }
 
         // Need to clean html, because tinymce adds a lot of extra tags that mess up formatting.
         $roledescription = $roledescription[0];
         // Whitelist some formatting tags.
         $roledescription = strip_tags($roledescription, '<b><i><strong><ul><li><ol>');
 
-        $rolestring .= ' ' . $roledescription;
+        if (!empty($roledescription)) {
+            $rolestring .= ': ' . $roledescription;
+        }
 
         return $rolestring;
     }
