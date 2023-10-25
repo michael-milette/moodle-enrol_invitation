@@ -39,6 +39,15 @@ if ($ADMIN->fulltree) {
         )
     );
 
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'enrol_invitation/defaultenrol',
+            get_string('defaultenrol', 'enrol'),
+            get_string('defaultenrol_desc', 'enrol'),
+            1
+        )
+    );
+
     $options = [ENROL_INSTANCE_ENABLED  => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
     $settings->add(
         new admin_setting_configselect(
