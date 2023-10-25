@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 - Fixed formatting in list of 'Assign roles' field for clarity.
 - Code refactoring for compliance with Moodle coding guidelines.
 - Case insensitive comparison between invitation email and user email
+- Now compatible and tested with Moodle 3.9, 3.10, 3.11, 4.0, 4.1, 4.2 and 4.3.
+- Now compatible with PHP 7.4 to 8.2.
 
 ## [2.2.0] - 2023-07-04
 ### Added
