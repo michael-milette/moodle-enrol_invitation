@@ -17,9 +17,10 @@
 /**
  * Self enrolment plugin - support for user self unenrolment.
  *
- * @package    enrol_self
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @package    enrol_invitation
  * @copyright  2023 TNG Consulting Inc. {@link https://tngconsulting.ca}
+ * @author     Michael Milette
+ * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

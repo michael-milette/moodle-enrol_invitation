@@ -18,7 +18,8 @@
  * The invitation_notsent event.
  *
  * @package    enrol_invitation
- * @copyright  2021-2023 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @copyright  2021-2024 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @author     Michael Milette
  * @copyright  2021 Christian Brugger (brugger.chr@gmail.com)
  * @author     Christian Brugger
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,6 +27,13 @@
 
 namespace enrol_invitation\event;
 
+/**
+ * Class invitation_notsent
+ *
+ * This class represents a not sent invitation event in the enrol_invitation system.
+ * It extends the invitation_base class and provides methods for creating the event,
+ * getting the event name, getting the event description, and getting the URL for the event.
+ */
 class invitation_notsent extends invitation_base {
     /**
      * Create this event on a given invitation.
@@ -39,10 +47,20 @@ class invitation_notsent extends invitation_base {
         return $event;
     }
 
+    /**
+     * Get the name of the event.
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('event_invitation_sent', 'enrol_invitation');
     }
 
+    /**
+     * Get the description of the event.
+     *
+     * @return string
+     */
     public function get_description() {
         $description = get_string(
             'notsentdescription',
@@ -52,6 +70,11 @@ class invitation_notsent extends invitation_base {
         return $description;
     }
 
+    /**
+     * Get the URL for the event.
+     *
+     * @return \moodle_url
+     */
     public function get_url() {
         return new \moodle_url('/enrol/invitation/invitation.php', ['courseid' => $this->other['courseid']]);
     }

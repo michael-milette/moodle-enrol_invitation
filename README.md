@@ -2,7 +2,7 @@
 
 Invitation enrollment plugin for Moodle
 =======================================
-![PHP](https://img.shields.io/badge/PHP-v5.6%20%2F%20v7.0%20%2F%20v7.1%20%2F%20v7.2%20%2F%20v7.3%20%2F%20v7.4%20%2F%20v8.0%20%2F%20v8.1%20%2F%20v8.2-blue.svg)
+![PHP](https://img.shields.io/badge/PHP-v7.4%20to%20v8.3-blue.svg)
 ![Moodle](https://img.shields.io/badge/Moodle-v2.6%20to%20v4.3-orange.svg)
 [![GitHub Issues](https://img.shields.io/github/issues/michael-milette/moodle-enrol_invitation.svg)](https://github.com/michael-milette/moodle-enrol_invitation/issues)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-green.svg)](#contributing)
@@ -247,7 +247,7 @@ https://github.com/michael-milette/moodle-enrol_invitation
 
 # License
 
-Copyright © 2021-2022 TNG Consulting Inc. - https://www.tngconsulting.ca/
+Copyright © 2021-2024 TNG Consulting Inc. - https://www.tngconsulting.ca/
 
 This file is part of Invitation for Moodle - https://moodle.org/
 

@@ -18,7 +18,8 @@
  * Base class for invitation events.
  *
  * @package    enrol_invitation
- * @copyright  2021-2023 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @copyright  2021-2024 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @author     Michael Milette
  * @copyright  2021 Lukas Celinak <lukascelinak@gmail.com> (see README.txt)
  * @author     Lukas Celinak
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,6 +36,11 @@ namespace enrol_invitation\event;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class invitation_base extends \core\event\base {
+    /**
+     * Invitation instance.
+     *
+     * @var array
+     */
     protected $invitation;
 
     /**
@@ -44,12 +50,21 @@ abstract class invitation_base extends \core\event\base {
      */
     protected $legacylogdata;
 
+    /**
+     * Initialize the class.
+     */
     protected function init() {
         $this->data['crud'] = 'c'; // Valid options include: c)reate, r)ead, u)pdate and d)elete.
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'enrol_invitation_invitation_manager';
     }
 
+    /**
+     * Gather the information we need for for a given invitation.
+     *
+     * @param object $invitation
+     * @return \core\event\base
+     */
     protected static function base_data($invitation) {
         $data = [
             'context' => \context_course::instance($invitation->courseid),
@@ -61,6 +76,11 @@ abstract class invitation_base extends \core\event\base {
         return $data;
     }
 
+    /**
+     * Set invitation instance.
+     *
+     * @param object $invitation
+     */
     protected function set_invitation($invitation) {
         $this->add_record_snapshot('enrol_invitation', $invitation);
         $this->invitation = (array) $invitation;

@@ -20,9 +20,9 @@
  * @package    enrol_invitation
  * @copyright  2013 UC Regents
  * @copyright  2011 Jerome Mouneyrac {@link http://www.moodleitandme.com}
+ * @author     Michael Milette
  * @copyright  2023 TNG Consulting Inc {@link http://www.tngconsulting.ca}
  * @author     Jerome Mouneyrac
- * @author     Michael Milette
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -18,7 +18,8 @@
  * Local library file to include classes and functions used.
  *
  * @package    enrol_invitation
- * @copyright  2021-2023 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @copyright  2021-2024 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @author     Michael Milette
  * @copyright  2013 UC Regents
  * @author     Rex Lorenzo
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -355,7 +356,7 @@ class invitation_manager {
             return get_string('status_invite_invalid', 'enrol_invitation');
         }
 
-        // TODO: Redefinition for statuses storing in enrol_invitation history.
+        // TODO: MDL-0 Redefinition for statuses storing in enrol_invitation history.
         if (empty($invite->status)) {
             if ($invite->tokenused) {
                 // Invite was used already.
@@ -370,7 +371,7 @@ class invitation_manager {
             return get_string('status_invite_' . $invite->status, 'enrol_invitation');
         }
 
-        // TODO: Add status_invite_revoked and status_invite_resent status.
+        // TODO: MDL-0 Add status_invite_revoked and status_invite_resent status.
     }
 
     /**

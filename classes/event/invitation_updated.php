@@ -18,7 +18,8 @@
  * The invitation_updated event.
  *
  * @package    enrol_invitation
- * @copyright  2021-2023 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @copyright  2021-2024 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @author     Michael Milette
  * @copyright  2021 Christian Brugger (brugger.chr@gmail.com)
  * @author     Christian Brugger
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,7 +27,17 @@
 
 namespace enrol_invitation\event;
 
+/**
+ * Class invitation_updated
+ *
+ * This class represents an updated invitation event in the enrol_invitation system.
+ * It extends the invitation_base class and provides methods for creating the event,
+ * getting the event name, getting the event description, and getting the URL for the event.
+ */
 class invitation_updated extends invitation_base {
+    /**
+     * Initialize the class.
+     */
     protected function init() {
         $this->data['crud'] = 'u'; // Valid options include: c)reate, r)ead, u)pdate and d)elete.
         $this->data['edulevel'] = self::LEVEL_OTHER;
@@ -45,10 +56,20 @@ class invitation_updated extends invitation_base {
         return $event;
     }
 
+    /**
+     * Get the name of the event.
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('event_invitation_updated', 'enrol_invitation');
     }
 
+    /**
+     * Get the description for the event.
+     *
+     * @return string
+     */
     public function get_description() {
         $description = get_string(
             'updateddescription',
@@ -58,6 +79,11 @@ class invitation_updated extends invitation_base {
         return $description;
     }
 
+    /**
+     * Get the URL for the event.
+     *
+     * @return \moodle_url
+     */
     public function get_url() {
         return new \moodle_url('/enrol/invitation/invitation.php', ['courseid' => $this->other['courseid']]);
     }

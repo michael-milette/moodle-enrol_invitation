@@ -18,7 +18,8 @@
  * Form to display invitation.
  *
  * @package    enrol_invitation
- * @copyright  2021-2023 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @copyright  2021-2024 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @author     Michael Milette
  * @copyright  2013 UC Regents
  * @author     Rex Lorenzo
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,7 +34,7 @@ require_once($CFG->dirroot . '/lib/enrollib.php');
 /**
  * Class for sending invitation to enrol users in a course when the "Use invitation with default values" field is set to "Yes".
  *
- * @copyright  2021-2023 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
+ * @copyright  2021-2024 TNG Consulting Inc. {@link https://www.tngconsulting.ca}
  * @copyright  2013 UC Regents
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

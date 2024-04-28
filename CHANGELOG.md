@@ -1,6 +1,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.2.1] - 2024-04-28
+Note: There are no changes to the code in this release.
+### Added
+- Github CI Workflows.
+- Github security reporting
+### Updated
+- Code updated to latest Moodle coding guidelines.
+- Bug reporting form.
+- Renamed LICENSE to LICENSE.txt
+- Tested compatible and tested with Moodle 3.9, 3.10, 3.11, 4.0, 4.1, 4.2, 4.3 and 4.4.
+- Compatible with Moodle up to v4.4.
+- Updated copyright notice for 2024.
+
 ## [2.2.1] - 2023-10-24
 ### Added
 - Ability to self-unenrol from the course.
