@@ -115,6 +115,30 @@ class enrol_invitation_plugin extends enrol_plugin {
     }
 
     /**
+     * Add new instance of enrol plugin with default settings.
+     *
+     * @param stdClass $course
+     * @return int id of new instance
+     */
+    public function add_default_instance($course)
+    {
+        $fields = [
+            'status' => $this->get_config('status'),
+            'name' => '',
+            'customint1' => 0,
+            'customint2' => 3,
+            'customint3' => 0,
+            'customint4' => 0,
+            'customint5' => 0,
+            'customint6' => 0,
+            'customchar1' => get_string('default_subject', 'enrol_invitation', getcoursesubject($course)),
+            'customtext1' => '',
+        ];
+
+        return $this->add_instance($course, $fields);
+    }
+
+    /**
      * Restore instance and map settings.
      *
      * @param restore_enrolments_structure_step $step
