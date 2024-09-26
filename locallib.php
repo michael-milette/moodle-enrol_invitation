@@ -31,6 +31,10 @@
  * @copyright  2013 UC Regents
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require_once($CFG->dirroot . '/group/lib.php');
+require_once($CFG->dirroot . '/lib/enrollib.php');
+
+
 class invitation_manager {
     /**
      * Course id.
@@ -136,6 +140,11 @@ class invitation_manager {
                 $invitation->token = $token;
                 $invitation->tokenused = false;
                 $invitation->roleid = $resend ? $data->roleid : $data->role_group['roleid'];
+
+                $groups = filterGroups($data->courseid, $USER, $data->groups);
+                if (!is_null($groups) && !empty($groups)) {
+                    $invitation->groupsid =  json_encode($groups);
+                }
                 $invitation->status = null;
 
                 // Set the timesent/timeexpiration date for the invitation.
@@ -463,6 +472,13 @@ class invitation_manager {
 
         $enrol = enrol_get_plugin('invitation');
         $enrol->enrol_user($this->enrolinstance, $user->id, $invitation->roleid, 0, $timeend);
+
+        $groupInvitations  = json_decode($invitation->groupsid);
+
+        foreach ($groupInvitations as $key => $groupInvitation) {
+            groups_add_member($key, $user->id);
+        }
+       
     }
 
     /**
@@ -1032,4 +1048,17 @@ function print_page_tabs($activetab) {
 
     // Display tabs here.
     print_tabs([$tabs], $activetab);
+}
+
+function filterGroups($courseid, $user, $groups) {
+    $context = context_course::instance($courseid);
+    if (is_null($groups) || empty($groups) || has_capability('moodle/course:managegroups', $context)) {
+        return $groups;
+    } else {
+        $user_groups = groups_get_user_groups($courseid, $user->id);
+        $filtered_group = array_filter($groups, function($groupid) use ($user_groups) {
+            return in_array($groupid, $user_groups[0]);
+        });
+        return $filtered_group;
+    }
 }

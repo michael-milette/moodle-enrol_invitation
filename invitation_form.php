@@ -30,6 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once('locallib.php');
 require_once($CFG->dirroot . '/lib/formslib.php');
 require_once($CFG->dirroot . '/lib/enrollib.php');
+require_once($CFG->dirroot . '/group/lib.php');
+
 
 /**
  * Class for sending invitation to enrol users in a course when the "Use invitation with default values" field is set to "Yes".
@@ -79,6 +81,21 @@ class invitation_form extends moodleform {
         $mform->setDefault('roleid', 3);
         $mform->addGroup($rolegroup, 'role_group', $label, '<br>');
         $mform->addRule('role_group', get_string('norole', 'enrol_invitation'), 'required');
+
+
+        $groups = $this->getappropiategroups($course, $USER);
+
+        if (!empty($groups)) {
+            $mform->addElement('header', 'header_group', get_string('header_group', 'enrol_invitation'));
+            $label = get_string('assigngroup', 'enrol_invitation');
+
+            $groupselem = [];
+
+            foreach( $groups as $group) {
+                $groupselem[] = &$mform->createElement('checkbox', $group->id, $group->name);
+            }
+            $mform->addGroup($groupselem, 'groups', $label, '<br>');
+        }
 
         // Email address field.
         $mform->addElement('header', 'header_email', get_string('header_email', 'enrol_invitation'));
@@ -255,6 +272,25 @@ class invitation_form extends moodleform {
 
         return $retval;
     }
+
+     /**
+     * Private class method to return a list of appropriate roles for given course and user.
+     *
+     * @param object $course Course record.
+     * @param object $user User
+
+     * @return array         Returns array of roles indexed by role archetype.
+     */
+    private function getappropiategroups($course, $user) {
+        $context = context_course::instance($course->id, $user->id);
+        if (has_capability('moodle/course:managegroups', $context)) {
+            $groups = groups_get_all_groups($course->id);
+        } else {
+            $groups = groups_get_all_groups($course->id, $user->id);
+        }
+        return $groups;
+    }
+
 
     /**
      * Provides custom validation rules.
