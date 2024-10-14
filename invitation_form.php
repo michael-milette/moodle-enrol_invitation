@@ -397,8 +397,11 @@ class invitation_email_form extends moodleform {
         } else {
             $userfields = get_extra_user_fields($context);
         }
-        // this line is causing issue for system lower than version 311
-       // $userfields = \core_user\fields::get_identity_fields($context, false);
+
+        if ($CFG->branch >= 311) {
+            $userfields = \core_user\fields::get_identity_fields($context, false);
+        }
+
         $options = [
             'ajax' => 'enrol_manual/form-potential-user-selector',
             'multiple' => true,
