@@ -3,7 +3,7 @@
 Invitation enrollment plugin for Moodle
 =======================================
 ![PHP](https://img.shields.io/badge/PHP-v7.4%20to%20v8.3-blue.svg)
-![Moodle](https://img.shields.io/badge/Moodle-v2.6%20to%20v4.3-orange.svg)
+![Moodle](https://img.shields.io/badge/Moodle-v2.6%20to%20v4.5-orange.svg)
 [![GitHub Issues](https://img.shields.io/github/issues/michael-milette/moodle-enrol_invitation.svg)](https://github.com/michael-milette/moodle-enrol_invitation/issues)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-green.svg)](#contributing)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](#license)

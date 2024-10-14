@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+### Updated
+- Fixed deprecation notice running on PHP 8.3.
+
 ## [2.2.1] - 2024-04-28
 Note: There are no changes to the code in this release.
 ### Added
