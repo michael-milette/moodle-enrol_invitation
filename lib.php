@@ -115,25 +115,34 @@ class enrol_invitation_plugin extends enrol_plugin {
     }
 
     /**
+     * Returns defaults for new instances.
+     *
+     * @return array
+     */
+    public function get_instance_defaults() {
+        $fields = [];
+        $fields['status'] = $this->get_config('status');
+        $fields['name'] = '';
+        $fields['customint1'] = 0;
+        $fields['customint2'] = 3;
+        $fields['customint3'] = 0;
+        $fields['customint4'] = 0;
+        $fields['customint5'] = 0;
+        $fields['customint6'] = 0;
+        $fields['customchar1'] = get_string('default_subject', 'enrol_invitation', getcoursesubject($course));
+        $fields['customtext1'] = '';
+
+        return $fields;
+    }
+
+    /**
      * Add new instance of enrol plugin with default settings.
      *
      * @param stdClass $course
      * @return int id of new instance
      */
-    public function add_default_instance($course)
-    {
-        $fields = [
-            'status' => $this->get_config('status'),
-            'name' => '',
-            'customint1' => 0,
-            'customint2' => 3,
-            'customint3' => 0,
-            'customint4' => 0,
-            'customint5' => 0,
-            'customint6' => 0,
-            'customchar1' => get_string('default_subject', 'enrol_invitation', getcoursesubject($course)),
-            'customtext1' => '',
-        ];
+    public function add_default_instance($course) {
+        $fields = $this->get_instance_defaults();
 
         return $this->add_instance($course, $fields);
     }

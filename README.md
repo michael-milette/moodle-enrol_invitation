@@ -226,6 +226,7 @@ Michael Milette - Author and Lead Developer
 
 Big thank you to the following contributors. (Please let me know if I forgot to include you in the list):
 
+* Phillip Fickl (phillipfickl) - Add instance to new coures by default. (2023)
 * MSVermet - Case insensitive comparison between invitation email and user email. (2023)
 * [Jerome Mouneyrac](http://www.moodleitandme.com) for his work on the original [invitation enrollment plug-in](https://github.com/mouneyrac/moodle-enrol_invitation) in which this one is based upon.
 * The staff, faculty, and students at the University of California, Los Angeles (UCLA) that were involved in creating the additional use cases, development, and refinement to this tool.

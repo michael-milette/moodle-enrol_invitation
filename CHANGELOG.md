@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [2.2.2] - 2024-10-13
+- Added option to automatically add instance to new courses.
 ### Updated
 - Fixed support for plain text tag called {$a->userfullname}.
 - Fixed deprecation notice running on PHP 8.3.
