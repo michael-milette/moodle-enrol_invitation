@@ -131,6 +131,7 @@ Note that you can use any of the following plain text tags within the body of th
 * {$a->emailmsgunsubscribe} : Unsubscribe/Support message.
 * {$a->email} : Invitees email address - always available.
 * {$a->username} : Invitees username - only available if the user already has an account on the site, otherwise blank.
+* {$a->userfullname} : Invitees formatted full name - only available if the user already has an account on the site, otherwise blank.
 * {$a->firstname} : Invitees first name - only available if the user already has an account on the site, otherwise blank.
 * {$a->lastname} : Invitees last name - only available if the user already has an account on the site, otherwise blank.
 * {$a->surname} : This is an alias for {$a->lastname}.

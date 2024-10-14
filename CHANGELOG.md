@@ -1,7 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.2.2] - 2024-10-13
 ### Updated
+- Fixed support for plain text tag called {$a->userfullname}.
 - Fixed deprecation notice running on PHP 8.3.
 
 ## [2.2.1] - 2024-04-28

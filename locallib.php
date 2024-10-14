@@ -223,11 +223,13 @@ class invitation_manager {
                     $messageparams->message = $data->message['text'];
                     $messageparams->email = $invitation->email;
                     if ($userexits) {
+                        $messageparams->userfullname = fullname($contactuser);
                         $messageparams->firstname = $contactuser->firstname;
                         $messageparams->lastname = $contactuser->lastname;
                         $messageparams->surname = $contactuser->lastname;
                         $messageparams->username = $contactuser->username;
                     } else {
+                        $messageparams->userfullname = '';
                         $messageparams->firstname = '';
                         $messageparams->lastname = '';
                         $messageparams->surname = '';
@@ -262,12 +264,14 @@ class invitation_manager {
                     $contactuser->mailformat = 1;
                     $contactuser->maildisplay = true;
                     $invitation->userid = $contactuser->id;
+                    $contactuser->userfullname = fullname($contactuser);
                 } else {
                     // User does not have an account yet.
                     $contactuser = new stdClass();
                     $contactuser->id = -1; // Required by new version of email_to_user since moodle 2.6.
                     $contactuser->email = $invitation->email;
                     $contactuser->mailformat = 1; // 0 (zero): text-only emails, 1 (one): for HTML/Text emails.
+                    $contactuser->userfullname = '';
                     $contactuser->firstname = '';
                     $contactuser->lastname = '';
                     $contactuser->maildisplay = true;
@@ -465,7 +469,7 @@ class invitation_manager {
      * Figures out who used an invite.
      *
      * @param object $invite Invitation record
-     * @return object Returns an object with following values:
+     * @return object|bool Returns an object with following values:
      *                ['username'] - name of who used invite
      *                ['useremail'] - email of who used invite
      *                ['roles'] - roles the user has for course that
