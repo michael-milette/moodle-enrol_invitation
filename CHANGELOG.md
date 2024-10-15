@@ -2,11 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 ## [2.2.2] - 2024-10-13
-- Added option to automatically add instance to new courses.
+### Added
+- Option to automatically add instance to new courses.
 ### Updated
 - Fixed support for plain text tag called {$a->userfullname}.
 - Fixed compatibility issue with Moodle versions prior to v3.11.
 - Fixed deprecation notice running on PHP 8.3.
+- Compatible with Moodle up to v4.5.
 
 ## [2.2.1] - 2024-04-28
 Note: There are no changes to the code in this release.
