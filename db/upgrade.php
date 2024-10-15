@@ -298,5 +298,22 @@ function xmldb_enrol_invitation_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021073000, 'enrol', 'invitation');
     }
 
+    if ($oldversion < 2024092600) {
+        $table = new xmldb_table('enrol_invitation');
+
+        // Add status column.
+        $fields[] = new xmldb_field('groupsid',XMLDB_TYPE_TEXT, 'small');
+
+        foreach ($fields as $field) {
+            // Conditionally launch add field subject.
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2024092600, 'enrol', 'invitation');
+    }
+
+
     return true;
 }
